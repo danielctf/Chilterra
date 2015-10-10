@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Login</string>
+    <string name="title_activity_traslado_bolo">Traslado Bolos</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    
+    <!-- menu_config -->
+    <string name="menu_acercade">Acerca de..</string>
+
+    <!-- Layout traslado_bolos -->
+    <string name="bodega_origen">Bodega Origen</string>
+    <string name="bodega_destino">Bodega Destino</string>
+    <string name="transportista">Trasportista</string>
+    <string name="chofer">Chofer</string>
+    <string name="camion">Camión</string>
+    <string name="acoplado">Acoplado</string>
+    <string name="producto">Producto</string>
+    <string name="cantidad">Cantidad</string>
+    <string name="siguiente">Siguiente</string>
+    <string name="confirmar">Confirmar</string>
+
+</resources>

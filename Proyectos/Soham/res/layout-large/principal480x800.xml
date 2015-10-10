@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/lobbyfixed1" >
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="170dp"
+        android:onClick="goRelajacion"
+        android:background="@drawable/animacionboton"/>
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="255dp"
+        android:onClick="goSoham"
+        android:background="@drawable/animacionboton"/>
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="335dp"
+        android:onClick="goSamatha"
+        android:background="@drawable/animacionboton"/>
+
+    <ImageButton
+        android:id="@+id/imageButton1"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginLeft="440dp"
+        android:layout_marginTop="15dp"
+        android:onClick="goAbout"
+        android:background="@drawable/animacionabout" />
+    
+    
+    <AbsoluteLayout
+        android:id="@+id/AbsoluteLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" >
+
+	    <Button
+	        android:layout_width="73dp"
+	        android:layout_height="77dp"
+	        android:layout_x="308dp"
+	        android:layout_y="24dp"
+	        android:onClick="noDisponible"
+	        android:background="@drawable/roundedbutton" />
+
+	    <Button
+	        android:layout_width="73dp"
+	        android:layout_height="77dp"
+	        android:layout_x="207dp"
+	        android:layout_y="24dp"
+	        android:onClick="noDisponible"
+	        android:background="@drawable/roundedbutton" />
+
+	    <Button
+	        android:layout_width="73dp"
+	        android:layout_height="77dp"
+	        android:layout_x="100dp"
+	        android:layout_y="25dp"
+	        android:onClick="goAprender"
+	        android:background="@drawable/roundedbutton" />
+
+    </AbsoluteLayout>
+
+</RelativeLayout>

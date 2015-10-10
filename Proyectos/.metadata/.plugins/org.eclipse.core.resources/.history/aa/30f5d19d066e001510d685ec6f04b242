@@ -1,0 +1,53 @@
+package cl.a2r.custom;
+
+import android.os.Bundle;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
+
+import cl.a2r.animales.BajaGanado.IncomingHandler;
+
+import com.example.bt.EIDService;
+import com.example.bt.MainActivity;
+
+public class IncomingHandler {
+	
+	public static String dato;
+	Messenger mService = null;
+	String diio;
+	Messenger mService = null;
+	public void handleMessage(Message msg) {
+		switch (msg.what) {
+		case EIDService.MSG_UPDATE_STATUS:
+			Bundle b1 = msg.getData();
+			dato = b1.getString("info1");
+			if (dato != "zzz"){
+				diio = dato;
+			}
+			break;
+		case EIDService.MSG_UPDATE_LOG_APPEND:
+			Bundle b2 = msg.getData();
+			if (b2.getString("logappend").contains("Failed")) {
+				failedToConnect();
+			}
+			break;
+		case EIDService.MSG_THREAD_SUICIDE:
+			failedToConnect();
+			break;
+		default:
+			super.handleMessage(msg);
+		}
+	}
+	
+	public void configService(){
+		mService = new Messenger(MainActivity.globService);
+		Message msg = Message.obtain(null, EIDService.MSG_REGISTER_CLIENT);
+		msg.replyTo = mMessenger;
+		try {
+			mService.send(msg);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

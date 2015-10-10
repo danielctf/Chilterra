@@ -1,0 +1,260 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.registroleche.RegistrarOLB" >
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:background="@drawable/blackbkg" >
+
+        <EditText
+            android:id="@+id/calostro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="18dp"
+            android:layout_toRightOf="@+id/TextView02"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:textSize="28sp" >
+        </EditText>
+
+        <EditText
+            android:id="@+id/mastitis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextView05"
+            android:layout_alignBottom="@+id/TextView05"
+            android:layout_alignLeft="@+id/LBTerneros"
+            android:layout_alignRight="@+id/LBTerneros"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <EditText
+            android:id="@+id/resguardo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/mastitis"
+            android:layout_alignRight="@+id/mastitis"
+            android:layout_alignTop="@+id/TextView03"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/calostro"
+            android:layout_alignBottom="@+id/calostro"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="22dp"
+            android:text="Calostro"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <EditText
+            android:id="@+id/cojas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextView04"
+            android:layout_alignBottom="@+id/TextView04"
+            android:layout_alignLeft="@+id/LBTerneros"
+            android:layout_alignRight="@+id/LBTerneros"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <EditText
+            android:id="@+id/total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/resguardo"
+            android:layout_alignRight="@+id/resguardo"
+            android:layout_alignTop="@+id/TextView07"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <EditText
+            android:id="@+id/LBTerneros"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/calostro"
+            android:layout_alignRight="@+id/calostro"
+            android:layout_alignTop="@+id/TextView02"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView1"
+            android:layout_below="@+id/textView1"
+            android:layout_marginTop="20dp"
+            android:text="Antibióticos"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/TextView04"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView02"
+            android:layout_below="@+id/TextView02"
+            android:layout_marginTop="15dp"
+            android:text="Cojas"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView01"
+            android:layout_below="@+id/TextView01"
+            android:layout_marginTop="13dp"
+            android:text="Leche buena\npara terneros"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <EditText
+            android:id="@+id/antibiotico"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/TextView02"
+            android:layout_alignLeft="@+id/LBTerneros"
+            android:layout_alignRight="@+id/calostro"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <EditText
+            android:id="@+id/recalto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextView06"
+            android:layout_alignBottom="@+id/TextView06"
+            android:layout_alignLeft="@+id/mastitis"
+            android:layout_alignRight="@+id/mastitis"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/TextView03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView05"
+            android:layout_below="@+id/TextView05"
+            android:layout_marginTop="22dp"
+            android:text="Resguardo"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/TextView07"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView03"
+            android:layout_below="@+id/TextView03"
+            android:layout_marginTop="17dp"
+            android:text="Total"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/TextView06"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView04"
+            android:layout_below="@+id/TextView04"
+            android:layout_marginTop="23dp"
+            android:text="Rec. Alto"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/TextView05"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView06"
+            android:layout_below="@+id/TextView06"
+            android:layout_marginTop="19dp"
+            android:text="Mastitis"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="28sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="@drawable/blackbkg" >
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/selected_state"
+            android:onClick="goSiguienteOLT"
+            android:text="Siguiente"
+            android:textSize="28sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

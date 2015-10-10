@@ -1,0 +1,5 @@
+This an android application to communicate with EID readers.
+It is based on BlueTerm and Ntrip Client.
+It has been tested with the Priority1 FDX-B/HDX RFID Reader Writer
+with added bluetooth serial interface, as well as a commercial bluetooth
+reader from AllFlex.

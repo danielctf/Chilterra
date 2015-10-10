@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">testing</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_despliega_datos">DespliegaDatos</string>
+    <string name="title_activity_ingresa_datos">IngresaDatos</string>
+    <string name="title_activity_calculadora">Calculadora</string>
+
+</resources>

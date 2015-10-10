@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fondo_login">#ffffff</color>
+    <color name="titulo_login">#0000ff</color>
+    <color name="label_login">#336600</color>
+    <color name="campo_login">#99BEBE</color>
+    <color name="actionbar_fondo_login">#2196f3</color>
+    <color name="actionbar_text_login">#ffffff</color>
+</resources>

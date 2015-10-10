@@ -1,0 +1,22 @@
+package cl.a2r.custom;
+
+import cl.a2r.animales.BajaGanado;
+
+public class AppLauncher {
+
+	private static Class launchApp;
+	
+	public static void setAppClass(String codigoApp){
+		launchApp = null;
+		switch (codigoApp){
+		case "BAJ":
+			launchApp = BajaGanado.class;
+			break;
+		}
+	}
+	
+	public static Class getAppClass(){
+		return launchApp;
+	}
+	
+}

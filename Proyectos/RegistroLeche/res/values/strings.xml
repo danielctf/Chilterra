@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Registro Leche</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_principal">Principal</string>
+    <string name="title_activity_olb">OLB</string>
+    <string name="title_activity_registrar_olb">RegistrarOLB</string>
+    <string name="title_activity_registrar_olb2">RegistrarOLB2</string>
+    <string name="title_activity_registrar_olt">RegistrarOLT</string>
+    <string name="title_activity_registrar_olt2">RegistrarOLT2</string>
+    <string name="title_activity_salida">Salida</string>
+    <string name="title_activity_generar_entrega">GenerarEntrega</string>
+    <string name="title_activity_test">Test</string>
+    <string name="title_activity_generar_consumo">GenerarConsumo</string>
+
+</resources>

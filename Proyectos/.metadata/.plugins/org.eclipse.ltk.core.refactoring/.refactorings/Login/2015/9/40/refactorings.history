@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;cl.a2r.bolos&apos; to &apos;cl.a2r.login&apos;&#x0D;&#x0A;- Original project: &apos;Login&apos;&#x0D;&#x0A;- Original element: &apos;Login/src/cl.a2r.bolos&apos;&#x0D;&#x0A;- Renamed element: &apos;Login/src/cl.a2r.login&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;cl.a2r.bolos&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src&lt;cl.a2r.bolos" name="cl.a2r.login" qualified="false" references="true" stamp="1443555159702" textual="false" version="1.0"/>
+</session>

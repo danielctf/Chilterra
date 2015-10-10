@@ -1,0 +1,236 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.registroleche.RegistrarOLB2" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="165dp"
+        android:background="@drawable/blackbkg" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Leche antes Ordeña"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="25sp" />
+
+        <EditText
+            android:id="@+id/antesregla"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextView01"
+            android:layout_alignBottom="@+id/TextView01"
+            android:layout_marginLeft="47dp"
+            android:layout_marginRight="60dp"
+            android:layout_toRightOf="@+id/TextView01"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:textSize="25sp" />
+
+        <EditText
+            android:id="@+id/anteslitros"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextView02"
+            android:layout_alignBottom="@+id/TextView02"
+            android:layout_alignLeft="@+id/antesregla"
+            android:layout_alignRight="@+id/antesregla"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView01"
+            android:layout_below="@+id/TextView01"
+            android:layout_marginTop="24dp"
+            android:text="Saldo"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView1"
+            android:layout_below="@+id/textView1"
+            android:layout_marginTop="10dp"
+            android:text="Regla"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="25sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:background="@drawable/blackbkg" >
+
+        <EditText
+            android:id="@+id/despuesregla"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextView04"
+            android:layout_alignBottom="@+id/TextView04"
+            android:layout_marginLeft="47dp"
+            android:layout_marginRight="60dp"
+            android:layout_toRightOf="@+id/TextView04"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:textSize="25sp" />
+
+        <EditText
+            android:id="@+id/despueslitros"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextView05"
+            android:layout_alignBottom="@+id/TextView05"
+            android:layout_alignLeft="@+id/despuesregla"
+            android:layout_alignRight="@+id/despuesregla"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:textSize="25sp" />
+
+        <EditText
+            android:id="@+id/ordena"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextView06"
+            android:layout_alignBottom="@+id/TextView06"
+            android:layout_alignLeft="@+id/despueslitros"
+            android:layout_alignRight="@+id/despueslitros"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:textSize="25sp" />
+
+        <EditText
+            android:id="@+id/rendimiento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextView07"
+            android:layout_alignBottom="@+id/TextView07"
+            android:layout_alignLeft="@+id/ordena"
+            android:layout_alignRight="@+id/ordena"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/TextView05"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/TextView04"
+            android:layout_marginTop="21dp"
+            android:layout_toLeftOf="@+id/despuesregla"
+            android:text="Litros"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/TextView07"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView06"
+            android:layout_below="@+id/TextView06"
+            android:layout_marginTop="17dp"
+            android:text="Lt/Vaca"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/TextView06"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView05"
+            android:layout_below="@+id/TextView05"
+            android:layout_marginTop="19dp"
+            android:text="Ordeña"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/TextView04"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView03"
+            android:layout_below="@+id/TextView03"
+            android:layout_marginTop="29dp"
+            android:text="Regla"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/TextView03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="Leche después Ordeña"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="25sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="@drawable/blackbkg" >
+
+        <Button
+            android:id="@+id/confirmar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/selected_state"
+            android:onClick="goConfirmar"
+            android:text="Confirmar"
+            android:textSize="25sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

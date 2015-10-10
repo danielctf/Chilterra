@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fondo">#ffffff</color>
+    <color name="titulo">#0000ff</color>
+    <color name="label">#336600</color>
+    <color name="campo">#99BEBE</color>
+    <color name="negro">#000000</color>
+    <color name="blanco">#ffffff</color>
+    <color name="actionbar_fondo">#2196f3</color>
+    <color name="actionbar_text">#ffffff</color>
+</resources>

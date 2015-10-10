@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;BastonBT/res/drawable/highwhite.xml&apos; to &apos;semiblack.xml&apos;" description="Rename resource &apos;highwhite.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="res/drawable/highwhite.xml" name="semiblack.xml" stamp="1444322154854" updateReferences="true"/>
+</session>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.weyr_associates.eidclient"
+    android:installLocation="auto"
+    android:versionCode="20121014"
+    android:versionName="2012.10.14" >
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="8" />
+
+    <application>
+        <activity
+            android:name="com.example.bt.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.bt.EditPreferences"
+            android:label="@string/app_name_settings" >
+        </activity>
+
+        <service android:name="com.example.bt.EIDService" >
+        </service>
+
+        <intent-filter>
+            <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+            <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" />
+            <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+        </intent-filter>
+
+        <activity
+            android:name=".BTListener"
+            android:label="@string/title_activity_btlistener" >
+        </activity>
+
+    </application>
+
+</manifest>

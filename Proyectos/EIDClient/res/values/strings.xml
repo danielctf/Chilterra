@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">EID Client</string>
+	<string name="app_name_long">Weyr Associates EID Client</string>
+	<string name="app_name_settings">Weyr Associates EID Client - Settings</string>
+	
+	<string name="service_started">EID Service Running</string> 
+	<string name="service_label">EID Service</string> 
+</resources>

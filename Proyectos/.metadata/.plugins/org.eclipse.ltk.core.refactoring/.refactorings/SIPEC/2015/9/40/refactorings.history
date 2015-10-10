@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;javagui.views.CuadraturaParcial&apos; to &apos;GenerarFMA&apos;&#x0D;&#x0A;- Original project: &apos;SIPEC&apos;&#x0D;&#x0A;- Original element: &apos;javagui.views.CuadraturaParcial&apos;&#x0D;&#x0A;- Renamed element: &apos;javagui.views.GenerarFMA&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;CuadraturaParcial&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;javagui.views{CuadraturaParcial.java[CuadraturaParcial" matchStrategy="1" name="GenerarFMA" qualified="false" references="true" similarDeclarations="false" stamp="1443537838607" textual="false" version="1.0"/>
+</session>

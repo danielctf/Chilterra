@@ -1,0 +1,122 @@
+package cl.a2r.animales;
+
+import com.example.bajas.DespliegaDatos.IncomingHandler;
+import com.example.bt.EIDService;
+import com.example.bt.MainActivity;
+
+import cl.a2r.custom.Baston;
+import cl.a2r.login.R;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.pm.ActivityInfo;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.Window;
+import android.widget.TextView;
+
+public class BajaGanado extends Activity {
+	
+	TextView despliegaDiio;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		setContentView(R.layout.activity_baja_ganado);
+		
+		if (EIDService.isRunning()){
+			Baston.configService();
+		}
+		
+		cargarInterfaz();
+	}
+	
+	private void cargarInterfaz(){
+		despliegaDiio = (TextView)findViewById(R.id.despliegaDiio);
+		
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.baja_ganado, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	//--------------------------FUNCIONES BASTON-----------------------
+	public void failedToConnect(){
+		Dialog dialog = new Dialog(this){		
+			public boolean dispatchTouchEvent(MotionEvent event){
+		        dismiss();
+		        return false;
+		    }
+		};
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.device_disconnected);
+		dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+		dialog.show();
+	}
+	
+	
+	public void configService(){
+		mService = new Messenger(MainActivity.globService);
+		Message msg = Message.obtain(null, EIDService.MSG_REGISTER_CLIENT);
+		msg.replyTo = mMessenger;
+		try {
+			mService.send(msg);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static String dato;
+	Messenger mService = null;
+	final Messenger mMessenger = new Messenger(new IncomingHandler());
+	class IncomingHandler extends Handler {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case EIDService.MSG_UPDATE_STATUS:
+				Bundle b1 = msg.getData();
+				//textInfo1.setText(b1.getString("info1"));
+				dato = b1.getString("info1");
+				//LogMessage("datobaston: "+datoBaston);
+				if (dato != "zzz"){
+					//dio.setText(dato);
+				}
+				break;
+			case EIDService.MSG_UPDATE_LOG_APPEND:
+				Bundle b2 = msg.getData();
+				if (b2.getString("logappend").contains("Failed")) {
+					failedToConnect();
+				}
+				break;
+			case EIDService.MSG_THREAD_SUICIDE:
+				failedToConnect();
+				break;
+			default:
+				super.handleMessage(msg);
+			}
+		}
+
+}

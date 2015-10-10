@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/blackbkg"
+    android:orientation="vertical" >
+    
+     <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="50dp"
+           android:background="@color/darkred" >
+
+                <ImageButton
+                    android:id="@+id/back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/ic_hardware_keyboard_arrow_left" />
+
+                <TextView
+                    android:id="@+id/textViewBaston"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+	                android:layout_centerHorizontal="true"
+                    android:text="Conexión Bastón"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/white" />
+                
+                <ImageView
+                    android:id="@+id/more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_navigation_more_vert" />
+                
+            </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout03"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white" >
+
+        <TextView
+            android:id="@+id/textInfo1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:padding="1sp"
+            android:text=""
+            android:textColor="#FFFFFF"
+            android:textSize="36sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/nombreBaston"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+			android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:text="Nombre Baston"
+            android:textColor="#000000"
+            android:textSize="36sp"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/btnService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/con2"
+            android:layout_marginTop="50dp"
+            android:icon="@drawable/connect"
+            android:onClick="goConnect"
+            android:text="Conectar"
+            android:drawableBottom="@drawable/connect"
+            android:background="@drawable/selected_state"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/con2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nombreBaston"
+            android:layout_marginTop="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:drawableBottom="@drawable/btooth"
+            android:onClick="findDevices"
+            android:text="Dispositivos Enlazados"
+            android:background="@drawable/selected_state"
+            android:textSize="24sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

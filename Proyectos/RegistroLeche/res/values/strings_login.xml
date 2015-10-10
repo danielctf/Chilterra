@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- login -->
+    <!-- label -->
+    <string name="label_usuario">Usuario</string>
+    <string name="label_password">Clave</string>
+    <!-- botones -->
+    <string name="boton_ingreso">Ingresar</string>
+    <!-- Titulos -->
+    <string name="titulo_ingreso">Ingreso</string>
+</resources>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/soham" >
+
+    <ImageButton
+        android:id="@+id/playButton"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="13dp"
+        android:layout_marginTop="410dp"
+        android:background="@drawable/playbuttons"
+        android:onClick="playSong" />
+
+    <SeekBar
+        android:id="@+id/seekBarRelajacion"
+        android:layout_width="200dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="410dp"
+        android:maxHeight="3dp"
+        android:minHeight="3dp"
+        android:progressDrawable="@drawable/scrubber_progress"
+        android:thumb="@drawable/scrubber_control" />
+
+    <ImageButton
+        android:id="@+id/pauseButton"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="410dp"
+        android:background="@drawable/pausebuttons"
+        android:onClick="pauseSong" />
+
+    <ImageButton
+        android:id="@+id/stopButton"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="274dp"
+        android:layout_marginTop="408dp"
+        android:background="@drawable/stopbuttons"
+        android:onClick="stopSong" />
+
+    <Button
+        android:id="@+id/min5"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="213dp"
+        android:onClick="minuto5"
+        android:background="@drawable/roundedbutton" />
+
+    <Button
+        android:id="@+id/min15"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="128dp"
+        android:layout_marginTop="213dp"
+        android:onClick="minuto15"
+        android:background="@drawable/roundedbutton" />
+
+    <Button
+        android:id="@+id/min30"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="215dp"
+        android:layout_marginTop="213dp"
+        android:onClick="minuto30"
+        android:background="@drawable/roundedbutton" />
+
+    <TextView
+        android:id="@+id/seleccion"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="345dp"
+        android:textColor="#80ffffff"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>

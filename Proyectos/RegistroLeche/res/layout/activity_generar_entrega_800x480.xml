@@ -1,0 +1,250 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.registroleche.GenerarEntrega" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="445dp"
+        android:background="@drawable/blackbkg" >
+        
+        <EditText
+            android:id="@+id/hora"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/TextView02"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="time"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
+        <requestFocus />
+
+        <EditText
+            android:id="@+id/no_guia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextView01"
+            android:layout_alignBottom="@+id/TextView01"
+            android:layout_alignLeft="@+id/hora"
+            android:layout_alignRight="@+id/hora"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="7"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
+
+        <EditText
+            android:id="@+id/temperatura"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextView02"
+            android:layout_alignBottom="@+id/TextView02"
+            android:layout_alignLeft="@+id/no_guia"
+            android:layout_alignRight="@+id/no_guia"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
+
+        <EditText
+            android:id="@+id/lts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/TextView03"
+            android:layout_alignLeft="@+id/temperatura"
+            android:layout_alignRight="@+id/temperatura"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="5"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/hora"
+            android:layout_alignBottom="@+id/hora"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:text="Hora"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView1"
+            android:layout_below="@+id/textView1"
+            android:layout_marginTop="10dp"
+            android:text="N° Guia"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView01"
+            android:layout_below="@+id/TextView01"
+            android:layout_marginTop="10dp"
+            android:text="Temperatura"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
+
+        <Button
+            android:id="@+id/menos"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignBottom="@+id/TextView04"
+            android:layout_alignTop="@+id/fecha"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/TextView04"
+            android:background="@drawable/selected_state"
+            android:text="-"
+            android:onClick="goMenos"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/TextView03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView02"
+            android:layout_below="@+id/temperatura"
+            android:layout_marginTop="10dp"
+            android:text="Litros\nEntregados"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
+
+        <Button
+            android:id="@+id/mas"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignBottom="@+id/fecha"
+            android:layout_alignTop="@+id/fecha"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/fecha"
+            android:background="@drawable/selected_state"
+            android:text="+"
+            android:onClick="goMas"
+            android:textSize="25dp" />
+
+        <Button
+            android:id="@+id/foto"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/selected_state"
+            android:onClick="takePicture"
+            android:text="Hacer Foto"
+            android:textSize="22sp" />
+
+        <EditText
+            android:id="@+id/fecha"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/TextView04"
+            android:layout_alignLeft="@+id/menos"
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/outline_color"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="date"
+            android:maxLength="10"
+            android:textColor="#ffffff"
+            android:textSize="22sp" >
+        </EditText>
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/foto"
+            android:layout_marginBottom="10dp"
+            android:layout_centerHorizontal="true" >
+
+            <RadioButton
+                android:id="@+id/anular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Anular esta entrega"
+                android:textColor="#ffffff"
+                android:textSize="22sp" />
+
+            <RadioButton
+                android:id="@+id/parcial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Entrega parcial"
+                android:textColor="#ffffff"
+                android:textSize="22sp" />
+
+            <RadioButton
+                android:id="@+id/none"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Entrega completa"
+                android:textColor="#ffffff"
+                android:textSize="22sp" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/TextView04"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/radioGroup"
+            android:layout_alignLeft="@+id/TextView03"
+            android:layout_marginBottom="10dp"
+            android:text="Fecha"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="@drawable/blackbkg" >
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/selected_state"
+            android:onClick="goConfirmarEntrega"
+            android:text="Confirmar"
+            android:textSize="22sp" />
+    </RelativeLayout>
+
+</LinearLayout>

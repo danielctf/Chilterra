@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.weyr_associates.eidclient"
+	android:versionCode="20121014"
+	android:versionName="2012.10.14"
+	android:installLocation="auto">
+	<uses-permission android:name="android.permission.BLUETOOTH" />
+	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="8" />
+
+    <application android:icon="@drawable/icon" android:label="@string/app_name_long" >
+
+        <activity android:name="com.weyr_associates.eidclient.MainActivity" android:label="@string/app_name">
+            <intent-filter>
+               	<action android:name="android.intent.action.MAIN" />
+               	<category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".EditPreferences" android:label="@string/app_name_settings"></activity>
+
+    	<service android:name=".EIDService"></service>
+    </application>
+	
+</manifest> 
