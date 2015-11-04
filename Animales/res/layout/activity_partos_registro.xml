@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
+            android:text="Tipo Parto"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ababab"
+            android:textSize="15sp" />
+
+        <Spinner
+            android:id="@+id/spinnerTipoParto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView1"
+            android:layout_below="@+id/textView1"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/spinner_style" />
+        
+         <TextView
+            android:id="@+id/textViewSubTipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/spinnerTipoParto"
+            android:layout_alignLeft="@+id/spinnerTipoParto"
+            android:layout_marginTop="10dp"
+            android:text="Sub Tipo"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ababab"
+            android:textSize="15sp" />
+
+        <Spinner
+            android:id="@+id/spinnerSubTipoParto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textViewSubTipo"
+            android:layout_below="@+id/textViewSubTipo"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/spinner_style" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/spinnerSubTipoParto"
+            android:layout_below="@+id/spinnerSubTipoParto"
+            android:layout_marginTop="15dp"
+            android:text="Informacion de la Cría"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ababab"
+            android:textSize="15sp" />
+        
+         <TextView
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/textView5"
+            android:background="@color/gris" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/textView5"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/radioVivo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textSize="25sp"
+                android:text="Vivo" />
+
+            <RadioButton
+                android:id="@+id/radioMuerto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:textSize="25sp"
+                android:text="Muerto" />
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/radioGroup1" >
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:layout_marginTop="10dp" >
+
+                <TextView
+                    android:id="@+id/textViewSexo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Sexo"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="#ababab"
+                    android:textSize="15sp" />
+
+                <Spinner
+                    android:id="@+id/spinnerSexo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textViewSexo"
+                    android:layout_alignLeft="@+id/textViewSexo"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/spinner_style" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:layout_marginTop="10dp" >
+
+                <TextView
+                    android:id="@+id/textViewCollar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Collar"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="#ababab"
+                    android:textSize="15sp" />
+
+                <Spinner
+                    android:id="@+id/spinnerCollar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textViewCollar"
+                    android:layout_alignLeft="@+id/textViewCollar"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/spinner_style" />
+
+                <ImageButton
+                    android:id="@+id/confirmarRegistro"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_alignBottom="@+id/spinnerCollar"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/circlebutton_state"
+                    android:src="@drawable/ic_action_done" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

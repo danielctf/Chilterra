@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Animales</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="openDrawer">Open</string>
+    <string name="closeDrawer">Close</string>
+    <string name="title_activity_baja_ganado">BajaGanado</string>
+    <string name="title_activity_calculadora">Calculadora</string>
+    <string name="title_activity_logs">Logs</string>
+    <string name="title_activity_baja_ganado_edicion">BajaGanadoEdicion</string>
+    <string name="title_activity_partos">Partos</string>
+    <string name="title_activity_baston">Baston</string>
+
+</resources>
