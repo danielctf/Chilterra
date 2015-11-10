@@ -12,5 +12,6 @@
     <string name="title_activity_baja_ganado_edicion">BajaGanadoEdicion</string>
     <string name="title_activity_partos">Partos</string>
     <string name="title_activity_baston">Baston</string>
+    <string name="title_activity_candidatos">Candidatos</string>
 
 </resources>

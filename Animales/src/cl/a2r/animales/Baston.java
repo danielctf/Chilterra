@@ -51,7 +51,8 @@ public class Baston extends Activity implements View.OnClickListener, ListView.O
 	private static final int RETRY_CONNECTION = 4;
 	
     private Handler mHandler = new Handler(){
-    	public void handleMessage(Message msg) {
+    	@SuppressWarnings("unchecked")
+		public void handleMessage(Message msg) {
     		super.handleMessage(msg);
     		switch(msg.what){
     		case SUCCESS_CONNECT:

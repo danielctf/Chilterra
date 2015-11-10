@@ -19,6 +19,7 @@ package cl.a2r.custom;
 import java.util.HashMap;
 import java.util.List;
 
+import cl.a2r.sip.model.Ganado;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,11 +31,11 @@ public class LogsArrayAdapter extends ArrayAdapter<Integer> {
     View.OnTouchListener mTouchListener;
 
     public LogsArrayAdapter(Context context, int textViewResourceId,
-            List<Integer> objects, View.OnTouchListener listener) {
-        super(context, textViewResourceId, objects);
+            List<Integer> list, View.OnTouchListener listener) {
+        super(context, textViewResourceId, list);
         mTouchListener = listener;
-        for (int i = 0; i < objects.size(); ++i) {
-            mIdMap.put(objects.get(i), i);
+        for (int i = 0; i < list.size(); ++i) {
+            mIdMap.put(list.get(i), i);
         }
     }
 

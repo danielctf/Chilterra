@@ -8,12 +8,15 @@ package cl.a2r.sip.servlet;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sip.common.AppLog;
+import cl.a2r.sip.model.Baja;
 import cl.a2r.sip.service.BajasService;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -53,6 +56,14 @@ public class WSBajas extends HttpServlet {
             } else if (servicio.equals("traeCausas")) {
                 List list = BajasService.traeCausas();
                 retorno = list;
+            } else if (servicio.equals("insertaBaja")){
+            	Baja baja = (Baja) params.getParam("baja");
+            	BajasService.insertaBaja(baja);
+            } else if (servicio.equals("traeBajas")){
+            	Integer userId = (Integer) params.getParam("userId");
+            	Integer fundoId = (Integer) params.getParam("fundoId");
+            	List list = BajasService.traeBajas(userId, fundoId);
+            	retorno = list;
             } else {
                 retorno = new AppException("Servicio no válido.", null);
             }

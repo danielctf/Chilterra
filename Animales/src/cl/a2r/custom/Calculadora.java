@@ -153,8 +153,6 @@ public class Calculadora extends Activity implements View.OnClickListener {
 	
 	@SuppressWarnings({ "unchecked", "static-access" })
 	private boolean getGanadoWS(int diio){
-		//.traeSrGanado(diio);
-		//BUSCA EL GANADOID EN WS Y VERIFICAR Q ÉSTE PERTENEZCA AL PREDIO
 		List<Ganado> list = null;
 		try {
 			list = WSGanadoCliente.traeGanado(diio);

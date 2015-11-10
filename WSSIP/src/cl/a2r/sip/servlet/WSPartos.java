@@ -3,6 +3,7 @@ package cl.a2r.sip.servlet;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sip.common.AppLog;
+import cl.a2r.sip.model.Parto;
 import cl.a2r.sip.service.AutorizacionService;
 import cl.a2r.sip.service.PartosService;
 
@@ -48,19 +49,37 @@ public class WSPartos extends HttpServlet {
                 List list = PartosService.traeCollares(predioId);
                 retorno = list;
 
+            } else if (servicio.equals("traeTipoPartos")){
+	            List list = PartosService.traeTipoPartos();
+	            retorno = list;
+            } else if (servicio.equals("traeSubTipoPartos")){
+                List list = PartosService.traeSubTipoPartos();
+                retorno = list;
+            } else if (servicio.equals("traePartoAnterior")){
+            	Integer ganadoId = (Integer) params.getParam("ganadoId");
+                List list = PartosService.traePartoAnterior(ganadoId);
+                retorno = list;
+            } else if (servicio.equals("traePartos")){
+            	Integer userId = (Integer) params.getParam("userId");
+            	Integer fundoId = (Integer) params.getParam("fundoId");
+            	List list = PartosService.traePartos(userId, fundoId);
+            	retorno = list;
+            } else if (servicio.equals("traeCandidatosEncontrados")){
+            	Integer fundoId = (Integer) params.getParam("fundoId");
+            	List list = PartosService.traeCandidatosEncontrados(fundoId);
+            	retorno = list;
+            } else if (servicio.equals("traeCandidatosFaltantes")){
+            	Integer fundoId = (Integer) params.getParam("fundoId");
+            	List list = PartosService.traeCandidatosFaltantes(fundoId);
+            	retorno = list;
+            } else if (servicio.equals("insertaParto")){
+            	Parto parto = (Parto) params.getParam("parto");
+            	PartosService.insertaParto(parto);
+            }else if (servicio.equals("confirmaParto")){
+            	Integer ganadoId = (Integer) params.getParam("ganadoId");
+            	PartosService.confirmaParto(ganadoId);
             } else {
-            	if (servicio.equals("traeTipoPartos")){
-                    List list = PartosService.traeTipoPartos();
-                    retorno = list;
-            	}else{
-            		if (servicio.equals("traeSubTipoPartos")){
-                        List list = PartosService.traeSubTipoPartos();
-                        retorno = list;
-            		}else{
-            			retorno = new AppException("Servicio no válido.", null);
-            		}
-            	}
-            	
+            	retorno = new AppException("Servicio no válido.", null);
             }
         } catch (ClassNotFoundException ex) {
             retorno = new AppException("Error en parametros (ParamServlet).", ex);

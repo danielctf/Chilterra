@@ -10,8 +10,11 @@ import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.LogsArrayAdapter;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.login.R;
+import cl.a2r.sip.model.Ganado;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -19,8 +22,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.os.Message;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -41,15 +43,14 @@ public class Logs extends Activity implements View.OnClickListener{
 	private Button confirmarCambios;
 	private TextView deshacer, app;
 	private ListView listViewHistorial;
-	private List<Integer> diios, deletedDiios;
+	private List<Integer> diios, deletedGanadoId;
 	public static int sr_ganado, diio;
+	private List<Ganado> list;
 	
     private LogsArrayAdapter mAdapter;
     private boolean mSwiping = false;
     private boolean mItemPressed = false;
     @SuppressLint("UseSparseArrays") private HashMap<Long, Integer> mItemIdTopMap = new HashMap<Long, Integer>();
-    
-    private Handler mHandler = new Handler();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,30 +77,16 @@ public class Logs extends Activity implements View.OnClickListener{
 		deshacer.setOnClickListener(this);
 		app = (TextView)findViewById(R.id.app);
 		diios = new ArrayList<Integer>();
-		deletedDiios = new ArrayList<Integer>();
+		deletedGanadoId = new ArrayList<Integer>();
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void getLogsWS(){
-		//info a pasar: user, predioSeleccionado, idApp
-		//.getLogs(AppLauncher.getidApp(), AppLauncher.getUser(), AppLauncher.getPredioSeleccionado())
-		//Y devuelve una lista de diios
-		diios.clear();
-		diios.add(1056031);
-		diios.add(1056032);
-		diios.add(1056033);
-		diios.add(1056034);
-		diios.add(1056035);
-		diios.add(1056036);
-		diios.add(1056037);
-		diios.add(1056038);
-		diios.add(1056039);
-		diios.add(1056040);
-		diios.add(1056041);
-		diios.add(1056042);
-		diios.add(1056043);
-		
-		//mAdapter = new LogsArrayAdapter(this, android.R.layout.simple_list_item_1, diios, mTouchListener);
+		list = AppLauncher.getLogs();
+		for (Ganado g : list){
+			diios.add(g.getDiio());
+		}
 		mAdapter = new LogsArrayAdapter(this, android.R.layout.simple_list_item_1, diios, mTouchListener);
 		listViewHistorial.setAdapter(mAdapter);
 		
@@ -111,12 +98,15 @@ public class Logs extends Activity implements View.OnClickListener{
 		}
 		//OJO: View v significa la linea del respectivo ListView!!
 		//Solo deja pasar a editar 1 diio si no esta borrando otros
-		if (deletedDiios.size() == 0){
+		
+		/*
+		if (deletedGanadoId.size() == 0){
 			int position = listViewHistorial.getPositionForView(v);
 			setSrGanado(diios.get(position));
 			Intent i = new Intent(this, AppLauncher.getEditableAppClass());
 			startActivity(i);
 		}
+		*/
 	}
 	
 	@SuppressWarnings("static-access")
@@ -139,7 +129,7 @@ public class Logs extends Activity implements View.OnClickListener{
 		case R.id.confirmarCambios:
 			System.out.println(Login.user);
 			System.out.println(Aplicaciones.predioWS.getId());
-			System.out.println(deletedDiios);
+			System.out.println(deletedGanadoId);
 			Intent i = new Intent(this, Aplicaciones.class);
 			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(i);
@@ -164,14 +154,14 @@ public class Logs extends Activity implements View.OnClickListener{
 			deshacer.setVisibility(View.VISIBLE);
 			goBack.setVisibility(View.INVISIBLE);
 			app.setVisibility(View.INVISIBLE);
-			confirmarCambios.setText(Integer.toString(deletedDiios.size()));
+			confirmarCambios.setText(Integer.toString(deletedGanadoId.size()));
 		}else{
 			undo.setVisibility(View.INVISIBLE);
 			deshacer.setVisibility(View.INVISIBLE);
 			goBack.setVisibility(View.VISIBLE);
 			confirmarCambios.setVisibility(View.INVISIBLE);
 			app.setVisibility(View.VISIBLE);
-			deletedDiios.clear();
+			deletedGanadoId.clear();
 		}
 	}
 	
@@ -292,7 +282,9 @@ public class Logs extends Activity implements View.OnClickListener{
                                         v.setAlpha(1);
                                         v.setTranslationX(0);
                                         if (remove) {
-                                            animateRemoval(listViewHistorial, v);
+                                        	if (AppLauncher.getHasLogAccess()){
+                                        		animateRemoval(listViewHistorial, v);
+                                        	}
                                         } else {
                                             //mBackgroundContainer.hideBackground();
                                             mSwiping = false;
@@ -324,12 +316,14 @@ public class Logs extends Activity implements View.OnClickListener{
             }
         }
         // Delete the item from the adapter
-        if (AppLauncher.getHasLogAccess()){
-	        int position = listViewHistorial.getPositionForView(viewToRemove);
-	        deletedDiios.add(mAdapter.getItem(position));
-	        mAdapter.remove(mAdapter.getItem(position));
-	        confirmarCambios.setVisibility(View.VISIBLE);
+        int position = listViewHistorial.getPositionForView(viewToRemove);
+        for (int i = 0; i < list.size(); i++){
+        	if (list.get(i).getDiio() == mAdapter.getItem(position)){
+        		deletedGanadoId.add(list.get(i).getId());
+        	}
         }
+        mAdapter.remove(mAdapter.getItem(position));
+        confirmarCambios.setVisibility(View.VISIBLE);
         updateStatus();
 
         final ViewTreeObserver observer = listview.getViewTreeObserver();
@@ -386,28 +380,38 @@ public class Logs extends Activity implements View.OnClickListener{
             }
         });
     }
-    
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.logs, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 
 	//---------------------------------------------------------------------
 	//-------------------FIN ANIMACION LISTVIEW HISTORIAL------------------
 	//---------------------------------------------------------------------
+    
+	//---------------------------------------------------------------------------
+	//------------------------DATOS ENVIADOS DESDE BASTÓN------------------------
+	//---------------------------------------------------------------------------
+	
+    private Handler mHandler = new Handler(){
+    	public void handleMessage(Message msg) {
+    		super.handleMessage(msg);
+    		switch(msg.what){
+    		case ConnectThread.SUCCESS_CONNECT:
+    			BluetoothSocket mmSocket = (BluetoothSocket) ((List<Object>) msg.obj).get(0);
+    			BluetoothDevice mmDevice = (BluetoothDevice) ((List<Object>) msg.obj).get(1);
+    	        ConnectedThread connectedThread = new ConnectedThread(mmSocket, mmDevice);
+    	        connectedThread.start();
+    			break;
+    		case ConnectedThread.MESSAGE_READ:
+    			String EID = (String) msg.obj;
+    			System.out.println(EID);
+    			break;
+    		case ConnectedThread.CONNECTION_INTERRUPTED:
+    			ShowAlert.askReconnect("Error", "Se perdió la conexión con el bastón\n¿Intentar reconectar?", Logs.this, (BluetoothDevice) msg.obj);
+    			break;
+    		case ConnectThread.RETRY_CONNECTION:
+    			ConnectThread connectThread = new ConnectThread((BluetoothDevice) msg.obj, true);
+    			connectThread.start();
+    			break;
+    		}
+    	}
+    };
 	
 }

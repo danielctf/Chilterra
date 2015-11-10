@@ -6,9 +6,12 @@ import java.util.List;
 
 import cl.a2r.common.AppException;
 import cl.a2r.sip.common.AppLog;
+import cl.a2r.sip.dao.BajasDAO;
 import cl.a2r.sip.dao.GanadoDAO;
 import cl.a2r.sip.dao.PartosDAO;
 import cl.a2r.sip.dao.Transaccion;
+import cl.a2r.sip.model.Baja;
+import cl.a2r.sip.model.Parto;
 
 public class PartosService {
 
@@ -67,6 +70,122 @@ public class PartosService {
             throw new AppException("No se pudo obtener la conexión.", null);
         }
         return list;
+    }
+    
+    public static List traePartoAnterior(Integer ganadoId) throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = PartosDAO.selectPartoAnterior(trx, ganadoId);
+            } catch (SQLException ex) {
+                AppLog.logSevere("PartosService.traePartoAnterior()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
+    public static List traePartos(Integer userId, Integer fundoId) throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = PartosDAO.selectPartos(trx, userId, fundoId);
+            } catch (SQLException ex) {
+                AppLog.logSevere("PartosService.traePartos()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
+    public static List traeCandidatosEncontrados(Integer fundoId) throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = PartosDAO.selectCandidatosEncontrados(trx, fundoId);
+            } catch (SQLException ex) {
+                AppLog.logSevere("PartosService.traePartosEncontrados()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
+    public static List traeCandidatosFaltantes(Integer fundoId) throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = PartosDAO.selectCandidatosFaltantes(trx, fundoId);
+            } catch (SQLException ex) {
+                AppLog.logSevere("PartosService.traeCandidatosFaltantes()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
+    public static void insertaParto(Parto parto) throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                PartosDAO.insertParto(trx, parto);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("PartosService.insertaParto()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+    }
+    
+    public static void confirmaParto(Integer ganadoId) throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                PartosDAO.confirmaParto(trx, ganadoId);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("PartosService.confirmaParto()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
     }
 	
 }

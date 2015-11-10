@@ -37,7 +37,12 @@ public class Ganado implements Serializable{
 	public Integer getPredio() {
 		return predio;
 	}
+	
 	public void setPredio(Integer predio) {
 		this.predio = predio;
+	}
+	
+	public String toString(){
+		return Integer.toString(this.diio);
 	}
 }

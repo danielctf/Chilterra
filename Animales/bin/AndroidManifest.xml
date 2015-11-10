@@ -66,6 +66,10 @@
             android:name="cl.a2r.animales.Baston"
             android:label="@string/title_activity_baston" >
         </activity>
+        <activity
+            android:name="cl.a2r.animales.Candidatos"
+            android:label="@string/title_activity_candidatos" >
+        </activity>
     </application>
 
 </manifest>

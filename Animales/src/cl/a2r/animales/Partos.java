@@ -1,42 +1,51 @@
 package cl.a2r.animales;
 
 
+import java.util.List;
+
+import cl.a2r.common.AppException;
 import cl.a2r.custom.Calculadora;
+import cl.a2r.custom.ConnectThread;
+import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.login.R;
-import cl.a2r.sip.model.CausaBaja;
-import cl.a2r.sip.model.MotivoBaja;
-import cl.a2r.sip.model.RegistroParto;
+import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Parto;
+import cl.a2r.sip.wsservice.WSGanadoCliente;
+import cl.a2r.sip.wsservice.WSPartosCliente;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class Partos extends Activity implements View.OnClickListener{
 	
 	private Fragment registroTab = new PartosRegistro();
 	private Fragment confirmacionTab = new PartosConfirmacion();
 	
-	private static ImageButton undo, goBack, logs;
+	private static ImageButton undo, goBack, logs, cows_left;
 	private static TextView despliegaDiio, textViewDiio, tvApp, deshacer;
+	public static TextView tvFaltantes, tvEncontrados;
 	private Button btnRegistro, btnConfirmacion;
 	private RelativeLayout calculadora;
 	private static int diio;
+	private  String stance;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,8 +55,6 @@ public class Partos extends Activity implements View.OnClickListener{
 		
 		cargarInterfaz();
 	}
-	
-		
 	
 	private void cargarInterfaz(){
 		despliegaDiio = (TextView)findViewById(R.id.despliegaDiio);
@@ -69,7 +76,12 @@ public class Partos extends Activity implements View.OnClickListener{
 		goBack.setOnClickListener(this);
 		logs = (ImageButton)findViewById(R.id.logs);
 		logs.setOnClickListener(this);
+		cows_left = (ImageButton)findViewById(R.id.cows_left);
+		cows_left.setOnClickListener(this);
+		tvFaltantes = (TextView)findViewById(R.id.textViewFaltantes);
+		tvEncontrados = (TextView)findViewById(R.id.textViewEncontrados);
 		
+		stance = "registro";
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		transaction.replace(R.id.fragmentContainer, registroTab);
 		btnRegistro.setBackgroundResource(R.drawable.tab_state_activated);
@@ -92,15 +104,19 @@ public class Partos extends Activity implements View.OnClickListener{
 			transaction.commit();
 			btnRegistro.setBackgroundResource(R.drawable.tab_state_activated);
 			btnConfirmacion.setBackgroundResource(R.drawable.tab_state_deactivated);
+			stance = "registro";
 			clearScreen();
 			break;
 		case R.id.btnConfirmacion:
+			FragmentManager fm = getFragmentManager();
 			FragmentTransaction transaction2 = getFragmentManager().beginTransaction();
 			transaction2.replace(R.id.fragmentContainer, confirmacionTab);
 			transaction2.addToBackStack(null);
 			transaction2.commit();
+			fm.executePendingTransactions();
 			btnRegistro.setBackgroundResource(R.drawable.tab_state_deactivated);
 			btnConfirmacion.setBackgroundResource(R.drawable.tab_state_activated);
+			stance = "confirmacion";
 			clearScreen();
 			break;
 		case R.id.layoutCalculadora:
@@ -118,28 +134,63 @@ public class Partos extends Activity implements View.OnClickListener{
 		case R.id.deshacer:
 			clearScreen();
 			break;
+		case R.id.logs:
+			if (stance.equals("registro")){
+				Intent i4 = new Intent(this, Logs.class);
+				startActivity(i4);
+			} else if (stance.equals("confirmacion")){
+				getCandidatosEncontrados();
+			}
+			break;
+		case R.id.cows_left:
+			getCandidatosFaltantes();
+			break;
 		}
 		
+	}
+	
+	private void getCandidatosEncontrados(){
+		Intent i = new Intent(getApplicationContext(), Candidatos.class);
+		i.putExtra("stance","encontrados");
+		startActivity(i);
+	}
+	
+	private void getCandidatosFaltantes(){
+		Intent i = new Intent(getApplicationContext(), Candidatos.class);
+		i.putExtra("stance","faltantes");
+		startActivity(i);
 	}
 	
 	private void clearScreen(){
 		Calculadora.ganadoId = 0;
 		Calculadora.diio = 0;
-		PartosRegistro.registroWS.setGanadoId(0);
-		PartosRegistro.registroWS.setTipoPartoId(0);
-		PartosRegistro.registroWS.setSubTipoParto(0);
-		PartosRegistro.registroWS.setSexo("");
-		PartosRegistro.registroWS.setCollarId(0);
+		Calculadora.predio = 0;
+		Calculadora.activa = "";
+		this.diio = 0;
+		PartosConfirmacion.ganadoId = 0;
+		PartosRegistro.partoWS.setGanadoId(0);
+		PartosRegistro.partoWS.setTipoPartoId(0);
+		PartosRegistro.partoWS.setSubTipoParto(0);
+		PartosRegistro.partoWS.setSexo("");
+		PartosRegistro.partoWS.setCollarId(0);
 		PartosRegistro.spinnerTipoParto.setSelection(0);
 		PartosRegistro.spinnerSubTipoParto.setSelection(0);
 		PartosRegistro.spinnerSexo.setSelection(0);
 		PartosRegistro.spinnerCollar.setSelection(0);
-		updateStatus();
+		
+		if (stance.equals("registro")){
+			updateRegistro();
+		}else if (stance.equals("confirmacion")){
+			updateConfirmacion();
+		}
 	}
 	
-	public static void updateStatus(){
+	public static void updateRegistro(){
+		cows_left.setVisibility(View.INVISIBLE);
+		tvFaltantes.setVisibility(View.INVISIBLE);
+		tvEncontrados.setVisibility(View.INVISIBLE);
 		//Si escribió un DIIO, el texto 'DIIO:' desaparece
-		if (PartosRegistro.registroWS.getGanadoId() != 0){
+		if (PartosRegistro.partoWS.getGanadoId() != 0){
 			textViewDiio.setText("");
 			despliegaDiio.setText(Integer.toString(diio));
 		}else{
@@ -148,11 +199,11 @@ public class Partos extends Activity implements View.OnClickListener{
 		}
 		
 		//Si llenó todos los campos, el boton de confirmacion aparece
-		if (PartosRegistro.registroWS.getGanadoId() != 0 && 
-				PartosRegistro.registroWS.getTipoPartoId() != 0 && 
-				(PartosRegistro.registroWS.getSexo() != "" || PartosRegistro.isMuerto) &&
-				(PartosRegistro.registroWS.getCollarId() != 0 || PartosRegistro.isMuerto) &&
-				PartosRegistro.registroWS.getSubTipoParto() != 0){
+		if (PartosRegistro.partoWS.getGanadoId() != 0 && 
+				PartosRegistro.partoWS.getTipoPartoId() != 0 && 
+				(PartosRegistro.partoWS.getSexo() != "" || PartosRegistro.isMuerto) &&
+				(PartosRegistro.partoWS.getCollarId() != 0 || PartosRegistro.isMuerto) &&
+				(PartosRegistro.partoWS.getSubTipoParto() != 0 || PartosRegistro.isNotPartoNatural)){
 			
 			goBack.setVisibility(View.INVISIBLE);
 			tvApp.setVisibility(View.INVISIBLE);
@@ -161,11 +212,11 @@ public class Partos extends Activity implements View.OnClickListener{
 			logs.setVisibility(View.INVISIBLE);
 			PartosRegistro.confirmarRegistro.setVisibility(View.VISIBLE);
 		}else{
-			if (PartosRegistro.registroWS.getGanadoId() == 0 && 
-					PartosRegistro.registroWS.getTipoPartoId() == 0 && 
-					(PartosRegistro.registroWS.getSexo() == "" || PartosRegistro.isMuerto) &&
-					(PartosRegistro.registroWS.getCollarId() == 0 || PartosRegistro.isMuerto) &&
-					PartosRegistro.registroWS.getSubTipoParto() == 0){
+			if (PartosRegistro.partoWS.getGanadoId() == 0 && 
+					PartosRegistro.partoWS.getTipoPartoId() == 0 && 
+					(PartosRegistro.partoWS.getSexo() == "" || PartosRegistro.isMuerto) &&
+					(PartosRegistro.partoWS.getCollarId() == 0 || PartosRegistro.isMuerto) &&
+					(PartosRegistro.partoWS.getSubTipoParto() == 0 || PartosRegistro.isNotPartoNatural)){
 				
 				goBack.setVisibility(View.VISIBLE);
 				tvApp.setVisibility(View.VISIBLE);
@@ -184,24 +235,89 @@ public class Partos extends Activity implements View.OnClickListener{
 			}
 		}
 			
-			
+	}
+	
+	public static void updateConfirmacion(){
+		cows_left.setVisibility(View.VISIBLE);
+		tvFaltantes.setVisibility(View.VISIBLE);
+		tvEncontrados.setVisibility(View.VISIBLE);
+		
+		if (PartosConfirmacion.ganadoId == 0){
+			goBack.setVisibility(View.VISIBLE);
+			logs.setVisibility(View.VISIBLE);
+			tvApp.setVisibility(View.VISIBLE);
+			undo.setVisibility(View.INVISIBLE);
+			deshacer.setVisibility(View.INVISIBLE);
+			PartosConfirmacion.confirmarConfirmacion.setVisibility(View.INVISIBLE);
+			textViewDiio.setText("DIIO:");
+			despliegaDiio.setText("");
+		}else{
+			goBack.setVisibility(View.INVISIBLE);
+			tvApp.setVisibility(View.INVISIBLE);
+			logs.setVisibility(View.INVISIBLE);
+			undo.setVisibility(View.VISIBLE);
+			deshacer.setVisibility(View.VISIBLE);
+		}
+		
 	}
 	
 	private void checkDiioStatus(int diio, int ganadoId, String activa, int predio){
-		Partos.diio = diio;
+		this.diio = diio;
 		
 		if (activa.equals("N")){
 			ShowAlert.showAlert("Error", "DIIO no existe", this);
 			return;
 		}
 		
-		PartosRegistro.registroWS.setGanadoId(ganadoId);
-		updateStatus();
+		if (stance.equals("registro")){
+			PartosRegistro.partoWS.setGanadoId(ganadoId);
+			try {
+				List<Parto> list = WSPartosCliente.traePartoAnterior(ganadoId);
+				if (list.size() > 0){
+					ShowAlert.showAlert("Registro", "AVISO\nEste Animal ya tiene una cria asociada", this);
+				}
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
+			updateRegistro();
+		} else if (stance.equals("confirmacion")){
+			try {
+				List<Parto> list = WSPartosCliente.traePartoAnterior(ganadoId);
+				boolean confirmacionPendiente = false;
+				for (Parto p : list){
+					if (p.getEstadoParto().equals("R")){
+						confirmacionPendiente = true;
+					} else if (p.getEstadoParto().equals("C")){
+						confirmacionPendiente = false;
+					}
+				}
+				if (confirmacionPendiente){
+					PartosConfirmacion.ganadoId = ganadoId;
+					textViewDiio.setText("");
+					despliegaDiio.setText(Integer.toString(diio));
+					PartosConfirmacion.confirmarConfirmacion.setVisibility(View.VISIBLE);
+				} else if (ganadoId != 0){ 
+					ShowAlert.showAlert("Animal", "Este Animal no tiene una confirmación de parto pendiente", this);
+					return;
+				}
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
+			updateConfirmacion();
+		}
+		
+		if (ganadoId != 0){
+			if (Aplicaciones.predioWS.getId() != predio){
+				ShowAlert.realizarMovimiento("Predio", "El Animal figura en otro predio\n¿Esta seguro que el DIIO es correcto?", this);
+			}
+		}
+		
 	}
 	
 	protected  void onStart(){
 		super.onStart();
-	
+		ConnectThread.setHandler(mHandler);
+		
 		if (isOnline() == false){
 			return;
 		}
@@ -234,5 +350,46 @@ public class Partos extends Activity implements View.OnClickListener{
 	    }
 	    return netInfo != null && netInfo.isConnectedOrConnecting();
 	}
+	
+	//---------------------------------------------------------------------------
+	//------------------------DATOS ENVIADOS DESDE BASTÓN------------------------
+	//---------------------------------------------------------------------------
+	
+    private Handler mHandler = new Handler(){
+    	@SuppressWarnings("unchecked")
+		public void handleMessage(Message msg) {
+    		super.handleMessage(msg);
+    		switch(msg.what){
+    		case ConnectThread.SUCCESS_CONNECT:
+    			BluetoothSocket mmSocket = (BluetoothSocket) ((List<Object>) msg.obj).get(0);
+    			BluetoothDevice mmDevice = (BluetoothDevice) ((List<Object>) msg.obj).get(1);
+    	        ConnectedThread connectedThread = new ConnectedThread(mmSocket, mmDevice);
+    	        connectedThread.start();
+    			break;
+    		case ConnectedThread.MESSAGE_READ:
+    			String EID = (String) msg.obj;
+    			try {
+					List<Ganado> list = WSGanadoCliente.traeDIIO(EID);
+					if (list.size() == 0){
+						ShowAlert.showAlert("Error", "DIIO no existe", Partos.this);
+						return;
+					}
+					for (Ganado g: list){
+						checkDiioStatus(g.getDiio(), g.getId(), g.getActiva(), g.getPredio());
+					}
+				} catch (AppException ex) {
+					ShowAlert.showAlert("Error", ex.getMessage(), Partos.this);
+				}
+    			break;
+    		case ConnectedThread.CONNECTION_INTERRUPTED:
+    			ShowAlert.askReconnect("Error", "Se perdió la conexión con el bastón\n¿Intentar reconectar?", Partos.this, (BluetoothDevice) msg.obj);
+    			break;
+    		case ConnectThread.RETRY_CONNECTION:
+    			ConnectThread connectThread = new ConnectThread((BluetoothDevice) msg.obj, true);
+    			connectThread.start();
+    			break;
+    		}
+    	}
+    };
 
 }

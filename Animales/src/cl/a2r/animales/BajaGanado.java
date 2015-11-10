@@ -165,7 +165,6 @@ public class BajaGanado extends Activity implements View.OnClickListener {
 			break;
 		case R.id.confirmarBaja:
 			//WSBajasCliente.realizarMovimiento(bajaWS.getGanadoId(), bajaWS.getPredioId())
-			//WSBajasCliente.insertaBaja(bajaWS)
 			System.out.println("User: " + bajaWS.getUserId());
 			System.out.println("Predio: " + bajaWS.getPredioId());
 			System.out.println("Diio: " + diio);
@@ -175,8 +174,13 @@ public class BajaGanado extends Activity implements View.OnClickListener {
 			//Intent i5 = new Intent(this, Aplicaciones.class);
 			//i5.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			//startActivity(i5);
-			finish();
-			Toast.makeText(getApplicationContext(), "Registro guardado exitosamente", Toast.LENGTH_LONG).show();
+			try {
+				WSBajasCliente.insertaBaja(bajaWS);
+				finish();
+				Toast.makeText(getApplicationContext(), "Registro guardado exitosamente", Toast.LENGTH_LONG).show();
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", "No se pudo registrar la baja\n" + e.getMessage(), this);
+			}
 			break;
 		case R.id.layoutCalculadora:
 		case R.id.despliegaDiio:
@@ -189,6 +193,8 @@ public class BajaGanado extends Activity implements View.OnClickListener {
 			//texto que dice "Deshacer"
 			Calculadora.ganadoId = 0;
 			Calculadora.diio = 0;
+			Calculadora.predio = 0;
+			Calculadora.activa = "";
 			bajaWS.setGanadoId(0);
 			bajaWS.setMotivoId(0);
 			bajaWS.setCausaId(0);

@@ -8,10 +8,13 @@ import cl.a2r.custom.ShowAlert;
 import cl.a2r.login.R;
 import cl.a2r.object.SexoObject;
 import cl.a2r.sip.model.CollarParto;
-import cl.a2r.sip.model.RegistroParto;
+import cl.a2r.sip.model.Parto;
 import cl.a2r.sip.model.TipoParto;
 import cl.a2r.sip.wsservice.WSPartosCliente;
 import android.app.Fragment;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
@@ -32,10 +36,10 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 	public static Spinner spinnerTipoParto, spinnerSexo, spinnerCollar, spinnerSubTipoParto;
 	private View v;
 	public static ImageButton confirmarRegistro;
-	public static TextView tvSexo, tvCollar;
-	public static boolean isMuerto;
+	public static TextView tvSexo, tvCollar, tvSubTipoParto;
+	public static boolean isMuerto, isNotPartoNatural;
 	
-	public static RegistroParto registroWS = new RegistroParto();
+	public static Parto partoWS = new Parto();
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	v = inflater.inflate(R.layout.activity_partos_registro, container, false);
@@ -49,17 +53,19 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 		confirmarRegistro.setOnClickListener(this);
 		tvSexo = (TextView)v.findViewById(R.id.textViewSexo);
 		tvCollar = (TextView)v.findViewById(R.id.textViewCollar);
+		tvSubTipoParto = (TextView)v.findViewById(R.id.textViewSubTipo);
 		
-		registroWS.setUserId(Login.user);
-		registroWS.setPredioId(Aplicaciones.predioWS.getId());
-		registroWS.setGanadoId(0);
-		registroWS.setTipoPartoId(0);
-		registroWS.setSubTipoParto(0);
-		registroWS.setEstado("V");
-		registroWS.setSexo("");
-		registroWS.setCollarId(0);
+		partoWS.setUserId(Login.user);
+		partoWS.setPredioId(Aplicaciones.predioWS.getId());
+		partoWS.setGanadoId(0);
+		partoWS.setTipoPartoId(0);
+		partoWS.setSubTipoParto(0);
+		partoWS.setEstado("V");
+		partoWS.setSexo("");
+		partoWS.setCollarId(0);
 		
 		isMuerto = false;
+		isNotPartoNatural = true;
 		
     	cargarListeners();
 		getTipoPartosWS();
@@ -114,9 +120,6 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 		SexoObject s1 = new SexoObject();
 		s1.setId("M");
 		s1.setSexo("Macho");
-		SexoObject s2 = new SexoObject();
-		s2.setId("I");
-		s2.setSexo("Indefinido");
 		SexoObject s3 = new SexoObject();
 		s3.setId("");
 		s3.setSexo("");
@@ -125,7 +128,6 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 		list.add(s3);
 		list.add(s);
 		list.add(s1);
-		list.add(s2);
 		
 		ArrayAdapter<SexoObject> mAdapter = new ArrayAdapter<SexoObject>(this.getActivity(), android.R.layout.simple_list_item_1, list);
 		spinnerSexo.setAdapter(mAdapter);
@@ -134,7 +136,7 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 	private void getCollaresWS(){
 		List<CollarParto> list = null;
 		try {
-			list = WSPartosCliente.traeCollares(registroWS.getPredioId());
+			list = WSPartosCliente.traeCollares(partoWS.getPredioId());
 		} catch (AppException ex) {
 			ShowAlert.showAlert("Error", ex.getMessage(), this.getActivity());
 		}
@@ -155,7 +157,7 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 			tvCollar.setVisibility(View.VISIBLE);
 			spinnerSexo.setVisibility(View.VISIBLE);
 			spinnerCollar.setVisibility(View.VISIBLE);
-			registroWS.setEstado("V");
+			partoWS.setEstado("V");
 			isMuerto = false;
 			updateStatus();
 			break;
@@ -164,7 +166,7 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 			tvCollar.setVisibility(View.INVISIBLE);
 			spinnerSexo.setVisibility(View.INVISIBLE);
 			spinnerCollar.setVisibility(View.INVISIBLE);
-			registroWS.setEstado("M");
+			partoWS.setEstado("M");
 			isMuerto = true;
 			updateStatus();
 			break;
@@ -172,7 +174,14 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 	}
 	
 	private void updateStatus(){
-		Partos.updateStatus();
+		if (isNotPartoNatural){
+			tvSubTipoParto.setVisibility(View.INVISIBLE);
+			spinnerSubTipoParto.setVisibility(View.INVISIBLE);
+		}else{
+			tvSubTipoParto.setVisibility(View.VISIBLE);
+			spinnerSubTipoParto.setVisibility(View.VISIBLE);
+		}
+		Partos.updateRegistro();
 	}
 	
 	
@@ -186,7 +195,12 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 		
 		spinnerTipoParto.setOnItemSelectedListener(new OnItemSelectedListener(){
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				registroWS.setTipoPartoId(((TipoParto) arg0.getSelectedItem()).getId());
+				partoWS.setTipoPartoId(((TipoParto) arg0.getSelectedItem()).getId());
+				if (((TipoParto) arg0.getSelectedItem()).getNombre().equals("Natural")){
+					isNotPartoNatural = false;
+				}else{
+					isNotPartoNatural = true;
+				}
 				updateStatus();
 			}
 			
@@ -198,7 +212,7 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 		
 		spinnerSubTipoParto.setOnItemSelectedListener(new OnItemSelectedListener(){
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				registroWS.setSubTipoParto(((TipoParto) arg0.getSelectedItem()).getId());
+				partoWS.setSubTipoParto(((TipoParto) arg0.getSelectedItem()).getId());
 				updateStatus();
 			}
 			
@@ -210,7 +224,7 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 		
 		spinnerSexo.setOnItemSelectedListener(new OnItemSelectedListener(){
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				registroWS.setSexo(((SexoObject) arg0.getItemAtPosition(arg2)).getId());
+				partoWS.setSexo(((SexoObject) arg0.getItemAtPosition(arg2)).getId());
 				updateStatus();
 			}
 			
@@ -222,7 +236,7 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 		
 		spinnerCollar.setOnItemSelectedListener(new OnItemSelectedListener(){
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				registroWS.setCollarId(((CollarParto) arg0.getItemAtPosition(arg2)).getId());
+				partoWS.setCollarId(((CollarParto) arg0.getItemAtPosition(arg2)).getId());
 				updateStatus();
 			}
 			
@@ -234,17 +248,57 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 	}
 
 	public void onClick(View v) {
+		if (isOnline() == false){
+			return;
+		}
 		int id = v.getId();
 		switch (id){
 		case R.id.confirmarRegistro:
-			if (isMuerto){
-				System.out.println();
-				System.out.println("estado: " + registroWS.getEstado());
+			System.out.println("user: " + partoWS.getUserId());
+			System.out.println("predio: " + partoWS.getPredioId());
+			System.out.println("ganadoId: " + partoWS.getGanadoId());
+			System.out.println("tipoparto: " + partoWS.getTipoPartoId());
+			System.out.println("estado: " + partoWS.getEstado());
+			if (isNotPartoNatural && isMuerto){
+				partoWS.setSubTipoParto(null);
+				partoWS.setSexo(null);
+				partoWS.setCollarId(null);
 			} else {
-				
+				if (isNotPartoNatural && isMuerto == false){
+					partoWS.setSubTipoParto(null);
+					System.out.println("sexo: " + partoWS.getSexo());
+					System.out.println("collar: " + partoWS.getCollarId());
+				}else{
+					if (isNotPartoNatural == false && isMuerto){
+						System.out.println("subTipoParto: " + partoWS.getSubTipoParto());
+						partoWS.setSexo(null);
+						partoWS.setCollarId(null);
+					}else{
+						System.out.println("subTipoParto: " + partoWS.getSubTipoParto());
+						System.out.println("sexo: " + partoWS.getSexo());
+						System.out.println("collar: " + partoWS.getCollarId());
+					}
+				}
+			}
+			try {
+				WSPartosCliente.insertaParto(partoWS);
+				Toast.makeText(this.getActivity().getApplicationContext(), "Registro guardado exitosamente", Toast.LENGTH_LONG).show();
+				this.getActivity().finish();
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this.getActivity());
 			}
 			break;
 		}
+	}
+	
+	private boolean isOnline() {
+	    ConnectivityManager cm =
+	        (ConnectivityManager) this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    if ((netInfo != null && netInfo.isConnectedOrConnecting()) == false){
+	    	ShowAlert.showAlert("Error", "No hay conexión a Internet", this.getActivity());
+	    }
+	    return netInfo != null && netInfo.isConnectedOrConnecting();
 	}
 	
 }

@@ -6,24 +6,23 @@ import java.util.List;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.AppLauncher;
 import cl.a2r.custom.ConnectThread;
+import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.login.R;
 import cl.a2r.sip.model.Baja;
 import cl.a2r.sip.model.CausaBaja;
 import cl.a2r.sip.model.MotivoBaja;
 import cl.a2r.sip.wsservice.WSBajasCliente;
-import cl.a2r.wssipmodel.BajaGanadoWS;
-import cl.a2r.wssipmodel.GetBajaWS;
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.os.Message;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -44,7 +43,6 @@ public class BajaGanadoEdicion extends Activity implements View.OnClickListener 
 	private List<CausaBaja> listaCausas;
 	
 	public static Baja bajaEdicionWS = new Baja();
-	private Handler mHandler = new Handler();
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -112,21 +110,21 @@ public class BajaGanadoEdicion extends Activity implements View.OnClickListener 
 	private void getBajaWS(){
 		//entrega el diio y éste entrega motivo y causa.
 		//.getBaja(bajaEdicionWS.getDiio())
-		GetBajaWS gb1 = new GetBajaWS();
-		gb1.setMotivo(2);
-		gb1.setCausa(3);
+		Baja gb1 = new Baja();
+		gb1.setMotivoId(2);
+		gb1.setCausaId(3);
 		
-		List<GetBajaWS> list = new ArrayList<GetBajaWS>();
+		List<Baja> list = new ArrayList<Baja>();
 		list.add(gb1);
 		
 		despliegaDiio.setText(Integer.toString(Logs.diio));
 		for (int i = 0; i < listaMotivos.size(); i++){
-			if (list.get(0).getMotivo() == listaMotivos.get(i).getId()){
+			if (list.get(0).getMotivoId() == listaMotivos.get(i).getId()){
 				motivoSpinner.setSelection(i);
 			}
 		}
 		for (int i = 0; i < listaCausas.size(); i++){
-			if (list.get(0).getCausa() == listaCausas.get(i).getId()){
+			if (list.get(0).getCausaId() == listaCausas.get(i).getId()){
 				causaSpinner.setSelection(i);
 			}
 		}
@@ -261,5 +259,34 @@ public class BajaGanadoEdicion extends Activity implements View.OnClickListener 
 	    }
 	    return netInfo != null && netInfo.isConnectedOrConnecting();
 	}
+	
+	//---------------------------------------------------------------------------
+	//------------------------DATOS ENVIADOS DESDE BASTÓN------------------------
+	//---------------------------------------------------------------------------
+	
+    private Handler mHandler = new Handler(){
+    	public void handleMessage(Message msg) {
+    		super.handleMessage(msg);
+    		switch(msg.what){
+    		case ConnectThread.SUCCESS_CONNECT:
+    			BluetoothSocket mmSocket = (BluetoothSocket) ((List<Object>) msg.obj).get(0);
+    			BluetoothDevice mmDevice = (BluetoothDevice) ((List<Object>) msg.obj).get(1);
+    	        ConnectedThread connectedThread = new ConnectedThread(mmSocket, mmDevice);
+    	        connectedThread.start();
+    			break;
+    		case ConnectedThread.MESSAGE_READ:
+    			String EID = (String) msg.obj;
+    			System.out.println(EID);
+    			break;
+    		case ConnectedThread.CONNECTION_INTERRUPTED:
+    			ShowAlert.askReconnect("Error", "Se perdió la conexión con el bastón\n¿Intentar reconectar?", BajaGanadoEdicion.this, (BluetoothDevice) msg.obj);
+    			break;
+    		case ConnectThread.RETRY_CONNECTION:
+    			ConnectThread connectThread = new ConnectThread((BluetoothDevice) msg.obj, true);
+    			connectThread.start();
+    			break;
+    		}
+    	}
+    };
 
 }
