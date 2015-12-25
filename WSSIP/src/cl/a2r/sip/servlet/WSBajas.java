@@ -14,7 +14,6 @@ import cl.a2r.sip.service.BajasService;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -59,6 +58,8 @@ public class WSBajas extends HttpServlet {
             } else if (servicio.equals("insertaBaja")){
             	Baja baja = (Baja) params.getParam("baja");
             	BajasService.insertaBaja(baja);
+            	Integer i = 1;
+            	retorno = i;
             } else if (servicio.equals("traeBajas")){
             	Integer userId = (Integer) params.getParam("userId");
             	Integer fundoId = (Integer) params.getParam("fundoId");

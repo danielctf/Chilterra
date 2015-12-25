@@ -26,6 +26,8 @@ public class WSBajasCliente {
         Object obj = ServiceWS.invocaWS("WSBajas", params );
         if ( obj != null && obj.getClass().getName().contains("AppException")) {
             throw (AppException) obj;
+        } else if (obj == null){
+        	throw new AppException("Error de conexión a Internet", null);
         } else {
             return (List) obj;
         }
@@ -40,6 +42,8 @@ public class WSBajasCliente {
         Object obj = ServiceWS.invocaWS("WSBajas", params );
         if ( obj != null && obj.getClass().getName().contains("AppException")) {
             throw (AppException) obj;
+        } else if (obj == null){
+        	throw new AppException("Error de conexión a Internet", null);
         } else {
             return (List) obj;
         }
@@ -55,6 +59,8 @@ public class WSBajasCliente {
         Object obj = ServiceWS.invocaWS("WSBajas", params );
         if ( obj != null && obj.getClass().getName().contains("AppException")) {
             throw (AppException) obj;
+        } else if (obj == null){
+        	throw new AppException("Error de conexión a Internet", null);
         }
     }
     
@@ -68,6 +74,8 @@ public class WSBajasCliente {
         Object obj = ServiceWS.invocaWS("WSBajas", params );
         if ( obj != null && obj.getClass().getName().contains("AppException")) {
             throw (AppException) obj;
+        } else if (obj == null){
+        	throw new AppException("Error de conexión a Internet", null);
         } else {
             return (List) obj;
         }

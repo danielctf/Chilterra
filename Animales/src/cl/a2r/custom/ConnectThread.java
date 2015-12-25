@@ -2,7 +2,6 @@ package cl.a2r.custom;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;

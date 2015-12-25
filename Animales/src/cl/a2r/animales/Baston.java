@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -41,7 +43,7 @@ public class Baston extends Activity implements View.OnClickListener, ListView.O
 	private BluetoothAdapter mBluetoothAdapter;
 	private Set<BluetoothDevice> pairedDevices;
 	private List<BastonObject> listaVinculados, listaEncontrados;
-	private static List<ConnectedThread> listaConectados = new ArrayList<ConnectedThread>();
+	public static List<ConnectedThread> listaConectados = new ArrayList<ConnectedThread>();
 
 	
 	private static final int SUCCESS_CONNECT = 0;
@@ -182,6 +184,9 @@ public class Baston extends Activity implements View.OnClickListener, ListView.O
 	}
 	
 	public void onClick(View v) {
+		if (isOnline() == false){
+			return;
+		}
 		int id = v.getId();
 		switch (id){
 		case R.id.btnBuscar:
@@ -219,6 +224,9 @@ public class Baston extends Activity implements View.OnClickListener, ListView.O
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		if (isOnline() == false){
+			return;
+		}
 		int id = arg0.getId();
 		BluetoothDevice device;
 		switch (id){
@@ -281,6 +289,22 @@ public class Baston extends Activity implements View.OnClickListener, ListView.O
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(mReceiver);
+	}
+	
+	public void onBackPressed(){
+		if (isOnline()){
+			finish();
+		}
+	}
+	
+	private boolean isOnline() {
+	    ConnectivityManager cm =
+	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    if ((netInfo != null && netInfo.isConnectedOrConnecting()) == false){
+	    	ShowAlert.showAlert("Error", "No hay conexión a Internet", this);
+	    }
+	    return netInfo != null && netInfo.isConnectedOrConnecting();
 	}
 
 }

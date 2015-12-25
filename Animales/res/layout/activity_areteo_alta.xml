@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RadioGroup
+        android:id="@+id/radioGroup1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/radioVivo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:textSize="25sp"
+            android:text="Vivo" />
+
+        <RadioButton
+            android:id="@+id/radioMuerto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:layout_marginLeft="50dp"
+            android:text="Muerto" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/tvCollar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/radioGroup1"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:text="Collar"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ababab"
+        android:textSize="15sp" />
+
+    <Spinner
+        android:id="@+id/spinnerCollar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvCollar"
+        android:layout_below="@+id/tvCollar"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/spinner_style" />
+    
+    <TextView
+        android:id="@+id/tvSexo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/tvCollar"
+		android:layout_below="@+id/spinnerCollar"
+		android:layout_marginTop="10dp"
+        android:text="Sexo"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ababab"
+        android:textSize="15sp" />
+
+    <Spinner
+        android:id="@+id/spinnerSexo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvSexo"
+        android:layout_below="@+id/tvSexo"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/spinner_style" />
+    
+    <TextView
+        android:id="@+id/tvRaza"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/tvSexo"
+		android:layout_below="@+id/spinnerSexo"
+		android:layout_marginTop="10dp"
+        android:text="Raza"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ababab"
+        android:textSize="15sp" />
+
+    <Spinner
+        android:id="@+id/spinnerRaza"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvRaza"
+        android:layout_below="@+id/tvRaza"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/spinner_style" />
+    
+    <ImageButton
+        android:id="@+id/confirmarAlta"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignBottom="@+id/spinnerRaza"
+        android:layout_alignRight="@+id/spinnerRaza"
+        android:background="@drawable/circlebutton_state"
+        android:src="@drawable/ic_action_done" />
+
+</RelativeLayout>

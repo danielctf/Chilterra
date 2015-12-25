@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cl.a2r.sip.model.Baja;
 import cl.a2r.sip.model.CollarParto;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.GanadoLogs;
 import cl.a2r.sip.model.Parto;
 import cl.a2r.sip.model.TipoParto;
 
@@ -40,8 +40,13 @@ public class PartosDAO {
     		+ "select * from sip.ws_insert_parto(?, ?, ?, ?, ?, ?, ?, ?)";
     
     private static final String SQL_CONFIRMA_PARTO = ""
-    		+ "select * from sip.ws_confirma_parto(?)";
-
+    		+ "select * from sip.ws_confirma_parto(?, ?)";
+    
+    private static final String SQL_SELECT_PARTO_POR_CONFIRMAR = ""
+    		+ "select * from sip.ws_select_parto_por_confirmar(?)";
+    
+    private static final String SQL_DESHACER_REGISTRO_PARTO = ""
+    		+ "select * from sip.ws_deshacer_registro_parto(?, ?)";
 
     public static List selectCollares(Transaccion trx, Integer predioId) throws SQLException {
         List list = new ArrayList();
@@ -102,7 +107,7 @@ public class PartosDAO {
         res = pst.executeQuery();
         while (res.next() ){
             TipoParto t = new TipoParto();
-            t.setId(res.getInt("g_subtipoparto_id"));
+            t.setId(res.getInt("g_parto_subtipo_id"));
             t.setNombre(res.getString("name"));
             list.add(t);
         }
@@ -150,10 +155,11 @@ public class PartosDAO {
         res = pst.executeQuery();
         
         while (res.next() ){
-            Ganado g = new Ganado();
-            g.setId(res.getInt("g_ganado_id"));
-            g.setDiio(res.getInt("g_diio"));
-            list.add(g);
+        	GanadoLogs gl = new GanadoLogs();
+        	gl.setGanadoId(res.getInt("g_ganado_id"));
+        	gl.setDiio(res.getInt("diio"));
+        	gl.setLogId(res.getInt("g_parto_id"));
+            list.add(gl);
         }
         res.close();
         pst.close();
@@ -235,7 +241,7 @@ public class PartosDAO {
 	    pst.close();
     }
     
-    public static void confirmaParto(Transaccion trx, Integer ganadoId) throws SQLException {
+    public static void confirmaParto(Transaccion trx, Integer ganadoId, Integer usuarioId) throws SQLException {
 	    List list = new ArrayList();
 	
 	    Connection conn = null;
@@ -245,6 +251,47 @@ public class PartosDAO {
 	    conn = trx.getConn();
 	    pst = conn.prepareStatement( SQL_CONFIRMA_PARTO );
 	    pst.setObject(1, ganadoId);
+	    pst.setObject(2, usuarioId);
+	    pst.executeQuery();
+
+	    pst.close();
+    }
+    
+    public static List selectPartoPorConfirmar(Transaccion trx, Integer ganadoId) throws SQLException {
+        List list = new ArrayList();
+
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_PARTO_POR_CONFIRMAR );
+        pst.setObject(1, ganadoId);
+        res = pst.executeQuery();
+        
+        while (res.next() ){
+            Parto t = new Parto();
+            t.setGanadoId(res.getInt("g_ganado_id"));
+            t.setEstadoParto(res.getString("g_estado_parto"));
+            list.add(t);
+        }
+        res.close();
+        pst.close();
+
+        return list;
+    }
+    
+    public static void deshacerRegistroParto(Transaccion trx, GanadoLogs gl) throws SQLException {
+	    List list = new ArrayList();
+	
+	    Connection conn = null;
+	    PreparedStatement pst = null;
+	    ResultSet res = null;
+	
+	    conn = trx.getConn();
+	    pst = conn.prepareStatement( SQL_DESHACER_REGISTRO_PARTO );
+	    pst.setObject(1, gl.getUsuarioId());
+	    pst.setObject(2, gl.getLogId());
 	    pst.executeQuery();
 
 	    pst.close();

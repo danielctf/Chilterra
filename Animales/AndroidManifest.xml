@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cl.a2r.login"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="132"
+    android:versionName="1.32" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -69,6 +69,50 @@
         <activity
             android:name="cl.a2r.animales.Candidatos"
             android:label="@string/title_activity_candidatos" >
+        </activity>
+        <activity
+            android:name="cl.a2r.animales.Areteos"
+            android:label="@string/title_activity_areteo" >
+        </activity>
+        <activity
+            android:name="cl.a2r.animales.Traslados"
+            android:label="@string/title_activity_traslados" >
+        </activity>
+        <activity
+            android:name="cl.a2r.animales.TrasladosSalida"
+            android:label="@string/title_activity_traslados_salida" >
+        </activity>
+        <activity
+            android:name="cl.a2r.animales.TrasladosSalidaDiios"
+            android:label="@string/title_activity_traslados_salida_diios" >
+        </activity>
+        <activity
+            android:name="cl.a2r.animales.TrasladosLogs"
+            android:label="@string/title_activity_traslados_logs" >
+        </activity>
+        <activity
+            android:name="cl.a2r.animales.TrasladosConfirmacion"
+            android:label="@string/title_activity_traslados_confirmacion" >
+        </activity>
+        <activity
+            android:name="cl.a2r.animales.TrasladosConfirmacionDiios"
+            android:label="@string/title_activity_traslados_confirmacion_diios" >
+        </activity>
+        <activity
+            android:name="cl.a2r.custom.CalculadoraGD"
+            android:label="@string/title_activity_calculadora_gd" >
+        </activity>
+        <activity
+            android:name="cl.a2r.animales.Salvatajes"
+            android:label="@string/title_activity_salvataje" >
+        </activity>
+        <activity
+            android:name="cl.a2r.animales.SalvatajeDiios"
+            android:label="@string/title_activity_salvataje_diios" >
+        </activity>
+        <activity
+            android:name="cl.a2r.animales.Medicion"
+            android:label="@string/title_activity_medicion" >
         </activity>
     </application>
 

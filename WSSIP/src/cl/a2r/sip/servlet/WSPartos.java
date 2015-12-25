@@ -3,6 +3,7 @@ package cl.a2r.sip.servlet;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sip.common.AppLog;
+import cl.a2r.sip.model.GanadoLogs;
 import cl.a2r.sip.model.Parto;
 import cl.a2r.sip.service.AutorizacionService;
 import cl.a2r.sip.service.PartosService;
@@ -75,9 +76,23 @@ public class WSPartos extends HttpServlet {
             } else if (servicio.equals("insertaParto")){
             	Parto parto = (Parto) params.getParam("parto");
             	PartosService.insertaParto(parto);
+            	Integer i = 1;
+            	retorno = i;
             }else if (servicio.equals("confirmaParto")){
             	Integer ganadoId = (Integer) params.getParam("ganadoId");
-            	PartosService.confirmaParto(ganadoId);
+            	Integer usuarioId = (Integer) params.getParam("usuarioId");
+            	PartosService.confirmaParto(ganadoId, usuarioId);
+            	Integer i = 1;
+            	retorno = i;
+            } else if (servicio.equals("traePartoPorConfirmar")){
+            	Integer ganadoId = (Integer) params.getParam("ganadoId");
+                List list = PartosService.traePartoPorConfirmar(ganadoId);
+                retorno = list;
+            } else if (servicio.equals("deshacerRegistroParto")){
+            	GanadoLogs gl = (GanadoLogs) params.getParam("gl");
+            	PartosService.deshacerRegistroParto(gl);
+            	Integer i = 1;
+            	retorno = i;
             } else {
             	retorno = new AppException("Servicio no válido.", null);
             }

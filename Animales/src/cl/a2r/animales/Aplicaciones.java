@@ -13,6 +13,7 @@ import cl.a2r.custom.ShowAlert;
 import cl.a2r.login.R;
 import cl.a2r.sip.model.Aplicacion;
 import cl.a2r.sip.model.Predio;
+import cl.a2r.sip.model.Sesion;
 import cl.a2r.sip.wsservice.WSAutorizacionCliente;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -74,6 +75,7 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 	private TextView predio, nombrePerfil, correoPerfil;
 	private int width, height;
 	private static boolean openMeOnce = true;
+	private List<Aplicacion> apps;
 	
 	public static Predio predioWS = new Predio();
 	
@@ -137,24 +139,20 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 		List<Predio> predios = null;
         try {
         	predios = WSAutorizacionCliente.traePredios();
+            mAdapter = new ArrayAdapter<Predio>(this, android.R.layout.simple_list_item_1, predios);
+    	    lvPredios.setAdapter(mAdapter);
         } catch (AppException ex) {
             ShowAlert.showAlert("Error", ex.getMessage(), this);
         }
-
-        mAdapter = new ArrayAdapter<Predio>(this, android.R.layout.simple_list_item_1, predios);
-	    lvPredios.setAdapter(mAdapter);
-	    
 	}
 	
 	private void getAppsWS(){
-		List<Aplicacion> apps1 = null;
         try {
-            apps1 = WSAutorizacionCliente.traeAplicaciones(Login.user);
+            apps = WSAutorizacionCliente.traeAplicaciones(Login.user);
         } catch (AppException ex) {
         	ShowAlert.showAlert("Error", ex.getMessage(), this);
+        	return;
         }
-		final List<Aplicacion> apps = apps1;
-		
 		//Ordena las apps para que las que estan activas aparezcan al comienzo.
 		for (int i = 0; i < apps.size(); i++){
 			for (int j = i; j < apps.size(); j++){
@@ -170,25 +168,7 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 		
 		gridAdapter = new GridViewAdapter(Aplicaciones.this, apps, width, height);
 		gridApps.setAdapter(gridAdapter);
-		gridApps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			 
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				if (isOnline() == false){
-					return;
-				}
-				 //SOLO SI TIENE LA APP ACTIVA PUEDE ENTRAR
-				 //Objeto retorna nulo, por lo tanto, se busca en la lista la app
-				 if (apps.get(arg2).getActiva().equals("Y")){
-					 //SOLO SI SELECCIONÓ UN PREDIO PUEDE ENTRAR
-					 if (predio.getText() != "Aplicaciones"){
-						 AppLauncher.setAppClass(apps.get(arg2).getId());
-						 launchApplication();
-					 }else{
-						 ShowAlert.showAlert("Predio", "Debe seleccionar un predio\nantes de iniciar una aplicación.", Aplicaciones.this);
-					 }
-				 }
-			 }
-		 });
+		gridApps.setOnItemClickListener(this);
 		 
 	}
 	
@@ -216,6 +196,11 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 	
 	protected  void onStart(){
 		super.onStart();
+		
+		if (Login.user == 0){
+			finish();
+		}
+		
 		ConnectThread.setHandler(mHandler);
 		
 		if (isOnline()){
@@ -233,15 +218,11 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 	protected void onDestroy() {
 		super.onDestroy();
 		
-    	finish();
-    	System.exit(0);
+		openMeOnce = true;
 	}
 	
-	public void onBackPressed(){
-		openMeOnce = true;
-		
+	public void onBackPressed(){		
 		finish();
-		System.exit(0);
 	}
 
 	public void onConnectionFailed(ConnectionResult result) {
@@ -284,7 +265,7 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 	                    "Person information is null", Toast.LENGTH_LONG).show();
 	        }
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        ShowAlert.showAlert("Error", "Error de conexión a Internet", this);
 	    }
 	}
 	 
@@ -321,6 +302,22 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 		
 	}
 	
+	public static void createSession(){
+		Sesion s = new Sesion();
+		s.setUsuarioId(Login.user);
+		s.setFundoId(predioWS.getId());
+		s.setAppId(AppLauncher.getAppId());
+		s.setImei(null);
+		
+		try {
+			Login.sesionId = WSAutorizacionCliente.insertaSesion(s);
+		} catch (AppException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	private void launchApplication(){
 		Intent i = new Intent(this, AppLauncher.getAppClass());
 		startActivity(i);
@@ -341,10 +338,10 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 		int id = arg0.getId();
 		switch (id){
 		case R.id.lvPredios:
-			//Seleccionó algun predio
 			predioWS.setId(((Predio) arg0.getItemAtPosition(arg2)).getId());
 			predioWS.setCodigo(((Predio) arg0.getItemAtPosition(arg2)).getCodigo());
 			predioWS.setNombre(((Predio) arg0.getItemAtPosition(arg2)).getNombre());
+			predioWS.setRup(((Predio) arg0.getItemAtPosition(arg2)).getRup());
 			predio.setText(predioWS.getNombre());
 			mDrawerLayout.closeDrawer(mDrawerLinear);
 			break;
@@ -356,6 +353,29 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 			}else{
 				//Cerrar Sesión
 				processSignOut();
+			}
+			break;
+		case R.id.gridApps:
+			if (apps.get(arg2).getActiva().equals("Y")){
+				 //SOLO SI SELECCIONÓ UN PREDIO PUEDE ENTRAR
+				 if (predio.getText() != "Aplicaciones"){
+					 AppLauncher.setAppClass(apps.get(arg2).getId());
+				 } else {
+					 ShowAlert.showAlert("Predio", "Debe seleccionar un predio\nantes de iniciar una aplicación.", Aplicaciones.this);
+					 return;
+				 }
+				 
+				 for (int i = 0; i < Baston.listaConectados.size(); i++){
+					 if (!(Baston.listaConectados.get(i).isAlive())){
+						 Baston.listaConectados.remove(i);
+					 }
+				 }
+				 if (Baston.listaConectados.size() == 0){
+					 ShowAlert.askBaston("Bastón", "No hay ningún bastón conectado\n¿Desea conectar con uno?", Aplicaciones.this);
+				 } else {
+					 createSession();
+					 launchApplication();
+				 }
 			}
 			break;
 		}

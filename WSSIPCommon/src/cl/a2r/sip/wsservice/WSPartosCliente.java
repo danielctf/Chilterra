@@ -6,6 +6,7 @@ import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.common.wsutils.ServiceWS;
 import cl.a2r.sip.model.Baja;
+import cl.a2r.sip.model.GanadoLogs;
 import cl.a2r.sip.model.Parto;
 
 public class WSPartosCliente {
@@ -19,7 +20,9 @@ public class WSPartosCliente {
 	        Object obj = ServiceWS.invocaWS("WSPartos", params );
 	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
 	            throw (AppException) obj;
-	        } else {
+	        } else if (obj == null){
+		    	throw new AppException("Error de conexión a Internet", null);
+		    } else {
 	            return (List) obj;
 	        }
 	   }
@@ -32,7 +35,9 @@ public class WSPartosCliente {
 	        Object obj = ServiceWS.invocaWS("WSPartos", params );
 	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
 	            throw (AppException) obj;
-	        } else {
+	        } else if (obj == null){
+		    	throw new AppException("Error de conexión a Internet", null);
+		    } else {
 	            return (List) obj;
 	        }
 	   }
@@ -45,7 +50,25 @@ public class WSPartosCliente {
 	        Object obj = ServiceWS.invocaWS("WSPartos", params );
 	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
 	            throw (AppException) obj;
-	        } else {
+	        } else if (obj == null){
+		    	throw new AppException("Error de conexión a Internet", null);
+		    } else {
+	            return (List) obj;
+	        }
+	   }
+	   
+	   public static List traePartoPorConfirmar(Integer ganadoId) throws AppException {
+			
+	        ParamServlet params = new ParamServlet();
+	        params.add("servicio", "traePartoPorConfirmar" );
+	        params.add("ganadoId", ganadoId);
+	        
+	        Object obj = ServiceWS.invocaWS("WSPartos", params );
+	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	            throw (AppException) obj;
+	        } else if (obj == null){
+		    	throw new AppException("Error de conexión a Internet", null);
+		    } else {
 	            return (List) obj;
 	        }
 	   }
@@ -59,7 +82,9 @@ public class WSPartosCliente {
 	        Object obj = ServiceWS.invocaWS("WSPartos", params );
 	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
 	            throw (AppException) obj;
-	        } else {
+	        } else if (obj == null){
+		    	throw new AppException("Error de conexión a Internet", null);
+		    } else {
 	            return (List) obj;
 	        }
 	   }
@@ -74,7 +99,9 @@ public class WSPartosCliente {
 	        Object obj = ServiceWS.invocaWS("WSPartos", params );
 	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
 	            throw (AppException) obj;
-	        } else {
+	        } else if (obj == null){
+		    	throw new AppException("Error de conexión a Internet", null);
+		    } else {
 	            return (List) obj;
 	        }
 	   }
@@ -88,7 +115,9 @@ public class WSPartosCliente {
 	        Object obj = ServiceWS.invocaWS("WSPartos", params );
 	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
 	            throw (AppException) obj;
-	        } else {
+	        } else if (obj == null){
+		    	throw new AppException("Error de conexión a Internet", null);
+		    } else {
 	            return (List) obj;
 	        }
 	   }
@@ -102,7 +131,9 @@ public class WSPartosCliente {
 	        Object obj = ServiceWS.invocaWS("WSPartos", params );
 	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
 	            throw (AppException) obj;
-	        } else {
+	        } else if (obj == null){
+		    	throw new AppException("Error de conexión a Internet", null);
+		    } else {
 	            return (List) obj;
 	        }
 	   }
@@ -116,19 +147,38 @@ public class WSPartosCliente {
 	        Object obj = ServiceWS.invocaWS("WSPartos", params );
 	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
 	            throw (AppException) obj;
-	        }
+	        } else if (obj == null){
+		    	throw new AppException("Error de conexión a Internet", null);
+		    }
 	    }
 	    
-	    public static void confirmaParto(Integer ganadoId) throws AppException {
+	    public static void confirmaParto(Integer ganadoId, Integer usuarioId) throws AppException {
 
 	        ParamServlet params = new ParamServlet();
 	        params.add("servicio", "confirmaParto" );
 	        params.add("ganadoId", ganadoId);
+	        params.add("usuarioId", usuarioId);
 	        
 	        Object obj = ServiceWS.invocaWS("WSPartos", params );
 	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
 	            throw (AppException) obj;
-	        }
+	        } else if (obj == null){
+		    	throw new AppException("Error de conexión a Internet", null);
+		    }
+	    }
+	    
+	    public static void deshacerRegistroParto(GanadoLogs gl) throws AppException {
+
+	        ParamServlet params = new ParamServlet();
+	        params.add("servicio", "deshacerRegistroParto" );
+	        params.add("gl", gl);
+	        
+	        Object obj = ServiceWS.invocaWS("WSPartos", params );
+	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	            throw (AppException) obj;
+	        } else if (obj == null){
+		    	throw new AppException("Error de conexión a Internet", null);
+		    }
 	    }
 	
 }

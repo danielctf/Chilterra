@@ -8,12 +8,15 @@ package cl.a2r.sip.servlet;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sip.common.AppLog;
+import cl.a2r.sip.model.Sesion;
 import cl.a2r.sip.service.AutorizacionService;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -43,20 +46,28 @@ public class WSAutorizacion extends HttpServlet {
             params = (ParamServlet) inputFromApplet.readObject();
 
             String servicio = (String) params.getParam("servicio");
-
             if (servicio.equals("traeAplicaciones") ) {
 
                 Integer idUsuario = (Integer) params.getParam("idUsuario");
                 List list = AutorizacionService.traeAplicaciones(idUsuario);
                 retorno = list;
 
+            } else if (servicio.equals("traePredios")){
+                List list = AutorizacionService.traePredios();
+                retorno = list;
+            } else if (servicio.equals("traeUsuario")){
+            	String usuario = (String) params.getParam("usuario");
+            	Integer id = AutorizacionService.traeUsuario(usuario);
+            	retorno = id;
+            } else if (servicio.equals("traeVersionAndroid")){
+            	Integer ver = AutorizacionService.traeVersionAndroid();
+            	retorno = ver;
+            } else if (servicio.equals("insertaSesion")){
+            	Sesion sesion = (Sesion) params.getParam("sesion");
+            	Integer sesionId = AutorizacionService.insertaSesion(sesion);
+            	retorno = sesionId;
             } else {
-            	if (servicio.equals("traePredios")){
-                    List list = AutorizacionService.traePredios();
-                    retorno = list;
-            	}else{
-            		retorno = new AppException("Servicio no válido.", null);
-            	}
+            	retorno = new AppException("Servicio no válido.", null);
             }
         } catch (ClassNotFoundException ex) {
             retorno = new AppException("Error en parametros (ParamServlet).", ex);

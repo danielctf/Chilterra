@@ -1,0 +1,213 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="cl.a2r.alimentacion.BajaGanado" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:background="@color/green" >
+
+        <ImageButton
+            android:id="@+id/goBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:background="@null"
+            android:paddingRight="50dp"
+            android:src="@drawable/ic_hardware_keyboard_arrow_left" />
+
+        <TextView
+            android:id="@+id/app"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Medición Entrada"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white" />
+
+        <ImageButton
+            android:id="@+id/logs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_search_white_36dp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutCalculadora"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.15"
+        android:background="@color/green"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tvPotrero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|top"
+            android:text="Potrero:"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+            
+	        <TextView
+	            android:id="@+id/tvClick"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="0.5"
+	            android:layout_gravity="bottom"
+	            android:gravity="center"
+	            android:textAppearance="?android:attr/textAppearanceLarge"
+	            android:textColor="@color/white"
+	            android:textSize="25sp" />
+	        
+	        <TextView
+	            android:id="@+id/tvMS"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="0.5"
+	            android:layout_gravity="bottom"
+	            android:gravity="center"
+	            android:textAppearance="?android:attr/textAppearanceLarge"
+	            android:textColor="@color/white"
+	            android:textSize="25sp" />
+            
+        </LinearLayout>
+
+    </LinearLayout>
+
+   <LinearLayout
+        android:id="@+id/LinearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.6"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+	        
+   	        <TextView
+	            android:id="@+id/tvClickInicial"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="0.5"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+	            android:text="Click Inicial"
+	            android:textAppearance="?android:attr/textAppearanceLarge"
+	            android:textColor="@color/black"
+	            android:textSize="25sp" />
+
+   	        <EditText
+   	            android:id="@+id/etClickInicial"
+   	            android:layout_width="0dp"
+   	            android:layout_height="wrap_content"
+   	            android:layout_weight="0.5"
+   	            android:layout_marginRight="10dp"
+   	            android:layout_marginTop="15dp"
+   	            android:background="@drawable/apptheme_edit_text_holo_light"
+   	            android:textSize="25sp"
+   	            android:ems="10"
+   	            android:maxLength="9"
+   	            android:inputType="number" >
+   	            <requestFocus />
+   	        </EditText>
+            
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/tvClickFinal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:text="Click Final"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/etClickFinal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/apptheme_edit_text_holo_light"
+                android:textSize="25sp"
+                android:ems="10"
+                android:maxLength="9"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/tvMuestras"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_weight="0.5"
+                android:text="N° Muestras"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/etMuestras"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/apptheme_edit_text_holo_light"
+                android:textSize="25sp"
+                android:ems="10"
+                android:maxLength="9"
+                android:inputType="number" />
+        </LinearLayout>
+               
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.15" >
+        
+        <ImageButton
+            android:id="@+id/confirmarEntrada"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/circlebutton_state"
+            android:src="@drawable/ic_action_done" />         
+        
+    </RelativeLayout>
+
+</LinearLayout>

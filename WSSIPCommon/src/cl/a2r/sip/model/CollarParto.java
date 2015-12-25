@@ -42,7 +42,7 @@ public class CollarParto implements Serializable{
 		this.codigo = codigo;
 	}
 	
-	public String toString(){
+	public String toString() {
 		return this.nombre;
 	}
 	

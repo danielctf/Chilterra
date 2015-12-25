@@ -119,7 +119,7 @@
                     android:textSize="15sp" />
 
                 <Spinner
-                    android:id="@+id/spinnerSexo"
+                    android:id="@+id/spinnerEdad"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/textViewSexo"
@@ -144,7 +144,7 @@
                     android:textSize="15sp" />
 
                 <Spinner
-                    android:id="@+id/spinnerCollar"
+                    android:id="@+id/spinnerTipoAnimal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/textViewCollar"
@@ -156,7 +156,7 @@
                     android:id="@+id/confirmarRegistro"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_alignBottom="@+id/spinnerCollar"
+                    android:layout_alignBottom="@+id/spinnerTipoAnimal"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/circlebutton_state"

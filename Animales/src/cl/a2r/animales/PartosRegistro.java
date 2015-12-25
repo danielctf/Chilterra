@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cl.a2r.common.AppException;
+import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.login.R;
 import cl.a2r.object.SexoObject;
@@ -12,10 +13,12 @@ import cl.a2r.sip.model.Parto;
 import cl.a2r.sip.model.TipoParto;
 import cl.a2r.sip.wsservice.WSPartosCliente;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,8 +50,8 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 		rg = (RadioGroup)v.findViewById(R.id.radioGroup1);
 		spinnerTipoParto = (Spinner)v.findViewById(R.id.spinnerTipoParto);
 		spinnerSubTipoParto = (Spinner)v.findViewById(R.id.spinnerSubTipoParto);
-		spinnerSexo = (Spinner)v.findViewById(R.id.spinnerSexo);
-		spinnerCollar = (Spinner)v.findViewById(R.id.spinnerCollar);
+		spinnerSexo = (Spinner)v.findViewById(R.id.spinnerEdad);
+		spinnerCollar = (Spinner)v.findViewById(R.id.spinnerTipoAnimal);
 		confirmarRegistro = (ImageButton)v.findViewById(R.id.confirmarRegistro);
 		confirmarRegistro.setOnClickListener(this);
 		tvSexo = (TextView)v.findViewById(R.id.textViewSexo);
@@ -76,41 +79,43 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
     	return v;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void getTipoPartosWS(){
 		
 		List<TipoParto> list = null;
 		try {
 			list = WSPartosCliente.traeTipoPartos();
+			TipoParto t = new TipoParto();
+			t.setId(0);
+			t.setCodigo("");
+			t.setNombre("");
+			list.add(0, t);
+			
+			ArrayAdapter<TipoParto> mAdapter = new ArrayAdapter<TipoParto>(this.getActivity(), android.R.layout.simple_list_item_1, list);
+			spinnerTipoParto.setAdapter(mAdapter);
 		} catch (AppException ex) {
 			ShowAlert.showAlert("Error", ex.getMessage(), this.getActivity());
 		}
-		
-		TipoParto t = new TipoParto();
-		t.setId(0);
-		t.setCodigo("");
-		t.setNombre("");
-		list.add(0, t);
-		
-		ArrayAdapter<TipoParto> mAdapter = new ArrayAdapter<TipoParto>(this.getActivity(), android.R.layout.simple_list_item_1, list);
-		spinnerTipoParto.setAdapter(mAdapter);
+	
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void getSubTipoPartoWS(){
 		List<TipoParto> list = null;
 		try {
 			list = WSPartosCliente.traeSubTipoPartos();
+			TipoParto t = new TipoParto();
+			t.setId(0);
+			t.setCodigo("");
+			t.setNombre("");
+			list.add(0, t);
+			
+			ArrayAdapter<TipoParto> mAdapter = new ArrayAdapter<TipoParto>(this.getActivity(), android.R.layout.simple_list_item_1, list);
+			spinnerSubTipoParto.setAdapter(mAdapter);
 		} catch (AppException ex) {
 			ShowAlert.showAlert("Error", ex.getMessage(), this.getActivity());
 		}
 
-		TipoParto t = new TipoParto();
-		t.setId(0);
-		t.setCodigo("");
-		t.setNombre("");
-		list.add(0, t);
-		
-		ArrayAdapter<TipoParto> mAdapter = new ArrayAdapter<TipoParto>(this.getActivity(), android.R.layout.simple_list_item_1, list);
-		spinnerSubTipoParto.setAdapter(mAdapter);
 	}
 	
 	private void getSexoWS(){
@@ -133,20 +138,22 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 		spinnerSexo.setAdapter(mAdapter);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void getCollaresWS(){
 		List<CollarParto> list = null;
 		try {
-			list = WSPartosCliente.traeCollares(partoWS.getPredioId());
+			list = WSPartosCliente.traeCollares(Aplicaciones.predioWS.getId());
+			CollarParto c = new CollarParto();
+			c.setId(0);
+			c.setNombre("");
+			list.add(0, c);
+			
+			ArrayAdapter<CollarParto> mAdapter = new ArrayAdapter<CollarParto>(this.getActivity(), android.R.layout.simple_list_item_1, list);
+			spinnerCollar.setAdapter(mAdapter);
 		} catch (AppException ex) {
 			ShowAlert.showAlert("Error", ex.getMessage(), this.getActivity());
 		}
-		CollarParto c = new CollarParto();
-		c.setId(0);
-		c.setNombre("");
-		list.add(0, c);
-		
-		ArrayAdapter<CollarParto> mAdapter = new ArrayAdapter<CollarParto>(this.getActivity(), android.R.layout.simple_list_item_1, list);
-		spinnerCollar.setAdapter(mAdapter);
+	
 	}
 	
 	private void setEstadoAnimal(View v){
@@ -246,6 +253,28 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 			
 		});
 	}
+	
+    Handler hand = new Handler();
+    Runnable run = new Runnable() { 
+        public void run() { 
+			try {
+				WSPartosCliente.insertaParto(partoWS);
+				Toast.makeText(PartosRegistro.this.getActivity().getApplicationContext(), "Registro guardado exitosamente", Toast.LENGTH_LONG).show();
+				
+				Calculadora.ganadoId = 0;
+				Calculadora.diio = 0;
+				Calculadora.predio = 0;
+				Calculadora.activa = "";
+				Calculadora.sexo = "";
+				FragmentTransaction ft = getFragmentManager().beginTransaction();
+				ft.detach(PartosRegistro.this).attach(PartosRegistro.this).commit();
+				getFragmentManager().executePendingTransactions();
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), PartosRegistro.this.getActivity());
+				confirmarRegistro.setVisibility(View.VISIBLE);
+			}
+        }
+    }; 
 
 	public void onClick(View v) {
 		if (isOnline() == false){
@@ -254,11 +283,6 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 		int id = v.getId();
 		switch (id){
 		case R.id.confirmarRegistro:
-			System.out.println("user: " + partoWS.getUserId());
-			System.out.println("predio: " + partoWS.getPredioId());
-			System.out.println("ganadoId: " + partoWS.getGanadoId());
-			System.out.println("tipoparto: " + partoWS.getTipoPartoId());
-			System.out.println("estado: " + partoWS.getEstado());
 			if (isNotPartoNatural && isMuerto){
 				partoWS.setSubTipoParto(null);
 				partoWS.setSexo(null);
@@ -266,27 +290,16 @@ public class PartosRegistro extends Fragment implements View.OnClickListener{
 			} else {
 				if (isNotPartoNatural && isMuerto == false){
 					partoWS.setSubTipoParto(null);
-					System.out.println("sexo: " + partoWS.getSexo());
-					System.out.println("collar: " + partoWS.getCollarId());
 				}else{
 					if (isNotPartoNatural == false && isMuerto){
-						System.out.println("subTipoParto: " + partoWS.getSubTipoParto());
 						partoWS.setSexo(null);
 						partoWS.setCollarId(null);
-					}else{
-						System.out.println("subTipoParto: " + partoWS.getSubTipoParto());
-						System.out.println("sexo: " + partoWS.getSexo());
-						System.out.println("collar: " + partoWS.getCollarId());
 					}
 				}
 			}
-			try {
-				WSPartosCliente.insertaParto(partoWS);
-				Toast.makeText(this.getActivity().getApplicationContext(), "Registro guardado exitosamente", Toast.LENGTH_LONG).show();
-				this.getActivity().finish();
-			} catch (AppException e) {
-				ShowAlert.showAlert("Error", e.getMessage(), this.getActivity());
-			}
+			
+			confirmarRegistro.setVisibility(View.INVISIBLE);
+			hand.postDelayed(run, 100);
 			break;
 		}
 	}

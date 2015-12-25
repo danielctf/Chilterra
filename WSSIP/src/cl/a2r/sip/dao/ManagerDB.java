@@ -11,11 +11,14 @@ import java.sql.SQLException;
 
 public class ManagerDB {
     private static final String jdbcDriver = "org.postgresql.Driver";
-    // Produccion
+
     private static final String dbUser = "postgres";
     private static final String dbPassword = "pg1234";
-    private static final String urlConn = "jdbc:postgresql://201.187.98.131:5432/chilterra_desa";
-    // Desarrollo
+    private static final String urlConn = "jdbc:postgresql://200.6.115.179:5432/chilterra";
+
+    //private static final String dbUser = "postgres";
+    //private static final String dbPassword = "pg1234";
+    //private static final String urlConn = "jdbc:postgresql://201.187.98.131:5432/chilterra_desa";
             
     static {
         try {

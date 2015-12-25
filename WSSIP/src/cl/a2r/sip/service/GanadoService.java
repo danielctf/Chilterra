@@ -21,7 +21,11 @@ public class GanadoService {
                 list = GanadoDAO.selectGanado(trx, diio);
             } catch (SQLException ex) {
                 AppLog.logSevere("GanadoService.traeGanado()", ex);
-                throw new AppException("No se pudo recuperar los registros.", null);
+                if (ex.getSQLState().equals("SIP01")){
+                	throw new AppException(ex.getMessage(), null);
+                } else {
+                	throw new AppException("No se pudo recuperar los registros.", null);
+                }
             } finally {
                 trx.close();
             }
@@ -31,16 +35,20 @@ public class GanadoService {
         return list;
     }
     
-    public static List traeDIIO(long eid) throws AppException {
+    public static List traeGanadoBaston(long eid) throws AppException {
         List list = new ArrayList();
 
         Transaccion trx = Transaccion.getTransaccion(false);
         if (trx != null){
             try {
-                list = GanadoDAO.selectDIIO(trx, eid);
+                list = GanadoDAO.selectGanadoBaston(trx, eid);
             } catch (SQLException ex) {
-                AppLog.logSevere("GanadoService.traeDIIO()", ex);
-                throw new AppException("No se pudo recuperar los registros.", null);
+                AppLog.logSevere("GanadoService.traeGanadoBaston()", ex);
+                if (ex.getSQLState().equals("SIP01")){
+                	throw new AppException(ex.getMessage(), null);
+                } else {
+                	throw new AppException("No se pudo recuperar los registros.", null);
+                }
             } finally {
                 trx.close();
             }
@@ -48,5 +56,51 @@ public class GanadoService {
             throw new AppException("No se pudo obtener la conexión.", null);
         }
         return list;
+    }
+    
+    public static Integer traeDiio(Integer p_diio) throws AppException {
+        Integer diio;
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                diio = GanadoDAO.selectDiio(trx, p_diio);
+            } catch (SQLException ex) {
+                AppLog.logSevere("GanadoService.traeDiio()", ex);
+                if (ex.getSQLState().equals("SIP01")){
+                	throw new AppException(ex.getMessage(), null);
+                } else {
+                	throw new AppException("No se pudo recuperar los registros.", null);
+                }
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return diio;
+    }
+    
+    public static Integer traeDiioBaston(long eid) throws AppException {
+        Integer diio;
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                diio = GanadoDAO.selectDiioBaston(trx, eid);
+            } catch (SQLException ex) {
+                AppLog.logSevere("GanadoService.traeDiioBaston()", ex);
+                if (ex.getSQLState().equals("SIP01")){
+                	throw new AppException(ex.getMessage(), null);
+                } else {
+                	throw new AppException("No se pudo recuperar los registros.", null);
+                }
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return diio;
     }
 }

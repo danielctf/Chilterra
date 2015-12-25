@@ -5,18 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 
 import cl.a2r.custom.AppLauncher;
+import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.LogsArrayAdapter;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.login.R;
-import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.GanadoLogs;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -43,9 +43,9 @@ public class Logs extends Activity implements View.OnClickListener{
 	private Button confirmarCambios;
 	private TextView deshacer, app;
 	private ListView listViewHistorial;
-	private List<Integer> diios, deletedGanadoId;
+	private List<String> diios, deletedLogId;
 	public static int sr_ganado, diio;
-	private List<Ganado> list;
+	private List<GanadoLogs> list;
 	
     private LogsArrayAdapter mAdapter;
     private boolean mSwiping = false;
@@ -76,16 +76,25 @@ public class Logs extends Activity implements View.OnClickListener{
 		deshacer = (TextView)findViewById(R.id.deshacer);
 		deshacer.setOnClickListener(this);
 		app = (TextView)findViewById(R.id.app);
-		diios = new ArrayList<Integer>();
-		deletedGanadoId = new ArrayList<Integer>();
+		diios = new ArrayList<String>();
+		deletedLogId = new ArrayList<String>();
 		
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void getLogsWS(){
 		list = AppLauncher.getLogs();
-		for (Ganado g : list){
-			diios.add(g.getDiio());
+		if (list == null){
+			return;
+		}
+		diios.clear();
+		deletedLogId.clear();
+		for (GanadoLogs g : list){
+			if (Calculadora.isSalvataje){
+				diios.add(g.getEid());
+			} else {
+				diios.add(Integer.toString(g.getDiio()));
+			}
 		}
 		mAdapter = new LogsArrayAdapter(this, android.R.layout.simple_list_item_1, diios, mTouchListener);
 		listViewHistorial.setAdapter(mAdapter);
@@ -109,13 +118,14 @@ public class Logs extends Activity implements View.OnClickListener{
 		*/
 	}
 	
-	@SuppressWarnings("static-access")
-	private void setSrGanado(int diio){
-		//.traeSrGanado(diio);
-		//ESTE METODO DEBIERA RECIBIR EL DIIO Y SR GANADO Y SETEARLO
-		sr_ganado = 11111;
-		this.diio = diio;
-	}
+    Handler hand = new Handler();
+    Runnable run = new Runnable() { 
+        public void run() { 
+			AppLauncher.deleteLogs(deletedLogId);
+			Toast.makeText(getApplicationContext(), "Registros eliminados exitosamente", Toast.LENGTH_LONG).show();
+			finish();
+        }
+    }; 
 	
 	public void onClick(View v) {
 		if (isOnline() == false){
@@ -127,13 +137,8 @@ public class Logs extends Activity implements View.OnClickListener{
 			finish();
 			break;
 		case R.id.confirmarCambios:
-			System.out.println(Login.user);
-			System.out.println(Aplicaciones.predioWS.getId());
-			System.out.println(deletedGanadoId);
-			Intent i = new Intent(this, Aplicaciones.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(i);
-			Toast.makeText(getApplicationContext(), "Registros eliminados exitosamente", Toast.LENGTH_LONG).show();
+			confirmarCambios.setVisibility(View.INVISIBLE);
+			hand.postDelayed(run, 100);
 			break;
 		case R.id.undo:
 			confirmarCambios.setVisibility(View.INVISIBLE);
@@ -154,19 +159,23 @@ public class Logs extends Activity implements View.OnClickListener{
 			deshacer.setVisibility(View.VISIBLE);
 			goBack.setVisibility(View.INVISIBLE);
 			app.setVisibility(View.INVISIBLE);
-			confirmarCambios.setText(Integer.toString(deletedGanadoId.size()));
+			confirmarCambios.setText(Integer.toString(deletedLogId.size()));
 		}else{
 			undo.setVisibility(View.INVISIBLE);
 			deshacer.setVisibility(View.INVISIBLE);
 			goBack.setVisibility(View.VISIBLE);
 			confirmarCambios.setVisibility(View.INVISIBLE);
 			app.setVisibility(View.VISIBLE);
-			deletedGanadoId.clear();
 		}
 	}
 	
 	protected  void onStart(){
 		super.onStart();
+		
+		if (Login.user == 0){
+			finish();
+		}
+		
 		ConnectThread.setHandler(mHandler);
 		
 		if (isOnline() == false){
@@ -318,8 +327,14 @@ public class Logs extends Activity implements View.OnClickListener{
         // Delete the item from the adapter
         int position = listViewHistorial.getPositionForView(viewToRemove);
         for (int i = 0; i < list.size(); i++){
-        	if (list.get(i).getDiio() == mAdapter.getItem(position)){
-        		deletedGanadoId.add(list.get(i).getId());
+        	if (Calculadora.isSalvataje){
+        		if (list.get(i).getEid().equals(mAdapter.getItem(position))){
+        			deletedLogId.add(list.get(i).getEid());
+        		}
+        	} else {
+	        	if (Integer.toString(list.get(i).getDiio()).equals(mAdapter.getItem(position))){
+	        		deletedLogId.add(Integer.toString(list.get(i).getLogId()));
+	        	}
         	}
         }
         mAdapter.remove(mAdapter.getItem(position));
@@ -390,7 +405,8 @@ public class Logs extends Activity implements View.OnClickListener{
 	//---------------------------------------------------------------------------
 	
     private Handler mHandler = new Handler(){
-    	public void handleMessage(Message msg) {
+    	@SuppressWarnings("unchecked")
+		public void handleMessage(Message msg) {
     		super.handleMessage(msg);
     		switch(msg.what){
     		case ConnectThread.SUCCESS_CONNECT:

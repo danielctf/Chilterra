@@ -11,15 +11,16 @@ import cl.a2r.custom.ShowAlert;
 import cl.a2r.login.R;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Parto;
+import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
@@ -34,7 +35,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class Partos extends Activity implements View.OnClickListener{
+public class Partos extends Activity implements View.OnClickListener, DialogInterface.OnClickListener{
 	
 	private Fragment registroTab = new PartosRegistro();
 	private Fragment confirmacionTab = new PartosConfirmacion();
@@ -44,8 +45,8 @@ public class Partos extends Activity implements View.OnClickListener{
 	public static TextView tvFaltantes, tvEncontrados;
 	private Button btnRegistro, btnConfirmacion;
 	private RelativeLayout calculadora;
-	private static int diio;
-	private  String stance;
+	private static int diio, tempDiio, tempGanadoId, tempPredio;
+	private String stance, tempSexo;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -102,18 +103,18 @@ public class Partos extends Activity implements View.OnClickListener{
 			transaction.replace(R.id.fragmentContainer, registroTab);
 			transaction.addToBackStack(null);
 			transaction.commit();
+			getFragmentManager().executePendingTransactions();
 			btnRegistro.setBackgroundResource(R.drawable.tab_state_activated);
 			btnConfirmacion.setBackgroundResource(R.drawable.tab_state_deactivated);
 			stance = "registro";
 			clearScreen();
 			break;
 		case R.id.btnConfirmacion:
-			FragmentManager fm = getFragmentManager();
 			FragmentTransaction transaction2 = getFragmentManager().beginTransaction();
 			transaction2.replace(R.id.fragmentContainer, confirmacionTab);
 			transaction2.addToBackStack(null);
 			transaction2.commit();
-			fm.executePendingTransactions();
+			getFragmentManager().executePendingTransactions();
 			btnRegistro.setBackgroundResource(R.drawable.tab_state_deactivated);
 			btnConfirmacion.setBackgroundResource(R.drawable.tab_state_activated);
 			stance = "confirmacion";
@@ -146,18 +147,46 @@ public class Partos extends Activity implements View.OnClickListener{
 			getCandidatosFaltantes();
 			break;
 		}
-		
+	}
+	
+	@SuppressWarnings("static-access")
+	public void onClick(DialogInterface dialog, int which) {
+		if (which == -2){
+			this.diio = tempDiio;
+			
+			Traslado t = new Traslado();
+			t.setUsuarioId(Login.user);
+			t.setFundoOrigenId(tempPredio);
+			t.setFundoDestinoId(Aplicaciones.predioWS.getId());
+			Ganado g = new Ganado();
+			g.setId(tempGanadoId);
+			t.getGanado().add(g);
+			
+			try {
+				WSGanadoCliente.reajustaGanado(t);
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
+			
+			verParto(tempGanadoId, tempSexo);
+		} else {
+			Calculadora.ganadoId = 0;
+			Calculadora.diio = 0;
+			Calculadora.predio = 0;
+			Calculadora.activa = "";
+			Calculadora.sexo = "";
+		}
 	}
 	
 	private void getCandidatosEncontrados(){
 		Intent i = new Intent(getApplicationContext(), Candidatos.class);
-		i.putExtra("stance","encontrados");
+		i.putExtra("stance","partosEncontrados");
 		startActivity(i);
 	}
 	
 	private void getCandidatosFaltantes(){
 		Intent i = new Intent(getApplicationContext(), Candidatos.class);
-		i.putExtra("stance","faltantes");
+		i.putExtra("stance","partosFaltantes");
 		startActivity(i);
 	}
 	
@@ -166,7 +195,8 @@ public class Partos extends Activity implements View.OnClickListener{
 		Calculadora.diio = 0;
 		Calculadora.predio = 0;
 		Calculadora.activa = "";
-		this.diio = 0;
+		Calculadora.sexo = "";
+		diio = 0;
 		PartosConfirmacion.ganadoId = 0;
 		PartosRegistro.partoWS.setGanadoId(0);
 		PartosRegistro.partoWS.setTipoPartoId(0);
@@ -248,25 +278,23 @@ public class Partos extends Activity implements View.OnClickListener{
 			tvApp.setVisibility(View.VISIBLE);
 			undo.setVisibility(View.INVISIBLE);
 			deshacer.setVisibility(View.INVISIBLE);
-			PartosConfirmacion.confirmarConfirmacion.setVisibility(View.INVISIBLE);
+			PartosConfirmacion.confirmarConfirmacion.setEnabled(false);
 			textViewDiio.setText("DIIO:");
 			despliegaDiio.setText("");
 		}else{
 			goBack.setVisibility(View.INVISIBLE);
 			tvApp.setVisibility(View.INVISIBLE);
-			logs.setVisibility(View.INVISIBLE);
+			//logs.setVisibility(View.INVISIBLE);
 			undo.setVisibility(View.VISIBLE);
 			deshacer.setVisibility(View.VISIBLE);
 		}
 		
 	}
 	
-	private void checkDiioStatus(int diio, int ganadoId, String activa, int predio){
-		this.diio = diio;
-		
-		if (activa.equals("N")){
-			ShowAlert.showAlert("Error", "DIIO no existe", this);
-			return;
+	@SuppressWarnings("unchecked")
+	private void verParto(int ganadoId, String sexo){
+		if (!sexo.equals("H") && !sexo.equals("")){
+			ShowAlert.showAlert("Aviso", "AVISO: El animal figura con sexo distinto a Hembra", Partos.this);
 		}
 		
 		if (stance.equals("registro")){
@@ -276,53 +304,79 @@ public class Partos extends Activity implements View.OnClickListener{
 				if (list.size() > 0){
 					ShowAlert.showAlert("Registro", "AVISO\nEste Animal ya tiene una cria asociada", this);
 				}
+				updateRegistro();
 			} catch (AppException e) {
 				ShowAlert.showAlert("Error", e.getMessage(), this);
+				return;
 			}
-			updateRegistro();
 		} else if (stance.equals("confirmacion")){
 			try {
-				List<Parto> list = WSPartosCliente.traePartoAnterior(ganadoId);
+				List<Parto> list = WSPartosCliente.traePartoPorConfirmar(ganadoId);
 				boolean confirmacionPendiente = false;
 				for (Parto p : list){
 					if (p.getEstadoParto().equals("R")){
 						confirmacionPendiente = true;
-					} else if (p.getEstadoParto().equals("C")){
-						confirmacionPendiente = false;
 					}
 				}
 				if (confirmacionPendiente){
 					PartosConfirmacion.ganadoId = ganadoId;
 					textViewDiio.setText("");
 					despliegaDiio.setText(Integer.toString(diio));
-					PartosConfirmacion.confirmarConfirmacion.setVisibility(View.VISIBLE);
+					PartosConfirmacion.confirmarConfirmacion.setEnabled(true);
 				} else if (ganadoId != 0){ 
 					ShowAlert.showAlert("Animal", "Este Animal no tiene una confirmación de parto pendiente", this);
 					return;
 				}
+				updateConfirmacion();
 			} catch (AppException e) {
 				ShowAlert.showAlert("Error", e.getMessage(), this);
+				return;
 			}
-			updateConfirmacion();
+		}
+	}
+	
+	@SuppressWarnings("static-access")
+	private void checkDiioStatus(int diio, int ganadoId, String activa, int predio, String sexo){
+		if (activa.equals("N")){
+			ShowAlert.showAlert("Error", "DIIO se encuentra dado de baja", this);
+			return;
+		}
+		
+		if (diio != 0 && (diio == this.diio)){
+			return;
 		}
 		
 		if (ganadoId != 0){
 			if (Aplicaciones.predioWS.getId() != predio){
-				ShowAlert.realizarMovimiento("Predio", "El Animal figura en otro predio\n¿Esta seguro que el DIIO es correcto?", this);
+				tempGanadoId = ganadoId;
+				tempDiio = diio;
+				tempSexo = sexo;
+				tempPredio = predio;
+				ShowAlert.askYesNo("Predio", "El Animal figura en otro predio\n¿Esta seguro que el DIIO es correcto?", this, this);
+				return;
 			}
 		}
+		
+		this.diio = diio;
+		verParto(ganadoId, sexo);
 		
 	}
 	
 	protected  void onStart(){
 		super.onStart();
+		
+		if (Login.user == 0){
+			finish();
+		}
+		
 		ConnectThread.setHandler(mHandler);
 		
 		if (isOnline() == false){
 			return;
 		}
 		
-		checkDiioStatus(Calculadora.diio, Calculadora.ganadoId, Calculadora.activa, Calculadora.predio);
+		checkDiioStatus(Calculadora.diio, Calculadora.ganadoId, Calculadora.activa, Calculadora.predio, Calculadora.sexo);
+		
 	}
 	
 	protected  void onDestroy(){
@@ -332,7 +386,8 @@ public class Partos extends Activity implements View.OnClickListener{
 		Calculadora.diio = 0;
 		Calculadora.predio = 0;
 		Calculadora.activa = "";
-		
+		Calculadora.sexo = "";
+		Calculadora.tipoGanado = 0;
 	}
 	
 	public void onBackPressed(){
@@ -367,15 +422,18 @@ public class Partos extends Activity implements View.OnClickListener{
     	        connectedThread.start();
     			break;
     		case ConnectedThread.MESSAGE_READ:
+    			if (isOnline() == false){
+    				return;
+    			}
     			String EID = (String) msg.obj;
     			try {
-					List<Ganado> list = WSGanadoCliente.traeDIIO(EID);
+					List<Ganado> list = WSGanadoCliente.traeGanadoBaston(EID);
 					if (list.size() == 0){
 						ShowAlert.showAlert("Error", "DIIO no existe", Partos.this);
 						return;
 					}
 					for (Ganado g: list){
-						checkDiioStatus(g.getDiio(), g.getId(), g.getActiva(), g.getPredio());
+						checkDiioStatus(g.getDiio(), g.getId(), g.getActiva(), g.getPredio(), g.getSexo());
 					}
 				} catch (AppException ex) {
 					ShowAlert.showAlert("Error", ex.getMessage(), Partos.this);

@@ -16,6 +16,7 @@ import cl.a2r.sip.common.AppLog;
 import cl.a2r.sip.model.Baja;
 import cl.a2r.sip.model.CausaBaja;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.GanadoLogs;
 import cl.a2r.sip.model.MotivoBaja;
 
 /**
@@ -49,10 +50,11 @@ public class BajasDAO {
         pst.setObject(2, fundoId);
         res = pst.executeQuery();
         while (res.next() ){
-            Ganado g = new Ganado();
-            g.setId(res.getInt("g_ganado_id"));
-            g.setDiio(res.getInt("g_diio"));
-            list.add(g);
+        	GanadoLogs gl = new GanadoLogs();
+        	gl.setGanadoId(res.getInt("g_ganado_id"));
+        	gl.setDiio(res.getInt("diio"));
+        	gl.setLogId(res.getInt("g_baja_id"));
+            list.add(gl);
         }
         res.close();
         pst.close();

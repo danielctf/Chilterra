@@ -12,12 +12,14 @@ import cl.a2r.sip.model.Baja;
 import cl.a2r.sip.model.CausaBaja;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.MotivoBaja;
+import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.wsservice.WSBajasCliente;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
@@ -36,13 +38,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BajaGanado extends Activity implements View.OnClickListener {
+public class BajaGanado extends Activity implements View.OnClickListener, DialogInterface.OnClickListener {
 	
 	private TextView despliegaDiio, textViewDiio, tvApp, deshacer;
 	private Spinner spinnerMotivo, spinnerCausa;
 	private ImageButton goBack, confirmarBaja, undo, logs;
 	private RelativeLayout calculadora;
-	private int diio;
+	private int diio, tempGanadoId, tempDiio, tempPredio;
 	
 	public static Baja bajaWS = new Baja();
 	
@@ -121,18 +123,16 @@ public class BajaGanado extends Activity implements View.OnClickListener {
 		List<MotivoBaja> listaMotivos = null;
         try {
         	listaMotivos = WSBajasCliente.traeMotivos();
+            MotivoBaja mb = new MotivoBaja();
+            mb.setId(0);
+            mb.setNombre("");
+            listaMotivos.add(0, mb);
+    		
+    		ArrayAdapter<MotivoBaja> mAdapter = new ArrayAdapter<MotivoBaja>(this, android.R.layout.simple_list_item_1, listaMotivos);
+    		spinnerMotivo.setAdapter(mAdapter);
         } catch (AppException ex) {
             ShowAlert.showAlert("Error", ex.getMessage(), this);
         }
-        
-        //Se agrega un campo nulo para que el spinner comience en blanco
-        MotivoBaja mb = new MotivoBaja();
-        mb.setId(0);
-        mb.setNombre("");
-        listaMotivos.add(0, mb);
-		
-		ArrayAdapter<MotivoBaja> mAdapter = new ArrayAdapter<MotivoBaja>(this, android.R.layout.simple_list_item_1, listaMotivos);
-		spinnerMotivo.setAdapter(mAdapter);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -140,19 +140,31 @@ public class BajaGanado extends Activity implements View.OnClickListener {
 		List<CausaBaja> listaCausas = null;
         try {
         	listaCausas = WSBajasCliente.traeCausas();
+    		CausaBaja cb = new CausaBaja();
+    		cb.setId(0);
+    		cb.setNombre("");
+    		listaCausas.add(0, cb);
+            
+    		ArrayAdapter<CausaBaja> mAdapter2 = new ArrayAdapter<CausaBaja>(this, android.R.layout.simple_list_item_1, listaCausas);
+    		spinnerCausa.setAdapter(mAdapter2);
         } catch (AppException ex) {
             ShowAlert.showAlert("Error", ex.getMessage(), this);
         }
-        
-        //Se agrega un campo nulo para que el spinner comience en blanco
-		CausaBaja cb = new CausaBaja();
-		cb.setId(0);
-		cb.setNombre("");
-		listaCausas.add(0, cb);
-        
-		ArrayAdapter<CausaBaja> mAdapter2 = new ArrayAdapter<CausaBaja>(this, android.R.layout.simple_list_item_1, listaCausas);
-		spinnerCausa.setAdapter(mAdapter2);
 	}
+	
+    Handler hand = new Handler();
+    Runnable run = new Runnable() { 
+        public void run() { 
+			try {
+				WSBajasCliente.insertaBaja(bajaWS);
+				Toast.makeText(BajaGanado.this, "Registro guardado exitosamente", Toast.LENGTH_LONG).show();
+				clearScreen();
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), BajaGanado.this);
+				confirmarBaja.setVisibility(View.VISIBLE);
+			}
+        }
+    }; 
 
 	public void onClick(View v) {
 		if (isOnline() == false){
@@ -164,23 +176,8 @@ public class BajaGanado extends Activity implements View.OnClickListener {
 			finish();
 			break;
 		case R.id.confirmarBaja:
-			//WSBajasCliente.realizarMovimiento(bajaWS.getGanadoId(), bajaWS.getPredioId())
-			System.out.println("User: " + bajaWS.getUserId());
-			System.out.println("Predio: " + bajaWS.getPredioId());
-			System.out.println("Diio: " + diio);
-			System.out.println("Sr_Ganado: " + bajaWS.getGanadoId());
-			System.out.println("Motivo Baja: " + bajaWS.getMotivoId());
-			System.out.println("Causa Baja: " + bajaWS.getCausaId());
-			//Intent i5 = new Intent(this, Aplicaciones.class);
-			//i5.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			//startActivity(i5);
-			try {
-				WSBajasCliente.insertaBaja(bajaWS);
-				finish();
-				Toast.makeText(getApplicationContext(), "Registro guardado exitosamente", Toast.LENGTH_LONG).show();
-			} catch (AppException e) {
-				ShowAlert.showAlert("Error", "No se pudo registrar la baja\n" + e.getMessage(), this);
-			}
+			confirmarBaja.setVisibility(View.INVISIBLE);
+			hand.postDelayed(run, 100);
 			break;
 		case R.id.layoutCalculadora:
 		case R.id.despliegaDiio:
@@ -190,23 +187,58 @@ public class BajaGanado extends Activity implements View.OnClickListener {
 			break;
 		case R.id.undo:
 		case R.id.deshacer:
-			//texto que dice "Deshacer"
-			Calculadora.ganadoId = 0;
-			Calculadora.diio = 0;
-			Calculadora.predio = 0;
-			Calculadora.activa = "";
-			bajaWS.setGanadoId(0);
-			bajaWS.setMotivoId(0);
-			bajaWS.setCausaId(0);
-			spinnerMotivo.setSelection(0);
-			spinnerCausa.setSelection(0);
-			updateStatus();
+			clearScreen();
 			break;
 		case R.id.logs:
 			Intent i2 = new Intent(this, Logs.class);
 			startActivity(i2);
 			break;
 		}
+	}
+	
+	public void onClick(DialogInterface arg0, int arg1) {
+		if (arg1 == -2){
+			bajaWS.setGanadoId(tempGanadoId);
+			this.diio = tempDiio;
+			
+			Traslado t = new Traslado();
+			t.setUsuarioId(Login.user);
+			t.setFundoOrigenId(tempPredio);
+			t.setFundoDestinoId(Aplicaciones.predioWS.getId());
+			Ganado g = new Ganado();
+			g.setId(bajaWS.getGanadoId());
+			t.getGanado().add(g);
+			
+			try {
+				WSGanadoCliente.reajustaGanado(t);
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
+			
+			updateStatus();
+			
+		} else {
+			Calculadora.ganadoId = 0;
+			Calculadora.diio = 0;
+			Calculadora.predio = 0;
+			Calculadora.activa = "";
+			Calculadora.sexo = "";
+		}
+	}
+	
+	private void clearScreen(){
+		Calculadora.ganadoId = 0;
+		Calculadora.diio = 0;
+		Calculadora.predio = 0;
+		Calculadora.activa = "";
+		Calculadora.sexo = "";
+		bajaWS.setGanadoId(0);
+		bajaWS.setMotivoId(0);
+		bajaWS.setCausaId(0);
+		spinnerMotivo.setSelection(0);
+		spinnerCausa.setSelection(0);
+		confirmarBaja.setVisibility(View.VISIBLE);
+		updateStatus();
 	}
 	
 	private void updateStatus(){
@@ -252,6 +284,11 @@ public class BajaGanado extends Activity implements View.OnClickListener {
 
 	protected  void onStart(){
 		super.onStart();
+		
+		if (Login.user == 0){
+			finish();
+		}
+		
 		ConnectThread.setHandler(mHandler);
 		
 		if (isOnline() == false){
@@ -269,7 +306,8 @@ public class BajaGanado extends Activity implements View.OnClickListener {
 		Calculadora.diio = 0;
 		Calculadora.predio = 0;
 		Calculadora.activa = "";
-		
+		Calculadora.sexo = "";
+		Calculadora.tipoGanado = 0;
 	}
 	
 	public void onBackPressed(){
@@ -289,19 +327,28 @@ public class BajaGanado extends Activity implements View.OnClickListener {
 	}
 	
 	private void checkDiioStatus(int diio, int ganadoId, String activa, int predio){
-		this.diio = diio;
-		
 		if (activa.equals("N")){
-			ShowAlert.showAlert("Error", "DIIO no existe", this);
+			ShowAlert.showAlert("Error", "DIIO se encuentra dado de baja", this);
 			return;
 		}
 		
-		bajaWS.setGanadoId(ganadoId);
-		if (bajaWS.getGanadoId() != 0){
-			if (bajaWS.getPredioId() != predio){
-				ShowAlert.realizarMovimiento("Predio", "El Animal figura en otro predio\n¿Esta seguro que el DIIO es correcto?", this);
+		if (diio != 0 && (diio == this.diio)){
+			return;
+		}
+		
+		if (ganadoId != 0){
+			if (Aplicaciones.predioWS.getId() != predio){
+				tempGanadoId = ganadoId;
+				tempDiio = diio;
+				tempPredio = predio;
+				ShowAlert.askYesNo("Predio", "El Animal figura en otro predio\n¿Esta seguro que el DIIO es correcto?", this, this);
+				return;
 			}
 		}
+		
+		bajaWS.setGanadoId(ganadoId);
+		this.diio = diio;
+		
 		updateStatus();
 	}
 	
@@ -321,9 +368,12 @@ public class BajaGanado extends Activity implements View.OnClickListener {
     	        connectedThread.start();
     			break;
     		case ConnectedThread.MESSAGE_READ:
+    			if (isOnline() == false){
+    				return;
+    			}
     			String EID = (String) msg.obj;
     			try {
-					List<Ganado> list = WSGanadoCliente.traeDIIO(EID);
+					List<Ganado> list = WSGanadoCliente.traeGanadoBaston(EID);
 					if (list.size() == 0){
 						ShowAlert.showAlert("Error", "DIIO no existe", BajaGanado.this);
 						return;

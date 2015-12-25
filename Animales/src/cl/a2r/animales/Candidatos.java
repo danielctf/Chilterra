@@ -7,8 +7,13 @@ import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.login.R;
+import cl.a2r.sip.model.Areteo;
+import cl.a2r.sip.model.CollarParto;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Movimiento;
+import cl.a2r.sip.wsservice.WSAreteosCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
+import cl.a2r.sip.wsservice.WSTrasladosCliente;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -21,16 +26,18 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class Candidatos extends Activity implements View.OnClickListener{
+public class Candidatos extends Activity implements View.OnClickListener, ListView.OnItemClickListener{
 
 	private ListView lvCandidatos;
 	private TextView tvApp;
 	private ImageButton goBack;
+	private String clickStance;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,14 +57,17 @@ public class Candidatos extends Activity implements View.OnClickListener{
 	
 	private void cargarInterfaz(){
 		lvCandidatos = (ListView)findViewById(R.id.lvCandidatos);
+		lvCandidatos.setOnItemClickListener(this);
 		tvApp = (TextView)findViewById(R.id.app);
 		goBack = (ImageButton)findViewById(R.id.goBack);
 		goBack.setOnClickListener(this);
+		clickStance = "";
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void getCandidatosWS(String stance){
-		if (stance.equals("encontrados")){
+		switch (stance){
+		case "partosEncontrados":
 			tvApp.setText("Candidatos Encontrados");
 			try {
 				List<Ganado> list = WSPartosCliente.traeCandidatosEncontrados(Aplicaciones.predioWS.getId());
@@ -66,7 +76,8 @@ public class Candidatos extends Activity implements View.OnClickListener{
 			} catch (AppException e) {
 				ShowAlert.showAlert("Error", e.getMessage(), this);
 			}
-		} else if (stance.equals("faltantes")){
+			break;
+		case "partosFaltantes":
 			tvApp.setText("Candidatos Faltantes");
 			try {
 				List<Ganado> list = WSPartosCliente.traeCandidatosFaltantes(Aplicaciones.predioWS.getId());
@@ -75,8 +86,52 @@ public class Candidatos extends Activity implements View.OnClickListener{
 			} catch (AppException e) {
 				ShowAlert.showAlert("Error", e.getMessage(), this);
 			}
-			
+			break;
+		case "areteosEncontrados":
+			tvApp.setText("Candidatos Encontrados");
+			try {
+				List<Areteo> list = WSAreteosCliente.traeAreteosEncontrados(Aplicaciones.predioWS.getId());
+				ArrayAdapter<Areteo> mAdapter = new ArrayAdapter<Areteo>(this, android.R.layout.simple_list_item_1, list);
+				lvCandidatos.setAdapter(mAdapter);
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
+			break;
+		case "areteosFaltantes":
+			tvApp.setText("Candidatos Faltantes");
+			try {
+				List<CollarParto> list = WSAreteosCliente.traeAreteosFaltantes(Aplicaciones.predioWS.getId());
+				ArrayAdapter<CollarParto> mAdapter = new ArrayAdapter<CollarParto>(this, android.R.layout.simple_list_item_1, list);
+				lvCandidatos.setAdapter(mAdapter);
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
+			break;
+		case "trasladosGuiasDespacho":
+			clickStance = "trasladosGuiasDespacho";
+			tvApp.setText("Guias Despacho Pendientes");
+			try {
+				List<Movimiento> list = WSTrasladosCliente.traeMovimientosEP();
+				ArrayAdapter<Movimiento> mAdapter = new ArrayAdapter<Movimiento>(this, android.R.layout.simple_list_item_1, list);
+				lvCandidatos.setAdapter(mAdapter);
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
+			break;
+		case "movimientosFaltantes":
+			tvApp.setText("Candidatos Faltantes");
+			List<Ganado> list = TrasladosConfirmacionDiios.faltantes.getGanado();
+			ArrayAdapter<Ganado> mAdapter = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, list);
+			lvCandidatos.setAdapter(mAdapter);
+			break;
+		case "movimientosEncontrados":
+			tvApp.setText("Candidatos Encontrados");
+			List<Ganado> list2 = TrasladosConfirmacion.confirmacion.getGanado();
+			ArrayAdapter<Ganado> mAdapter2 = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, list2);
+			lvCandidatos.setAdapter(mAdapter2);
+			break;
 		}
+		
 	}
 	
 	public void onClick(View arg0) {
@@ -91,12 +146,34 @@ public class Candidatos extends Activity implements View.OnClickListener{
 		}
 	}
 	
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		switch (clickStance){
+		case "trasladosGuiasDespacho":
+			Integer nro_documento = ((Movimiento) arg0.getItemAtPosition(arg2)).getNro_documento();
+			TrasladosConfirmacion.getTraslado(nro_documento);
+			this.finish();
+			break;
+		}
+		
+	}
+	
 	protected void onStart(){
 		super.onStart();
+		
+		if (Login.user == 0){
+			finish();
+		}
+		
 		ConnectThread.setHandler(mHandler);
 		
 		if (isOnline() == false){
 			return;
+		}
+	}
+	
+	public void onBackPressed(){
+		if (isOnline()){
+			finish();
 		}
 	}
 	
@@ -115,7 +192,8 @@ public class Candidatos extends Activity implements View.OnClickListener{
 	//---------------------------------------------------------------------------
 	
     private Handler mHandler = new Handler(){
-    	public void handleMessage(Message msg) {
+    	@SuppressWarnings("unchecked")
+		public void handleMessage(Message msg) {
     		super.handleMessage(msg);
     		switch(msg.what){
     		case ConnectThread.SUCCESS_CONNECT:

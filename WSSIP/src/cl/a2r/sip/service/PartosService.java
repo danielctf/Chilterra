@@ -11,6 +11,7 @@ import cl.a2r.sip.dao.GanadoDAO;
 import cl.a2r.sip.dao.PartosDAO;
 import cl.a2r.sip.dao.Transaccion;
 import cl.a2r.sip.model.Baja;
+import cl.a2r.sip.model.GanadoLogs;
 import cl.a2r.sip.model.Parto;
 
 public class PartosService {
@@ -81,6 +82,25 @@ public class PartosService {
                 list = PartosDAO.selectPartoAnterior(trx, ganadoId);
             } catch (SQLException ex) {
                 AppLog.logSevere("PartosService.traePartoAnterior()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
+    public static List traePartoPorConfirmar(Integer ganadoId) throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = PartosDAO.selectPartoPorConfirmar(trx, ganadoId);
+            } catch (SQLException ex) {
+                AppLog.logSevere("PartosService.traePartoPorConfirmar()", ex);
                 throw new AppException("No se pudo recuperar los registros.", null);
             } finally {
                 trx.close();
@@ -168,17 +188,37 @@ public class PartosService {
         }
     }
     
-    public static void confirmaParto(Integer ganadoId) throws AppException {
+    public static void confirmaParto(Integer ganadoId, Integer usuarioId) throws AppException {
         List list = new ArrayList();
 
         Transaccion trx = Transaccion.getTransaccion(true);
         if (trx != null){
             try {
-                PartosDAO.confirmaParto(trx, ganadoId);
+                PartosDAO.confirmaParto(trx, ganadoId, usuarioId);
                 trx.commit();
             } catch (SQLException ex) {
                 trx.rollback();
             	AppLog.logSevere("PartosService.confirmaParto()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+    }
+    
+    public static void deshacerRegistroParto(GanadoLogs gl) throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                PartosDAO.deshacerRegistroParto(trx, gl);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("PartosService.deshacerRegistroParto()", ex);
                 throw new AppException("No se pudo recuperar los registros.", null);
             } finally {
                 trx.close();

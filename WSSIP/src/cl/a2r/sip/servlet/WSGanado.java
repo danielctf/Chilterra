@@ -3,7 +3,6 @@ package cl.a2r.sip.servlet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.math.BigInteger;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -14,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sip.common.AppLog;
+import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.service.GanadoService;
+import cl.a2r.sip.service.TrasladosService;
 
 public class WSGanado extends HttpServlet{
 
@@ -48,15 +49,29 @@ public class WSGanado extends HttpServlet{
                 List list = GanadoService.traeGanado(diio);
                 retorno = list;
 
+            } else if (servicio.equals("traeGanadoBaston") ){
+                long eid = Long.parseLong(((String) params.getParam("eid")).trim());
+                List list = GanadoService.traeGanadoBaston(eid);
+                retorno = list;
+            } else if (servicio.equals("traeDiio")){
+            	Integer p_diio = (Integer) params.getParam("diio");
+            	Integer diio = GanadoService.traeDiio(p_diio);
+            	retorno = diio;
+            } else if (servicio.equals("traeDiioBaston")){
+                long eid = Long.parseLong(((String) params.getParam("eid")).trim());
+                Integer diio = GanadoService.traeDiioBaston(eid);
+                retorno = diio;
+            } else if (servicio.equals("reajustaGanado")){
+            	Traslado traslado = (Traslado) params.getParam("traslado");
+            	Integer g_movimiento_id = TrasladosService.insertaMovimiento(traslado);
+            	traslado.setG_movimiento_id(g_movimiento_id);
+            	TrasladosService.insertaMovtoConfirm(traslado);
+            	Integer i = 1;
+            	retorno = i;
             } else {
-            	if (servicio.equals("traeDIIO") ){
-                    long eid = Long.parseLong(((String) params.getParam("eid")).trim());
-                    List list = GanadoService.traeDIIO(eid);
-                    retorno = list;
-            	} else {
-            		retorno = new AppException("Servicio no válido.", null);
-            	}
+        		retorno = new AppException("Servicio no válido.", null);
             }
+            
         } catch (ClassNotFoundException ex) {
             retorno = new AppException("Error en parametros (ParamServlet).", ex);
             AppLog.logSevere(((AppException)retorno).getMessage(), ex);

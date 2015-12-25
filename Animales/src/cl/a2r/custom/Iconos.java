@@ -38,6 +38,12 @@ public class Iconos {
 		case 10:
 			icon = R.drawable.iconoinventariorotativo;
 			break;
+		case 11:
+			icon = R.drawable.iconoinducciones;
+			break;
+		case 12:
+			icon = R.drawable.iconosalvataje;
+			break;
 		}
 		return icon;
 	}

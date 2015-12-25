@@ -13,5 +13,16 @@
     <string name="title_activity_partos">Partos</string>
     <string name="title_activity_baston">Baston</string>
     <string name="title_activity_candidatos">Candidatos</string>
+    <string name="title_activity_areteo">Areteo</string>
+    <string name="title_activity_traslados">Traslados</string>
+    <string name="title_activity_traslados_salida">TrasladosSalida</string>
+    <string name="title_activity_traslados_salida_diios">TrasladosSalidaDiios</string>
+    <string name="title_activity_traslados_logs">TrasladosLogs</string>
+    <string name="title_activity_traslados_confirmacion">TrasladosConfirmacion</string>
+    <string name="title_activity_traslados_confirmacion_diios">TrasladosConfirmacionDiios</string>
+    <string name="title_activity_calculadora_gd">CalculadoraGD</string>
+    <string name="title_activity_salvataje">Salvataje</string>
+    <string name="title_activity_salvataje_diios">SalvatajeDiios</string>
+    <string name="title_activity_medicion">Medicion</string>
 
 </resources>

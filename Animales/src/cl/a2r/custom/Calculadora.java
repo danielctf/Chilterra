@@ -2,19 +2,22 @@ package cl.a2r.custom;
 
 import java.util.List;
 
+import cl.a2r.animales.Login;
 import cl.a2r.common.AppException;
 import cl.a2r.login.R;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -29,8 +32,10 @@ public class Calculadora extends Activity implements View.OnClickListener {
 	private boolean diioInverso;
 	private String diioActual, diioActualInverso;
 	
-	public static int ganadoId, diio, predio;
-	public static String activa ="";
+	public static int ganadoId, diio, predio, tipoGanado;
+	public static String activa ="", sexo = "";
+	public static boolean isAreteo = false, isSalvataje = false;
+	private String errMsg;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -115,27 +120,27 @@ public class Calculadora extends Activity implements View.OnClickListener {
 			tvdiio.setText(tvdiio.getText() + "0");
 			break;
 		case R.id.aceptar:
-			if (tvdiio.getText().length() == 7 && diioInverso == false){
+			if (diioInverso == false && tvdiio.length() >= 1){
 				ShowAlert.showAlert("Diio", "Ingrese diio al revés.", this);
 				diioInverso = true;
 				diioActual = tvdiio.getText().toString();
 				tvdiio.setText("");
 			}else{
-				if (tvdiio.getText().length() == 7 && diioInverso){
+				if (diioInverso && tvdiio.length() >= 1){
 					diioActualInverso = tvdiio.getText().toString();
 					if (validarDiioInverso()){
 						if (getGanadoWS(Integer.parseInt(diioActual))){
 							finish();
 						}else{
-							ShowAlert.showAlert("Error", "DIIO no existe", this);
+							ShowAlert.showAlert("Error", errMsg, this);
 							diioInverso = false;
 							tvdiio.setText("");
 						}
 					}else{
-						ShowAlert.showAlert("Error", "El diio ingresado no coincide con el original\nIntente ingresar el diio al revés nuevamente", this);
+						ShowAlert.showAlert("Error", "El DIIO ingresado no coincide con el original\nIntente ingresar el diio al revés nuevamente", this);
 					}
 				}else{
-					ShowAlert.showAlert("Error", "Diio no válido.\nEl diio debe contener 7 caracteres", this);
+					ShowAlert.showAlert("Error", "DIIO no válido.\nNo escribió ningún DIIO", this);
 				}
 			}
 			break;
@@ -153,20 +158,38 @@ public class Calculadora extends Activity implements View.OnClickListener {
 	
 	@SuppressWarnings({ "unchecked", "static-access" })
 	private boolean getGanadoWS(int diio){
+		if (isSalvataje){
+			this.diio = diio;
+			return true;
+		}
+		
 		List<Ganado> list = null;
-		try {
-			list = WSGanadoCliente.traeGanado(diio);
-			if (list.size() == 0){
+		if (isAreteo == false){
+			try {
+				list = WSGanadoCliente.traeGanado(diio);
+				if (list.size() == 0){
+					errMsg = "DIIO no existe";
+					return false;
+				}
+				for (Ganado g : list){
+					ganadoId = g.getId();
+					this.diio = g.getDiio();
+					activa = g.getActiva();
+					predio = g.getPredio();
+					sexo = g.getSexo();
+					tipoGanado = g.getTipoGanadoId();
+				}
+			} catch (AppException ex) {
+				errMsg = ex.getMessage();
 				return false;
 			}
-			for (Ganado g : list){
-				ganadoId = g.getId();
-				this.diio = diio;
-				activa = g.getActiva();
-				predio = g.getPredio();
+		} else if (isAreteo) {
+			try {
+				this.diio = WSGanadoCliente.traeDiio(diio);
+			} catch (AppException e) {
+				errMsg = e.getMessage();
+				return false;
 			}
-		} catch (AppException ex) {
-			ShowAlert.showAlert("Error", ex.getMessage(), this);
 		}
 		return true;
 	}
@@ -182,7 +205,13 @@ public class Calculadora extends Activity implements View.OnClickListener {
 	
 	protected  void onStart(){
 		super.onStart();
-	
+		
+		if (Login.user == 0){
+			finish();
+		}
+		
+		ConnectThread.setHandler(mHandler);
+		
 		if (isOnline() == false){
 			return;
 		}
@@ -203,5 +232,35 @@ public class Calculadora extends Activity implements View.OnClickListener {
 	    }
 	    return netInfo != null && netInfo.isConnectedOrConnecting();
 	}
+	
+	//---------------------------------------------------------------------------
+	//------------------------DATOS ENVIADOS DESDE BASTÓN------------------------
+	//---------------------------------------------------------------------------
+	
+    private Handler mHandler = new Handler(){
+    	@SuppressWarnings("unchecked")
+		public void handleMessage(Message msg) {
+    		super.handleMessage(msg);
+    		switch(msg.what){
+    		case ConnectThread.SUCCESS_CONNECT:
+    			BluetoothSocket mmSocket = (BluetoothSocket) ((List<Object>) msg.obj).get(0);
+    			BluetoothDevice mmDevice = (BluetoothDevice) ((List<Object>) msg.obj).get(1);
+    	        ConnectedThread connectedThread = new ConnectedThread(mmSocket, mmDevice);
+    	        connectedThread.start();
+    			break;
+    		case ConnectedThread.MESSAGE_READ:
+    			String EID = (String) msg.obj;
+    			System.out.println(EID);
+    			break;
+    		case ConnectedThread.CONNECTION_INTERRUPTED:
+    			ShowAlert.askReconnect("Error", "Se perdió la conexión con el bastón\n¿Intentar reconectar?", Calculadora.this, (BluetoothDevice) msg.obj);
+    			break;
+    		case ConnectThread.RETRY_CONNECTION:
+    			ConnectThread connectThread = new ConnectThread((BluetoothDevice) msg.obj, true);
+    			connectThread.start();
+    			break;
+    		}
+    	}
+    };
 
 }

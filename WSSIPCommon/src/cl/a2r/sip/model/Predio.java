@@ -9,6 +9,8 @@ public class Predio implements Serializable {
 	private Integer id;
 	private String codigo;
 	private String nombre;
+	private String rup;
+	private Integer potreros;
 	
     /**
      * @return the id
@@ -52,10 +54,24 @@ public class Predio implements Serializable {
         this.nombre = nombre;
     }
 
-    @Override
-    public String toString() {
+	public String getRup() {
+		return rup;
+	}
+
+	public void setRup(String rup) {
+		this.rup = rup;
+	}
+	
+    public Integer getPotreros() {
+		return potreros;
+	}
+
+	public void setPotreros(Integer potreros) {
+		this.potreros = potreros;
+	}
+
+	public String toString() {
         return this.getNombre();
     }
-	
 	
 }

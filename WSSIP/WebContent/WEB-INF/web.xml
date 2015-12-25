@@ -12,9 +12,21 @@
   <servlet-name>WSGanado</servlet-name> 
   <servlet-class>cl.a2r.sip.servlet.WSGanado</servlet-class> 
   </servlet>
-    <servlet>
+  <servlet>
   <servlet-name>WSPartos</servlet-name> 
   <servlet-class>cl.a2r.sip.servlet.WSPartos</servlet-class> 
+  </servlet>
+  <servlet>
+  <servlet-name>WSAreteos</servlet-name> 
+  <servlet-class>cl.a2r.sip.servlet.WSAreteos</servlet-class> 
+  </servlet>
+  <servlet>
+  <servlet-name>WSTraslados</servlet-name> 
+  <servlet-class>cl.a2r.sip.servlet.WSTraslados</servlet-class> 
+  </servlet>
+  <servlet>
+  <servlet-name>WSMedicion</servlet-name> 
+  <servlet-class>cl.a2r.sip.servlet.WSMedicion</servlet-class> 
   </servlet>
  <servlet-mapping>
   <servlet-name>WSAutorizacion</servlet-name> 
@@ -31,6 +43,18 @@
   <servlet-mapping>
   <servlet-name>WSPartos</servlet-name> 
   <url-pattern>/WSPartos</url-pattern> 
+  </servlet-mapping>
+  <servlet-mapping>
+  <servlet-name>WSAreteos</servlet-name> 
+  <url-pattern>/WSAreteos</url-pattern> 
+  </servlet-mapping>
+  <servlet-mapping>
+  <servlet-name>WSTraslados</servlet-name> 
+  <url-pattern>/WSTraslados</url-pattern> 
+  </servlet-mapping>
+  <servlet-mapping>
+  <servlet-name>WSMedicion</servlet-name> 
+  <url-pattern>/WSMedicion</url-pattern> 
   </servlet-mapping>
  <session-config>
   <session-timeout>30</session-timeout> 
