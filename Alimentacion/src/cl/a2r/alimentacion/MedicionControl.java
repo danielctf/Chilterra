@@ -25,11 +25,9 @@ import android.widget.Toast;
 
 public class MedicionControl extends Activity implements View.OnClickListener, View.OnKeyListener {
 
-	private TextView tvPotrero, tvClick, tvMS;
-	private EditText etInicial, etFinal, etMuestras;
+	private TextView tvClick, tvMS;
+	private EditText etPotrero, etInicial, etFinal, etMuestras;
 	private ImageButton goBack, logs, confirmarEntrada;
-	private LinearLayout layoutCalculadora;
-	private Integer potreroId;
 	private Medicion med;
 	
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +40,8 @@ public class MedicionControl extends Activity implements View.OnClickListener, V
 	}
 	
 	private void cargarInterfaz(){
+		etPotrero = (EditText)findViewById(R.id.etPotrero);
+		etPotrero.setOnKeyListener(this);
 		etInicial = (EditText)findViewById(R.id.etClickInicial);
 		etInicial.setOnKeyListener(this);
 		etFinal = (EditText)findViewById(R.id.etClickFinal);
@@ -54,12 +54,8 @@ public class MedicionControl extends Activity implements View.OnClickListener, V
 		goBack.setOnClickListener(this);
 		logs = (ImageButton)findViewById(R.id.logs);
 		logs.setOnClickListener(this);
-		tvPotrero = (TextView)findViewById(R.id.tvPotrero);
-		tvPotrero.setOnClickListener(this);
 		tvClick = (TextView)findViewById(R.id.tvClick);
 		tvMS = (TextView)findViewById(R.id.tvMS);
-		layoutCalculadora = (LinearLayout)findViewById(R.id.layoutCalculadora);
-		layoutCalculadora.setOnClickListener(this);
 		
 		med = new Medicion();
 		Mediciones.tipoMuestraActual = 4;
@@ -81,18 +77,13 @@ public class MedicionControl extends Activity implements View.OnClickListener, V
 			insertaEntrada();
 			clearScreen();
 			break;
-		case R.id.layoutCalculadora:
-		case R.id.tvPotrero:
-			i = new Intent(this, Calculadora.class);
-			startActivity(i);
-			break;
 		}
 	}
 	
 	private void clearScreen(){
 		med = new Medicion();
-		potreroId = null;
 		Calculadora.potrero = null;
+		etPotrero.setText("");
 		etInicial.setText("");
 		etFinal.setText("");
 		etMuestras.setText("");
@@ -117,24 +108,47 @@ public class MedicionControl extends Activity implements View.OnClickListener, V
 	}
 	
 	private void updateStatus(){
-		med.setPotreroId(potreroId);
-		if (!etInicial.getText().toString().equals("") && !etFinal.getText().toString().equals("") && !etMuestras.getText().toString().equals("")){
+		String etPot = etPotrero.getText().toString();
+		if (!etPot.equals("")){
+			if (Integer.parseInt(etPot) == 0 || Integer.parseInt(etPot) > Aplicaciones.predioWS.getPotreros()){
+				ShowAlert.showAlert("Error", "Potrero no existe", this);
+				etPotrero.setText("");
+				return;
+			} else {
+				med.setPotreroId(Integer.parseInt(etPot));
+			}
+		} else {
+			med.setPotreroId(null);
+		}
+		
+		if (!etInicial.getText().toString().equals("")){
 			med.setClickInicial(Integer.parseInt(etInicial.getText().toString()));
+		} else {
+			med.setClickInicial(null);
+		}
+		
+		if (!etFinal.getText().toString().equals("")){
 			med.setClickFinal(Integer.parseInt(etFinal.getText().toString()));
+		} else {
+			med.setClickFinal(null);
+		}
+		
+		if (!etMuestras.getText().toString().equals("")){
 			med.setMuestras(Integer.parseInt(etMuestras.getText().toString()));
+		} else {
+			med.setMuestras(null);
+		}
+		
+		if (med.getClickFinal() != null &&
+				med.getClickInicial() != null &&
+				med.getMuestras() != null){
 			med.setClick(roundForDisplay(calculaClick(med)));
 			tvClick.setText("Click: " + Double.toString(roundForDisplay(med.getClick())));
 			med.setMateriaSeca(calculaMSVerano(calculaClick(med)));
 			tvMS.setText("MS: " + Integer.toString(med.getMateriaSeca()));
 		} else {
-			tvClick.setText("");
-			tvMS.setText("");
-		}
-		
-		if (potreroId != null){
-			tvPotrero.setText("Potrero: " + Integer.toString(potreroId));
-		} else {
-			tvPotrero.setText("Potrero:");
+			tvClick.setText("Click:");
+			tvMS.setText("MS:");
 		}
 		
 		if (med.getClickFinal() != null &&
@@ -174,8 +188,7 @@ public class MedicionControl extends Activity implements View.OnClickListener, V
 	
 	protected  void onStart(){
 		super.onStart();
-		
-		potreroId = Calculadora.potrero;
+
 		updateStatus();
 	}
 	

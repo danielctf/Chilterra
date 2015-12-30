@@ -22,20 +22,15 @@ import java.util.logging.Logger;
 public class Test {
 
     public static void main(String[] arg) {
-    	
-    	Medicion m = new Medicion();
-		m.setCorreo("dsantamaria@chilterra.com");
-		m.setClickInicial(23);
-		m.setClickFinal(65);
-		m.setMuestras(12);
-		m.setFecha(new Date());
-		m.setFundoId(9);
-		m.setMateriaSeca(22);
-		m.setPotreroId(2);
-		m.setTipoMuestraId(1);
+
     	
     	try {
-			WSMedicionCliente.insertaMedicion(m);
+			List<Medicion> list = WSMedicionCliente.traeStock();
+			int i = 1;
+			for (Medicion m : list){
+				System.out.println(m.getMateriaSeca() + "  " + i + " " + m.getFundoId());
+				i++;
+			}
 		} catch (AppException e) {
 			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());

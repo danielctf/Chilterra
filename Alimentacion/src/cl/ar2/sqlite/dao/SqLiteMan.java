@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="alimentacion";
-    private static final int version = 1;
+    private static final int version = 2;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
@@ -39,14 +39,27 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " correo TEXT,"
         	+ " photo BLOB)");
         
+        db.execSQL(""
+            	+ "CREATE TABLE stock ( "
+            	+ " stock_id INTEGER PRIMARY KEY,"
+            	+ " medicion BLOB, "
+            	+ " actualizado DATE )");
+        
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Aqui dependiendo de los numeros de version se deben crear o modificar las nuevas tablas
         // Las actualizaciones debieran borrar la tabla anterior y crear las nuevas
-        // Siempre debieran estar todos los pasos de cambios desde la version 1
-
+        // Siempre debieran estar todos los pasos de cambios desde la version 1 
+    	
+    	//----------------- VERSION 2 -----------------
+        db.execSQL(""
+            	+ "CREATE TABLE stock ( "
+            	+ " stock_id INTEGER PRIMARY KEY,"
+            	+ " medicion BLOB, "
+            	+ " actualizado DATE )");
+        //---------------------------------------------
 
     }
 

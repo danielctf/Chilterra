@@ -28,5 +28,7 @@
     <string name="title_activity_medicion_residuo">MedicionResiduo</string>
     <string name="title_activity_medicion_semanal">MedicionSemanal</string>
     <string name="title_activity_medicion_control">MedicionControl</string>
+    <string name="title_activity_stock">Stock</string>
+    <string name="title_activity_stock_detalle">StockDetalle</string>
 
 </resources>

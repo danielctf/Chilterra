@@ -7,6 +7,7 @@ import cl.a2r.alimentacion.Aplicaciones;
 import cl.a2r.alimentacion.Login;
 import cl.a2r.alimentacion.MedicionEntrada;
 import cl.a2r.alimentacion.Mediciones;
+import cl.a2r.alimentacion.Stock;
 import cl.a2r.common.AppException;
 import cl.a2r.sap.model.Medicion;
 import cl.ar2.sqlite.cobertura.MedicionServicio;
@@ -26,6 +27,10 @@ public class AppLauncher {
 		case 1:
 			launchApp = Mediciones.class;
 			hasLogAccess = true;
+			break;
+		case 2:
+			launchApp = Stock.class;
+			hasLogAccess = false;
 			break;
 		}
 	}

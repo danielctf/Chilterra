@@ -133,30 +133,39 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 		Predio p;
 		p = new Predio();
 		p.setId(3)	;	p.setNombre("El Huite 1")	;	p.setPotreros(62);
+		p.setCodigo("EH1");
 		list.add(p);
 		p = new Predio();
 		p.setId(9)	;	p.setNombre("El Huite 2")	;	p.setPotreros(63);
+		p.setCodigo("EH2");
 		list.add(p);
 		p = new Predio();
 		p.setId(10)	;	p.setNombre("El Huite 3")	;	p.setPotreros(56);
+		p.setCodigo("EH3");
 		list.add(p);
 		p = new Predio();
 		p.setId(12)	;	p.setNombre("El Huite 5")	;	p.setPotreros(65);
+		p.setCodigo("EH5");
 		list.add(p);
 		p = new Predio();
 		p.setId(15)	;	p.setNombre("El Huite 8")	;	p.setPotreros(61);
+		p.setCodigo("EH8");
 		list.add(p);
 		p = new Predio();
 		p.setId(4)	;	p.setNombre("La Montaña")	;	p.setPotreros(67);
+		p.setCodigo("LM");
 		list.add(p);
 		p = new Predio();
 		p.setId(7)	;	p.setNombre("San José")	;	p.setPotreros(61);
+		p.setCodigo("SJ");
 		list.add(p);
 		p = new Predio();
 		p.setId(6)	;	p.setNombre("Santa Genova")	;	p.setPotreros(85);
+		p.setCodigo("SG");
 		list.add(p);
 		p = new Predio();
 		p.setId(8)	;	p.setNombre("Santa Laura")	;	p.setPotreros(89);
+		p.setCodigo("SL");
 		list.add(p);
 		
 		ArrayAdapter<Predio> mAdapter = new ArrayAdapter<Predio>(this, android.R.layout.simple_list_item_1, list);
@@ -171,11 +180,11 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 		a.setNombre("Medición");
 		a.setActiva("Y");
 		apps.add(a);
-		//a = new Aplicacion();
-		//a.setId(2);
-		//a.setNombre("Stock");
-		//a.setActiva("Y");
-		//apps.add(a);
+		a = new Aplicacion();
+		a.setId(2);
+		a.setNombre("Stock");
+		a.setActiva("Y");
+		apps.add(a);
 		
 		//Ordena las apps para que las que estan activas aparezcan al comienzo.
 		for (int i = 0; i < apps.size(); i++){

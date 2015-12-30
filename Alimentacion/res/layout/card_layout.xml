@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:id="@+id/container"
+     android:paddingTop="15dp"
+     android:paddingBottom="15dp"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/tvPotrero"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginLeft="10dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/black"
+        android:textSize="32sp" />
+
+      <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:layout_weight="0.7" >
+
+          <TextView
+              android:id="@+id/tvTipoMuestra"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="bottom"
+              android:layout_marginLeft="15dp"
+              android:textAppearance="?android:attr/textAppearanceLarge"
+              android:textColor="@color/black"
+              android:textSize="35sp" />
+
+          <TextView
+              android:id="@+id/tvFecha"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="bottom"
+              android:layout_marginLeft="15dp"
+              android:text="00/00/0000"
+              android:textAppearance="?android:attr/textAppearanceLarge"
+              android:textColor="@color/black"
+              android:textSize="25sp" />
+
+      </LinearLayout>
+
+      <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="0.3"
+          android:orientation="vertical" >
+
+          <TextView
+              android:id="@+id/tvClickNumber"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="top"
+              android:gravity="center"
+              android:text="Click"
+              android:textAppearance="?android:attr/textAppearanceLarge"
+              android:textColor="@color/black"
+              android:textSize="35sp" />
+
+          <TextView
+              android:id="@+id/tvClick"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="top"
+              android:gravity="center"
+              android:text="Click"
+              android:textAppearance="?android:attr/textAppearanceLarge"
+              android:textColor="@color/black"
+              android:textSize="25sp" />
+
+      </LinearLayout>
+      
+  </LinearLayout>
+

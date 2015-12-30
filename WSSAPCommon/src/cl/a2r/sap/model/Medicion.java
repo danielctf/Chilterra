@@ -7,6 +7,7 @@ import java.util.Date;
 public class Medicion implements Serializable{
 
 	private static final long serialVersionUID = 1L;
+	private Integer id;
 	private Integer usuarioId;
 	private String correo;
 	private Integer fundoId;
@@ -19,9 +20,20 @@ public class Medicion implements Serializable{
 	private Integer medidorId;
 	private String nombreMedidor;
 	private Integer tipoMuestraId;
+	private String tipoMuestraNombre;
+	private double superficie;
+	private Date actualizado;
 	private Date fecha;
 	private Integer sqliteId;
 	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	public Integer getUsuarioId() {
 		return usuarioId;
 	}
@@ -124,6 +136,36 @@ public class Medicion implements Serializable{
 
 	public void setTipoMuestraId(Integer tipoMuestraId) {
 		this.tipoMuestraId = tipoMuestraId;
+	}
+
+	/**
+	 * @return the actualizado
+	 */
+	public Date getActualizado() {
+		return actualizado;
+	}
+
+	/**
+	 * @param actualizado the actualizado to set
+	 */
+	public void setActualizado(Date actualizado) {
+		this.actualizado = actualizado;
+	}
+
+	public String getTipoMuestraNombre() {
+		return tipoMuestraNombre;
+	}
+
+	public double getSuperficie() {
+		return superficie;
+	}
+
+	public void setSuperficie(double superficie) {
+		this.superficie = superficie;
+	}
+
+	public void setTipoMuestraNombre(String tipoMuestraNombre) {
+		this.tipoMuestraNombre = tipoMuestraNombre;
 	}
 
 	public Integer getSqliteId() {

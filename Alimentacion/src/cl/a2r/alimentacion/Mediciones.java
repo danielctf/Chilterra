@@ -1,5 +1,6 @@
 package cl.a2r.alimentacion;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cl.a2r.common.AppException;
@@ -91,10 +92,14 @@ public class Mediciones extends Activity implements View.OnClickListener{
     				ShowAlert.showAlert("Sincronización", "Sincronización Completa", Mediciones.this);
     				return;
     			}
+    			List<Medicion> medList = new ArrayList<Medicion>();
     			for (RegistroMedicion rm : list){
-    				WSMedicionCliente.insertaMedicion(rm.getMedicion());
-    				MedicionServicio.deleteMedicion(rm.getId());
+    				medList.add(rm.getMedicion());
     			}
+				WSMedicionCliente.insertaMedicion(medList);
+				for (RegistroMedicion rm : list){
+					MedicionServicio.deleteMedicion(rm.getId());
+				}
     			ShowAlert.showAlert("Sincronización", "Sincronización Completa", Mediciones.this);
     		} catch (AppException e) {
     			ShowAlert.showAlert("Error", e.getMessage(), Mediciones.this);

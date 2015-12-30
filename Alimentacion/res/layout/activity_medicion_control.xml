@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="Medición de Control"
+            android:text="Medición Control"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />
 
@@ -51,16 +51,6 @@
         android:background="@color/green"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/tvPotrero"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|top"
-            android:text="Potrero:"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/white"
-            android:textSize="30sp" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
@@ -70,22 +60,24 @@
 	            android:layout_width="0dp"
 	            android:layout_height="wrap_content"
 	            android:layout_weight="0.5"
-	            android:layout_gravity="bottom"
+	            android:layout_gravity="center"
 	            android:gravity="center"
+	            android:text="Click:"
 	            android:textAppearance="?android:attr/textAppearanceLarge"
 	            android:textColor="@color/white"
-	            android:textSize="25sp" />
+	            android:textSize="30sp" />
 	        
 	        <TextView
 	            android:id="@+id/tvMS"
 	            android:layout_width="0dp"
 	            android:layout_height="wrap_content"
 	            android:layout_weight="0.5"
-	            android:layout_gravity="bottom"
+	            android:layout_gravity="center"
 	            android:gravity="center"
+	            android:text="MS:"
 	            android:textAppearance="?android:attr/textAppearanceLarge"
 	            android:textColor="@color/white"
-	            android:textSize="25sp" />
+	            android:textSize="30sp" />
             
         </LinearLayout>
 
@@ -97,6 +89,36 @@
         android:layout_height="0dp"
         android:layout_weight="0.6"
         android:orientation="vertical" >
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content" >
+
+           <TextView
+               android:id="@+id/tvPotrero1"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_marginLeft="15dp"
+               android:layout_marginTop="20dp"
+               android:layout_weight="0.5"
+               android:text="Potrero"
+               android:textAppearance="?android:attr/textAppearanceLarge"
+               android:textColor="@color/black"
+               android:textSize="25sp" />
+
+           <EditText
+               android:id="@+id/etPotrero"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_marginRight="10dp"
+               android:layout_marginTop="15dp"
+               android:layout_weight="0.5"
+               android:background="@drawable/apptheme_edit_text_holo_light"
+               android:ems="10"
+               android:inputType="number"
+               android:maxLength="9"
+               android:textSize="25sp" />
+       </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -114,7 +136,7 @@
 	            android:textColor="@color/black"
 	            android:textSize="25sp" />
 
-   	        <EditText
+   	       <EditText
    	            android:id="@+id/etClickInicial"
    	            android:layout_width="0dp"
    	            android:layout_height="wrap_content"
@@ -126,7 +148,6 @@
    	            android:ems="10"
    	            android:maxLength="9"
    	            android:inputType="number" >
-   	            <requestFocus />
    	        </EditText>
             
         </LinearLayout>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cl.a2r.alimentacion"
+    android:installLocation="preferExternal"
     android:versionCode="1"
     android:versionName="1.00" >
 
@@ -129,6 +130,14 @@
         <activity
             android:name=".MedicionControl"
             android:label="@string/title_activity_medicion_control" >
+        </activity>
+        <activity
+            android:name=".Stock"
+            android:label="@string/title_activity_stock" >
+        </activity>
+        <activity
+            android:name=".StockDetalle"
+            android:label="@string/title_activity_stock_detalle" >
         </activity>
     </application>
 
