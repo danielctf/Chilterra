@@ -104,7 +104,7 @@ public class MedicionDAO {
     	statement.executeUpdateDelete();
     }
     
-    public static List selectStock(SqLiteTrx trx, Integer g_fundo_id) throws SQLException {
+    public static List selectStockTotal(SqLiteTrx trx) throws SQLException {
         List<StockM> list = new ArrayList<StockM>();
         boolean hayReg;
 
@@ -123,7 +123,10 @@ public class MedicionDAO {
 
             hayReg = c.moveToNext();
         }
-        
+		return list;
+    }
+    
+    public static List selectStock(SqLiteTrx trx, List<StockM> list, Integer g_fundo_id) throws SQLException {
         //Filtra por el predio que eligio
         List<StockM> listFiltrada = new ArrayList<StockM>();
         for (StockM sm : list){
@@ -132,19 +135,91 @@ public class MedicionDAO {
         	}
         }
         
+        //Trae la medicion mas actualizada de cada potrero
+        List<StockM> listUpdated = new ArrayList<StockM>();
+        for (StockM sm : listFiltrada){
+        	StockM toAdd = new StockM();
+        	for (StockM s : listFiltrada){
+        		if (sm.getMed().getPotreroId().intValue() == s.getMed().getPotreroId().intValue()){
+        			if (s.getMed().getId().intValue() >= sm.getMed().getId().intValue()){
+        				toAdd = s;
+        			}
+        		}
+        	}
+        	if (!listUpdated.contains(toAdd)){
+        		listUpdated.add(toAdd);
+        	}
+        }
+        
         //Ordena de mayor a menor por materia seca
-        for (int i = 0; i < listFiltrada.size(); i++){
-        	for (int j = 0; j < listFiltrada.size(); j++){
-        		if (listFiltrada.get(j).getMed().getMateriaSeca() < listFiltrada.get(i).getMed().getMateriaSeca()){
-        			StockM temp = listFiltrada.get(i);
-        			listFiltrada.set(i, listFiltrada.get(j));
-        			listFiltrada.set(j, temp);
+        for (int i = 0; i < listUpdated.size(); i++){
+        	for (int j = 0; j < listUpdated.size(); j++){
+        		if (listUpdated.get(j).getMed().getMateriaSeca().intValue() < listUpdated.get(i).getMed().getMateriaSeca().intValue()){
+        			StockM temp = listUpdated.get(i);
+        			listUpdated.set(i, listUpdated.get(j));
+        			listUpdated.set(j, temp);
         		}
         	}
         }
 
-        return listFiltrada;
+        return listUpdated;
 
+    }
+    
+    public static List selectStockPotrero(SqLiteTrx trx, List<StockM> list, Integer g_fundo_id, Integer a_potrero_id) throws SQLException {        
+        //Filtra por el predio que eligio
+        List<StockM> listFiltrada = new ArrayList<StockM>();
+        for (StockM sm : list){
+        	if (sm.getMed().getFundoId().intValue() == g_fundo_id.intValue()){
+        		listFiltrada.add(sm);
+        	}
+        }
+        
+        //Filtra por el potrero que eligio
+        List<StockM> listUpdated = new ArrayList<StockM>();
+        for (StockM sm : listFiltrada){
+        	if (sm.getMed().getPotreroId().intValue() == a_potrero_id.intValue()){
+        		listUpdated.add(sm);
+        	}
+        }
+        
+        //Ordena de mayor a menor por Id
+        for (int i = 0; i < listUpdated.size(); i++){
+        	for (int j = 0; j < listUpdated.size(); j++){
+        		if (listUpdated.get(j).getMed().getId().intValue() < listUpdated.get(i).getMed().getId().intValue()){
+        			StockM temp = listUpdated.get(i);
+        			listUpdated.set(i, listUpdated.get(j));
+        			listUpdated.set(j, temp);
+        		}
+        	}
+        }
+        
+        return listUpdated;
+    }
+    
+    public static List selectStockCrecimiento(SqLiteTrx trx, List<StockM> list, Integer g_fundo_id, Integer numero) throws SQLException {        
+    	//Devuelve el stock de un fundo o potrero para calcular el crecimiento promedio
+    	
+        //Filtra por el predio que eligio
+        List<StockM> listFiltrada = new ArrayList<StockM>();
+        for (StockM sm : list){
+        	if (sm.getMed().getFundoId().intValue() == g_fundo_id.intValue()){
+        		listFiltrada.add(sm);
+        	}
+        }
+        
+        if (numero.intValue() != 0){
+            //Filtra por el potrero que eligio
+            List<StockM> listUpdated = new ArrayList<StockM>();
+            for (StockM sm : listFiltrada){
+            	if (sm.getMed().getPotreroId().intValue() == numero.intValue()){
+            		listUpdated.add(sm);
+            	}
+            }
+            return listUpdated;
+        }
+        
+		return listFiltrada;
     }
     
 }

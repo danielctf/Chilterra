@@ -33,7 +33,7 @@ public class Util {
             os.close();
             bytes = bs.toByteArray();
 
-            System.out.println("Serializa byte[] " + bytes.length);
+            //System.out.println("Serializa byte[] " + bytes.length);
 
         } catch (IOException ex) {
             Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
@@ -51,7 +51,7 @@ public class Util {
         ObjectInputStream is = null;
         Object obj = null;
 
-        System.out.println("Desserializa byte[] " + bytes.length);
+        //System.out.println("Desserializa byte[] " + bytes.length);
 
         try {
             ByteArrayInputStream bs = new ByteArrayInputStream(bytes);

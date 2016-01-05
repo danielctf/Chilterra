@@ -102,7 +102,7 @@ public class MedicionServicio {
         }
     }
     
-    public static List traeStock(Integer g_fundo_id) throws AppException {
+    public static List traeStockTotal() throws AppException {
         List list = new ArrayList();
         SqLiteTrx trx;
 
@@ -114,7 +114,7 @@ public class MedicionServicio {
 
         if (trx != null) {
             try {
-                list = MedicionDAO.selectStock(trx, g_fundo_id);
+                list = MedicionDAO.selectStockTotal(trx);
             } catch ( SQLException ex ) {
                 throw new AppException(ex.getMessage(), null);
             } finally {
@@ -124,6 +124,30 @@ public class MedicionServicio {
         }
 
         return list;
+    }
+    
+    public static List traeStock(List<StockM> list, Integer g_fundo_id) throws AppException {
+        List listFiltrada = new ArrayList();
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+            	listFiltrada = MedicionDAO.selectStock(trx, list, g_fundo_id);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return listFiltrada;
     }
     
     public static void deleteStock() throws AppException {
@@ -146,6 +170,54 @@ public class MedicionServicio {
                 trx.close();
             }
         }
+    }
+    
+    public static List traeStockPotrero(List<StockM> list, Integer g_fundo_id, Integer a_potrero_id) throws AppException {
+        List listFiltrada = new ArrayList();
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+            	listFiltrada = MedicionDAO.selectStockPotrero(trx, list, g_fundo_id, a_potrero_id);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return listFiltrada;
+    }
+    
+    public static List traeStockCrecimiento(List<StockM> list, Integer g_fundo_id, Integer a_potrero_id) throws AppException {
+        List listFiltrada = new ArrayList();
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+            	listFiltrada = MedicionDAO.selectStockCrecimiento(trx, list, g_fundo_id, a_potrero_id);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return listFiltrada;
     }
 	
 }

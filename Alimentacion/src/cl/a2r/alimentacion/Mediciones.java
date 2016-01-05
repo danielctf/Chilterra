@@ -96,7 +96,7 @@ public class Mediciones extends Activity implements View.OnClickListener{
     			for (RegistroMedicion rm : list){
     				medList.add(rm.getMedicion());
     			}
-				WSMedicionCliente.insertaMedicion(medList);
+				WSMedicionCliente.insertaMedicion(medList, Login.mail);
 				for (RegistroMedicion rm : list){
 					MedicionServicio.deleteMedicion(rm.getId());
 				}

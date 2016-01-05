@@ -50,7 +50,6 @@ public class StockAdapter extends BaseAdapter{
       @SuppressLint("InflateParams")
       public View getView(int position, View convertView, ViewGroup parent) {
           // TODO Auto-generated method stub
-    	  System.out.println("position: " + position);
           View grid;
           LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
           grid = new View(mContext);
@@ -74,6 +73,8 @@ public class StockAdapter extends BaseAdapter{
           tvClickNumber.setText(Double.toString(roundForDisplay(click)));
           
           tvFecha.setText(df.format(((StockM) meds.get(position)).getMed().getFecha()));
+          
+          
           //tvMS.setText("MS: " + Integer.toString(((StockM) meds.get(position)).getMed().getMateriaSeca()));
           tvTipoMuestra.setText(((StockM) meds.get(position)).getMed().getTipoMuestraNombre());
 

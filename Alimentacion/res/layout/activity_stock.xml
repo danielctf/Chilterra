@@ -74,7 +74,6 @@
 	                    android:layout_height="wrap_content"
 	                    android:layout_gravity="center"
 	                    android:gravity="center"
-	                    android:text="EH1"
 	                    android:textAppearance="?android:attr/textAppearanceLarge"
 	                    android:textColor="@color/white"
 	                    android:textSize="70sp" />                    
@@ -97,13 +96,12 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginRight="15dp"
-                            android:src="@drawable/ic_trending_up_white_24dp" />
+                            android:src="@drawable/cobertura" />
 
                         <TextView
                             android:id="@+id/tvCobertura"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2500 KgMs/Ha"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="@color/white"
                             android:textSize="20sp" />
@@ -118,13 +116,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="15dp"
-                            android:src="@drawable/ic_trending_up_white_24dp" />
+                            android:src="@drawable/plato" />
 
                         <TextView
                             android:id="@+id/tvClick"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="14.1 Click"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="@color/white"
                             android:textSize="20sp" />
@@ -146,7 +143,6 @@
                             android:id="@+id/tvCrecimiento"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="60 KgMs/Ha/dia"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="@color/white"
                             android:textSize="20sp" />
@@ -167,7 +163,7 @@
                             android:id="@+id/tvUpdate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Últ Actualización\n00/00/0000"
+                            android:text="Últ. Actualización\n00/00/0000"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="@color/white"
                             android:textSize="20sp" />
