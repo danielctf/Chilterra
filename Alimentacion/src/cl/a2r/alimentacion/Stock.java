@@ -2,7 +2,6 @@ package cl.a2r.alimentacion;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import cl.a2r.common.AppException;
@@ -13,19 +12,15 @@ import cl.a2r.sap.model.Medicion;
 import cl.a2r.sap.wsservice.WSMedicionCliente;
 import cl.ar2.sqlite.cobertura.Crecimiento;
 import cl.ar2.sqlite.cobertura.MedicionServicio;
-import cl.ar2.sqlite.cobertura.RegistroMedicion;
 import cl.ar2.sqlite.cobertura.StockM;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -74,7 +69,7 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 			break;
 		}
 	}
-	
+
 	private void getStock(){
 		try {
 			tvFundo.setText(Aplicaciones.predioWS.getCodigo());
@@ -97,8 +92,8 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 			cobertura = calcularCobertura(list2);
 			tvCobertura.setText(Integer.toString(cobertura) + " KgMs/Ha");
 			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-			tvUpdate.setText("Últ. Actualización\n" + df.format(list2.get(0).getActualizado()));
-			tvClick.setText(Double.toString(calcularClickPromedio(list2)) + " Click");
+			tvUpdate.setText(/*"Últ. Actualización\n" + */df.format(list2.get(0).getActualizado()));
+			tvClick.setText(Double.toString(calcularClickPromedio(cobertura)) + " Click");
 			
 			calcularCrecimiento();
 			Utility.setListViewHeightBasedOnChildren(lvStock);
@@ -140,7 +135,9 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 				max2.setId(0);
 				boolean valid = false;
 				for (StockM sm : listFiltrada){
-					if (sm.getMed().getPotreroId().intValue() == (i+1)){
+					if (sm.getMed().getPotreroId().intValue() == (i+1) &&
+							sm.getMed().getTipoMuestraNombre().equals("Semanal")){
+						
 						if (sm.getMed().getId().intValue() > max.getId().intValue()){
 							max2 = max;
 							max = sm.getMed();
@@ -163,7 +160,6 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 					if (diffDays > 0){
 						double matSeca = max.getMateriaSeca().intValue() - max2.getMateriaSeca().intValue();
 						double crecimiento = roundForDisplay(matSeca / (double) diffDays);
-						System.out.println("days " + diffDays + " matSeca " + matSeca+ " " + "crecimiento "+crecimiento);
 						
 						Crecimiento c = new Crecimiento();
 						c.setCrecimiento(crecimiento);
@@ -223,7 +219,11 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 		return coberturaPromedio;
 	}
 	
-	private double calcularClickPromedio(List<StockM> list){
+	private double calcularClickPromedio(int ms){
+		double matSeca = ((double) ms - (double) 500) / (double) 140;
+		return roundForDisplay(matSeca);
+		
+		/*
 		int totalClicks = 0;
 		double click = 0;
 		for (StockM sm : list){
@@ -233,6 +233,7 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 		click = click / (double) totalClicks;
 		click = roundForDisplay(click);
 		return click;
+		*/
 	}
 
 }

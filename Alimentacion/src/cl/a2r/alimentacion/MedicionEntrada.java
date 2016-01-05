@@ -181,6 +181,8 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 	}
 	
 	private int calculaMSVerano(double click){
+		//Hay 4 calculaMSVerano, uno en entrada, residuo, control y semanal
+		//tambien en la clase Stock ir a funcion calcularClickPromedio()
 		int res = 0;
 		res = (int) Math.round(click * (double)140 + (double)500);
 		return res;
