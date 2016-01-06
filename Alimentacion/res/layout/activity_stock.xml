@@ -163,7 +163,6 @@
                             android:id="@+id/tvUpdate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Últ. Actualización\n00/00/0000"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="@color/white"
                             android:textSize="20sp" />

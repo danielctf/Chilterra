@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 public class MedicionSemanal extends Activity implements View.OnClickListener, View.OnKeyListener {
 
-	private TextView tvClick, tvMS;
+	private TextView tvClick, tvMS, tvFundo;
 	private EditText etPotrero, etInicial, etFinal, etMuestras;
 	private ImageButton goBack, logs, confirmarEntrada;
 	private Medicion med;
@@ -56,6 +56,8 @@ public class MedicionSemanal extends Activity implements View.OnClickListener, V
 		logs.setOnClickListener(this);
 		tvClick = (TextView)findViewById(R.id.tvClick);
 		tvMS = (TextView)findViewById(R.id.tvMS);
+		tvFundo = (TextView)findViewById(R.id.tvFundo);
+		tvFundo.setText(Aplicaciones.predioWS.getCodigo());
 		
 		med = new Medicion();
 		Mediciones.tipoMuestraActual = 3;
@@ -143,12 +145,12 @@ public class MedicionSemanal extends Activity implements View.OnClickListener, V
 				med.getClickInicial() != null &&
 				med.getMuestras() != null){
 			med.setClick(roundForDisplay(calculaClick(med)));
-			tvClick.setText("Click: " + Double.toString(roundForDisplay(med.getClick())));
+			tvClick.setText(Double.toString(roundForDisplay(med.getClick())) + " Click");
 			med.setMateriaSeca(calculaMSVerano(calculaClick(med)));
-			tvMS.setText("MS: " + Integer.toString(med.getMateriaSeca()));
+			tvMS.setText(Integer.toString(med.getMateriaSeca()) + " KgMs/Ha");
 		} else {
-			tvClick.setText("Click:");
-			tvMS.setText("MS:");
+			tvClick.setText("");
+			tvMS.setText("");
 		}
 		
 		if (med.getClickFinal() != null &&

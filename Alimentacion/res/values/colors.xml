@@ -10,5 +10,9 @@
     <color name="lightgris">#50cccccc</color>
     <color name="cafe">#827717</color>
     <color name="lightgreen">#00C853</color>
-    <color name="amarillo">#effe81</color> 
+    <color name="amarillo">#effe81</color>
+    <color name="entrada">#0F9D58</color> 
+    <color name="residuo">#F4B400</color> 
+    <color name="control">#4285F4</color> 
+    <color name="cancelar">#DB4437</color> 
 </resources>

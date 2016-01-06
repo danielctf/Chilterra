@@ -7,6 +7,7 @@
     tools:context="cl.a2r.alimentacion.Stock" >
 
     <RelativeLayout
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.1"
@@ -34,154 +35,241 @@
             android:textColor="@color/white" />
     </RelativeLayout>
 
-    <ScrollView
-        android:id="@+id/scrollView1"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.9" >
 
-        <LinearLayout
+        <ScrollView
+            android:id="@+id/scrollView1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_height="match_parent" >
 
             <LinearLayout
-                android:id="@+id/layoutCalculadora"
+                android:id="@+id/test"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/green"
-                android:orientation="horizontal" >
+                android:orientation="vertical" >
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:id="@+id/layoutCalculadora"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
-                    android:orientation="vertical" >
-                    
-                    <TextView
-	                    android:id="@+id/tvPotrero"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:layout_gravity="center"
-	                    android:gravity="center"
-	                    android:textAppearance="?android:attr/textAppearanceLarge"
-	                    android:textColor="@color/white"
-	                    android:textSize="70sp" />
-
-                    <TextView
-                        android:id="@+id/tvFundo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:textColor="@color/white"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
-                    
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.6"
-                    android:orientation="vertical" >
+                    android:background="@color/green"
+                    android:orientation="horizontal" >
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:orientation="vertical" >
 
-                        <ImageView
-                            android:id="@+id/imageView1"
+                        <TextView
+                            android:id="@+id/tvPotrero"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginRight="15dp"
-                            android:src="@drawable/cobertura" />
-
-                        <TextView
-                            android:id="@+id/tvCobertura"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="@color/white"
-                            android:textSize="20sp" />
+                            android:textSize="70sp" />
+
+                        <TextView
+                            android:id="@+id/tvFundo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/white" />
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:orientation="vertical" >
 
-                        <ImageView
-                            android:id="@+id/imageView2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="15dp"
-                            android:src="@drawable/plato" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
 
-                        <TextView
-                            android:id="@+id/tvClick"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:textColor="@color/white"
-                            android:textSize="20sp" />
+                            <ImageView
+                                android:id="@+id/imageView1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginRight="15dp"
+                                android:src="@drawable/cobertura" />
 
+                            <TextView
+                                android:id="@+id/tvCobertura"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:textColor="@color/white"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <ImageView
+                                android:id="@+id/imageView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="15dp"
+                                android:src="@drawable/plato" />
+
+                            <TextView
+                                android:id="@+id/tvClick"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:textColor="@color/white"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <ImageView
+                                android:id="@+id/ImageView3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="15dp"
+                                android:src="@drawable/ic_trending_up_white_24dp" />
+
+                            <TextView
+                                android:id="@+id/tvCrecimiento"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:textColor="@color/white"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <ImageView
+                                android:id="@+id/ImageView4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="15dp"
+                                android:src="@drawable/ic_update_white_24dp" />
+
+                            <TextView
+                                android:id="@+id/tvUpdate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:textColor="@color/white"
+                                android:textSize="20sp" />
+                        </LinearLayout>
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
-
-                        <ImageView
-                            android:id="@+id/ImageView3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="15dp"
-                            android:src="@drawable/ic_trending_up_white_24dp" />
-
-                        <TextView
-                            android:id="@+id/tvCrecimiento"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:textColor="@color/white"
-                            android:textSize="20sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
-                        
-                        <ImageView
-                            android:id="@+id/ImageView4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="15dp"
-                            android:src="@drawable/ic_update_white_24dp" />
-
-                        <TextView
-                            android:id="@+id/tvUpdate"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Últ. Actualización\n00/00/0000"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:textColor="@color/white"
-                            android:textSize="20sp" />
-                    </LinearLayout>
-
                 </LinearLayout>
 
+                <ListView
+                    android:id="@+id/lvStock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff"
+                    android:choiceMode="singleChoice"
+                    android:dividerHeight="1dp" >
+                </ListView>
             </LinearLayout>
+        </ScrollView>
+        
+        <TextView
+            android:id="@+id/tvEntrada"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/btnEntrada"
+            android:layout_alignTop="@+id/btnEntrada"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:text="Entrada"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="25sp"
+            android:textColor="@color/entrada" />
+        
+        <ImageButton
+            android:id="@+id/btnEntrada"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+        	android:layout_alignLeft="@+id/btnResiduo"
+        	android:layout_above="@+id/btnResiduo"
+        	android:layout_marginBottom="10dp"
+            android:background="@drawable/circlebutton_entrada"
+            android:src="@drawable/plato"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
+        
+        <TextView
+            android:id="@+id/tvResiduo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/btnResiduo"
+            android:layout_alignTop="@+id/btnResiduo"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:text="Residuo"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="25sp"
+            android:textColor="@color/residuo" />          
+        
+        <ImageButton
+            android:id="@+id/btnResiduo"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+        	android:layout_alignLeft="@+id/btnControl"
+        	android:layout_above="@+id/btnControl"
+        	android:layout_marginBottom="10dp"
+            android:background="@drawable/circlebutton_residuo"
+            android:src="@drawable/plato"
+            android:textColor="@color/white"
+            android:textSize="30sp" />        
+        
+        <TextView
+            android:id="@+id/tvControl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/btnControl"
+            android:layout_alignTop="@+id/btnControl"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:text="Control"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="25sp"
+            android:textColor="@color/control" />           
+        
+        <ImageButton
+            android:id="@+id/btnControl"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+        	android:layout_alignLeft="@+id/addMed"
+        	android:layout_marginLeft="6dp"
+        	android:layout_above="@+id/addMed"
+        	android:layout_marginBottom="10dp"
+            android:background="@drawable/circlebutton_control"
+            android:src="@drawable/plato"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
+        
+        <ImageButton
+            android:id="@+id/addMed"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/circlebutton_state"
+            android:src="@drawable/ic_add_white_36dp" />
 
-            <ListView
-                android:id="@+id/lvStock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#ffffff"
-                android:choiceMode="singleChoice"
-                android:dividerHeight="1dp" >
-            </ListView>
-
-        </LinearLayout>
-
-    </ScrollView>
+    </RelativeLayout>
 
 </LinearLayout>

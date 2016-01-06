@@ -30,7 +30,7 @@ public class AppLauncher {
 			break;
 		case 2:
 			launchApp = Stock.class;
-			hasLogAccess = false;
+			hasLogAccess = true;
 			break;
 		}
 	}
@@ -55,6 +55,7 @@ public class AppLauncher {
 		List<RegistroMedicion> list = new ArrayList<RegistroMedicion>();
 		switch (appId){
 		case 1:
+		case 2:
 			try {
 				List<RegistroMedicion> allItems = MedicionServicio.traeMediciones();
 				for (RegistroMedicion rm : allItems){
@@ -74,6 +75,7 @@ public class AppLauncher {
 	public static void deleteLogs(List<RegistroMedicion> deletedLogId){
 		switch (appId){
 		case 1:
+		case 2:
 			try {
 				List<RegistroMedicion> list = MedicionServicio.traeMediciones();
 				for (RegistroMedicion rm : deletedLogId){

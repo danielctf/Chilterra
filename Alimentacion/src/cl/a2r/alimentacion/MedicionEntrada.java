@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 public class MedicionEntrada extends Activity implements View.OnClickListener, View.OnKeyListener {
 
-	private TextView tvClick, tvMS;
+	private TextView tvClick, tvMS, tvFundo;
 	private EditText etPotrero, etInicial, etFinal, etMuestras;
 	private ImageButton goBack, logs, confirmarEntrada;
 	private Medicion med;
@@ -37,6 +37,12 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 		setContentView(R.layout.activity_medicion_entrada);
 		
 		cargarInterfaz();
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			Integer numeroPotrero = extras.getInt("numeroPotrero");
+			etPotrero.setText(Integer.toString(numeroPotrero));
+		}
 	}
 	
 	private void cargarInterfaz(){
@@ -56,6 +62,8 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 		logs.setOnClickListener(this);
 		tvClick = (TextView)findViewById(R.id.tvClick);
 		tvMS = (TextView)findViewById(R.id.tvMS);
+		tvFundo = (TextView)findViewById(R.id.tvFundo);
+		tvFundo.setText(Aplicaciones.predioWS.getCodigo());
 		
 		med = new Medicion();
 		Mediciones.tipoMuestraActual = 1;
@@ -143,12 +151,12 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 				med.getClickInicial() != null &&
 				med.getMuestras() != null){
 			med.setClick(roundForDisplay(calculaClick(med)));
-			tvClick.setText("Click: " + Double.toString(roundForDisplay(med.getClick())));
+			tvClick.setText(Double.toString(roundForDisplay(med.getClick())) + " Click");
 			med.setMateriaSeca(calculaMSVerano(calculaClick(med)));
-			tvMS.setText("MS: " + Integer.toString(med.getMateriaSeca()));
+			tvMS.setText(Integer.toString(med.getMateriaSeca()) + " KgMs/Ha");
 		} else {
-			tvClick.setText("Click:");
-			tvMS.setText("MS:");
+			tvClick.setText("");
+			tvMS.setText("");
 		}
 		
 		if (med.getClickFinal() != null &&
@@ -182,7 +190,7 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 	
 	private int calculaMSVerano(double click){
 		//Hay 4 calculaMSVerano, uno en entrada, residuo, control y semanal
-		//tambien en la clase Stock ir a funcion calcularClickPromedio()
+		//tambien en la clase Stock y StockDetalle ir a funcion calcularClickPromedio()
 		int res = 0;
 		res = (int) Math.round(click * (double)140 + (double)500);
 		return res;

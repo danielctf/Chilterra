@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.a2r.alimentacion.R.color;
+import cl.a2r.alimentacion.R.drawable;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.custom.StockDetalleAdapter;
@@ -13,23 +15,37 @@ import cl.ar2.sqlite.cobertura.Crecimiento;
 import cl.ar2.sqlite.cobertura.MedicionServicio;
 import cl.ar2.sqlite.cobertura.StockM;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class StockDetalle extends Activity implements View.OnClickListener, ListView.OnItemClickListener{
+public class StockDetalle extends Activity implements View.OnClickListener, ListView.OnItemClickListener, View.OnTouchListener{
 	
 	private ListView lvStock;
-	private ImageButton goBack;
-	private TextView tvPotrero, tvCobertura, tvUpdate, tvFundo, tvClick, tvCrecimiento;
-	private int cobertura;
+	private ImageButton goBack, addMed;
+	private ImageButton btnEntrada, btnResiduo, btnControl;
+	private TextView tvPotrero, tvCobertura, tvUpdate, tvFundo, tvClick, tvCrecimiento, tvEntrada, tvResiduo, tvControl;
+	private LinearLayout layoutCalculadora;
+	private RelativeLayout toolbar;
+	private ScrollView sv1;
+	private String stance;
+	private int cobertura, numero;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,6 +59,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 		if (extras != null) {
 		    g_fundo_id = extras.getInt("g_fundo_id");
 		    numero = extras.getInt("numero");
+		    this.numero = numero;
 		}
 		
 		cargarInterfaz();
@@ -54,15 +71,33 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 	private void cargarInterfaz(){
 		lvStock = (ListView)findViewById(R.id.lvStock);
 		lvStock.setOnItemClickListener(this);
+		lvStock.setOnTouchListener(this);
 		lvStock.setFocusable(false);
 		goBack = (ImageButton)findViewById(R.id.goBack);
 		goBack.setOnClickListener(this);
+		addMed = (ImageButton)findViewById(R.id.addMed);
+		addMed.setOnClickListener(this);
 		tvCobertura = (TextView)findViewById(R.id.tvCobertura);
 		tvUpdate = (TextView)findViewById(R.id.tvUpdate);
 		tvFundo = (TextView)findViewById(R.id.tvFundo);
 		tvPotrero = (TextView)findViewById(R.id.tvPotrero);
 		tvClick = (TextView)findViewById(R.id.tvClick);
 		tvCrecimiento = (TextView)findViewById(R.id.tvCrecimiento);
+		btnEntrada = (ImageButton)findViewById(R.id.btnEntrada);
+		btnEntrada.setOnClickListener(this);
+		btnResiduo = (ImageButton)findViewById(R.id.btnResiduo);
+		btnResiduo.setOnClickListener(this);
+		btnControl = (ImageButton)findViewById(R.id.btnControl);
+		btnControl.setOnClickListener(this);
+		layoutCalculadora = (LinearLayout)findViewById(R.id.layoutCalculadora);
+		layoutCalculadora.setOnTouchListener(this);
+		toolbar = (RelativeLayout)findViewById(R.id.toolbar);
+		toolbar.setOnTouchListener(this);
+		sv1 = (ScrollView)findViewById(R.id.scrollView1);
+		sv1.setOnTouchListener(this);
+		tvEntrada = (TextView)findViewById(R.id.tvEntrada);
+		tvResiduo = (TextView)findViewById(R.id.tvResiduo);
+		tvControl = (TextView)findViewById(R.id.tvControl);
 	}
 	
 	private void getStockPotrero(Integer g_fundo_id, Integer numero){
@@ -95,9 +130,32 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 
 	public void onClick(View v) {
 		int id = v.getId();
+		Intent i;
 		switch (id){
 		case R.id.goBack:
 			finish();
+			break;
+		case R.id.addMed:
+			if (stance.equals("menu")){
+				resetMenu();
+			} else if (stance.equals("noMenu")){
+				showMenu();
+			}
+			break;
+		case R.id.btnEntrada:
+			i = new Intent(this, MedicionEntrada.class);
+			i.putExtra("numeroPotrero", numero);
+			startActivity(i);
+			break;
+		case R.id.btnResiduo:
+			i = new Intent(this, MedicionResiduo.class);
+			i.putExtra("numeroPotrero", numero);
+			startActivity(i);
+			break;
+		case R.id.btnControl:
+			i = new Intent(this, MedicionControl.class);
+			i.putExtra("numeroPotrero", numero);
+			startActivity(i);
 			break;
 		}
 	}
@@ -190,6 +248,60 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 	private double calcularClickPromedio(int ms){
 		double matSeca = ((double) ms - (double) 500) / (double) 140;
 		return roundForDisplay(matSeca);
+	}
+	
+	private void showMenu(){
+		btnEntrada.setVisibility(View.VISIBLE);
+		btnResiduo.setVisibility(View.VISIBLE);
+		btnControl.setVisibility(View.VISIBLE);
+		tvEntrada.setVisibility(View.VISIBLE);
+		tvResiduo.setVisibility(View.VISIBLE);
+		tvControl.setVisibility(View.VISIBLE);
+		Animation controlAnim = AnimationUtils.loadAnimation(this, R.anim.controlappear);
+		Animation residuoAnim = AnimationUtils.loadAnimation(this, R.anim.residuoappear);
+		Animation entradaAnim = AnimationUtils.loadAnimation(this, R.anim.entradaappear);
+		btnControl.startAnimation(controlAnim);
+		tvControl.startAnimation(controlAnim);
+		btnResiduo.startAnimation(residuoAnim);
+		tvResiduo.startAnimation(residuoAnim);
+		btnEntrada.startAnimation(entradaAnim);
+		tvEntrada.startAnimation(entradaAnim);
+		lvStock.setAlpha(0.1f);
+		layoutCalculadora.setAlpha(0.1f);
+		toolbar.setAlpha(0.1f);
+		stance = "menu";
+		
+		addMed.setImageResource(R.drawable.ic_clear_white_36dp);
+		addMed.setBackgroundResource(drawable.circlebutton_cancelar);
+	}
+	
+	private void resetMenu(){
+		btnEntrada.setVisibility(View.INVISIBLE);
+		btnResiduo.setVisibility(View.INVISIBLE);
+		btnControl.setVisibility(View.INVISIBLE);
+		tvEntrada.setVisibility(View.INVISIBLE);
+		tvResiduo.setVisibility(View.INVISIBLE);
+		tvControl.setVisibility(View.INVISIBLE);
+		lvStock.setAlpha(1);
+		layoutCalculadora.setAlpha(1);
+		toolbar.setAlpha(1);
+		addMed.setImageResource(R.drawable.ic_add_white_36dp);
+		addMed.setBackgroundResource(drawable.circlebutton_green);
+		stance = "noMenu";
+	}
+	
+	protected  void onStart(){
+		super.onStart();
+		
+		resetMenu();
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		if (stance.equals("menu")){
+			resetMenu();
+		}
+		return false;
 	}
 
 }
