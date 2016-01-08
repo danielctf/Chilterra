@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -41,6 +42,15 @@ public class ShowAlert {
 		builder.setTitle(title);
 		builder.setItems(items, listener);
 		AlertDialog alert = builder.create();
+		alert.show();
+	}
+	
+	public static void multipleChoice(String title, String[] items, boolean[] checked, Context ctx, OnMultiChoiceClickListener listener, OnClickListener okListener){
+		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+		builder.setTitle(title);
+		builder.setMultiChoiceItems(items, checked, listener);
+		final AlertDialog alert = builder.create();
+		alert.setButton("OK", okListener);
 		alert.show();
 	}
 

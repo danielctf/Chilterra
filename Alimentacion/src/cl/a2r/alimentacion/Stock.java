@@ -37,10 +37,12 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 	private TextView tvCobertura, tvUpdate, tvFundo, tvClick, tvCrecimiento;
 	public TextView tvSync;
 	public static List<StockM> list;
-	private List<StockM> listaPotreros;
+	private List<StockM> listaPotreros, listaPotrerosMenu;
 	private int cobertura;
 	private ProgressBar loading;
 	String[] items = {"Materia Seca", "Fecha", "Potrero"};
+	String[] filterItems = {"Entrada", "Residuo", "Semanal", "Control"};
+	boolean[] filterChecked = {true, true, true, true};
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -83,7 +85,7 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 			update();
 			break;
 		case R.id.sort:
-			String[] items = {"Ordenar por"};
+			String[] items = {"Ordenar por", "Filtrar por"};
 			ActionItem t1 = new ActionItem(1, items);
 			QuickAction quickAction = new QuickAction(this, QuickAction.VERTICAL);
 			quickAction.setOnActionItemClickListener(this);
@@ -96,11 +98,22 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 	public void onItemClick(QuickAction source, int pos, int actionId, int lvPos) {
 		if (lvPos == 0){
 			ShowAlert.selectItem("Ordenar por", items, this, new DialogInterface.OnClickListener(){
+				
 				public void onClick(DialogInterface dialog, int which) {
 					ordenarPor(which);
 				}});
 		} else if (lvPos == 1){
-			
+			ShowAlert.multipleChoice("Filtrar por", filterItems, filterChecked, this, new DialogInterface.OnMultiChoiceClickListener() {
+
+				public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+					filterChecked[which] = isChecked;
+				}
+			}, new DialogInterface.OnClickListener() {
+
+				public void onClick(DialogInterface dialog, int which) {
+					filtrarPor();
+				}
+			});
 		}
 	}
 
@@ -125,6 +138,7 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 					listaPotrerosConMediciones.add(sm);
 				}
 			}
+			listaPotrerosMenu = listaPotreros;
 			StockAdapter sAdapter = new StockAdapter(this, listaPotreros);
 			lvStock.setAdapter(sAdapter);
 			
@@ -142,6 +156,10 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 			
 			calcularCrecimiento();
 			Utility.setListViewHeightBasedOnChildren(lvStock);
+			
+			for (int i = 0; i < filterChecked.length; i++){
+				filterChecked[i] = true;
+			}
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
@@ -208,6 +226,36 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 		}
 	}
 	
+	private void filtrarPor(){
+		List<StockM> filterList = new ArrayList<StockM>();
+		List<StockM> potrerosNull = new ArrayList<StockM>();
+		boolean mostrarNulos = true;
+		for (int i = 0; i < filterChecked.length; i++){
+			if (filterChecked[i]){
+				for (StockM sm : listaPotreros){
+					if (sm.getId() != null){
+						if (sm.getMed().getTipoMuestraId().intValue() == (i + 1)){
+							filterList.add(sm);
+						}
+					} else {
+						if (!potrerosNull.contains(sm)){
+							potrerosNull.add(sm);
+						}
+					}
+				}
+			} else {
+				mostrarNulos = false;
+			}
+		}
+		if (mostrarNulos){
+			filterList.addAll(potrerosNull);
+		}
+		listaPotrerosMenu = filterList;
+		StockAdapter sAdapter = new StockAdapter(this, listaPotrerosMenu);
+		lvStock.setAdapter(sAdapter);
+		Utility.setListViewHeightBasedOnChildren(lvStock);
+	}
+	
 	private void ordenarPor(int which){
 		if (listaPotreros == null){
 			return;
@@ -216,56 +264,73 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 		switch (which){
 		case 0:
 			//Cobertura
-			try {
-				listaPotreros = MedicionServicio.traeStock(list, Aplicaciones.predioWS.getId());
-				sAdapter = new StockAdapter(this, listaPotreros);
-				lvStock.setAdapter(sAdapter);
-			} catch (AppException e) {
-				ShowAlert.showAlert("Error", e.getMessage(), this);
+			List<StockM> toRemoveCob = new ArrayList<StockM>();
+			List<StockM> blancosCob = new ArrayList<StockM>();
+			for (int i = 0; i < listaPotrerosMenu.size(); i++){
+				if (listaPotrerosMenu.get(i).getId() == null){
+					blancosCob.add(listaPotrerosMenu.get(i));
+					toRemoveCob.add(listaPotrerosMenu.get(i));
+					continue;
+				}
+				for (int j = 0; j < listaPotrerosMenu.size(); j++){
+					if (listaPotrerosMenu.get(i).getId() != null &&
+							listaPotrerosMenu.get(j).getId() != null &&
+							listaPotrerosMenu.get(i).getMed().getMateriaSeca().intValue() > listaPotrerosMenu.get(j).getMed().getMateriaSeca().intValue()){
+						
+						StockM temp = listaPotrerosMenu.get(i);
+						listaPotrerosMenu.set(i, listaPotrerosMenu.get(j));
+						listaPotrerosMenu.set(j, temp);
+					}
+				}
 			}
+			listaPotrerosMenu.removeAll(toRemoveCob);
+			listaPotrerosMenu.addAll(blancosCob);
+			sAdapter = new StockAdapter(this, listaPotrerosMenu);
+			lvStock.setAdapter(sAdapter);
 			break;
 		case 1:
 			//Fecha
 			List<StockM> toRemove = new ArrayList<StockM>();
 			List<StockM> blancos = new ArrayList<StockM>();
-			for (int i = 0; i < listaPotreros.size(); i++){
-				if (listaPotreros.get(i).getId() == null){
-					blancos.add(listaPotreros.get(i));
-					toRemove.add(listaPotreros.get(i));
+			for (int i = 0; i < listaPotrerosMenu.size(); i++){
+				if (listaPotrerosMenu.get(i).getId() == null){
+					blancos.add(listaPotrerosMenu.get(i));
+					toRemove.add(listaPotrerosMenu.get(i));
 					continue;
 				}
-				for (int j = 0; j < listaPotreros.size(); j++){
-					if (listaPotreros.get(i).getId() != null &&
-							listaPotreros.get(j).getId() != null &&
-							listaPotreros.get(i).getMed().getFecha().compareTo(listaPotreros.get(j).getMed().getFecha()) > 0){
+				for (int j = 0; j < listaPotrerosMenu.size(); j++){
+					if (listaPotrerosMenu.get(i).getId() != null &&
+							listaPotrerosMenu.get(j).getId() != null &&
+									listaPotrerosMenu.get(i).getMed().getFecha().compareTo(listaPotrerosMenu.get(j).getMed().getFecha()) > 0){
 						
-						StockM temp = listaPotreros.get(i);
-						listaPotreros.set(i, listaPotreros.get(j));
-						listaPotreros.set(j, temp);
+						StockM temp = listaPotrerosMenu.get(i);
+						listaPotrerosMenu.set(i, listaPotrerosMenu.get(j));
+						listaPotrerosMenu.set(j, temp);
 					}
 				}
 			}
-			listaPotreros.removeAll(toRemove);
-			listaPotreros.addAll(blancos);
-			sAdapter = new StockAdapter(this, listaPotreros);
+			listaPotrerosMenu.removeAll(toRemove);
+			listaPotrerosMenu.addAll(blancos);
+			sAdapter = new StockAdapter(this, listaPotrerosMenu);
 			lvStock.setAdapter(sAdapter);
 			break;
 		case 2:
 			//Potrero
-			for (int i = 0; i < listaPotreros.size(); i++){
-				for (int j = 0; j < listaPotreros.size(); j++){
-					if (listaPotreros.get(i).getMed().getPotreroId().intValue() < listaPotreros.get(j).getMed().getPotreroId().intValue()){
+			for (int i = 0; i < listaPotrerosMenu.size(); i++){
+				for (int j = 0; j < listaPotrerosMenu.size(); j++){
+					if (listaPotrerosMenu.get(i).getMed().getPotreroId().intValue() < listaPotrerosMenu.get(j).getMed().getPotreroId().intValue()){
 						
-						StockM temp = listaPotreros.get(i);
-						listaPotreros.set(i, listaPotreros.get(j));
-						listaPotreros.set(j, temp);
+						StockM temp = listaPotrerosMenu.get(i);
+						listaPotrerosMenu.set(i, listaPotrerosMenu.get(j));
+						listaPotrerosMenu.set(j, temp);
 					}
 				}
 			}
-			sAdapter = new StockAdapter(this, listaPotreros);
+			sAdapter = new StockAdapter(this, listaPotrerosMenu);
 			lvStock.setAdapter(sAdapter);
 			break;
 		}
+		Utility.setListViewHeightBasedOnChildren(lvStock);
 	}
 	
 	public void updateStatus(){
