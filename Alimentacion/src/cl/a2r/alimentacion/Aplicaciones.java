@@ -176,13 +176,9 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 	private void getAppsWS(){
 		apps = new ArrayList<Aplicacion>();
 		Aplicacion a = new Aplicacion();
-		a.setId(1);
-		a.setNombre("Medición");
-		a.setActiva("Y");
-		apps.add(a);
 		a = new Aplicacion();
-		a.setId(2);
-		a.setNombre("Stock");
+		a.setId(1);
+		a.setNombre("Pastoreo");
 		a.setActiva("Y");
 		apps.add(a);
 		

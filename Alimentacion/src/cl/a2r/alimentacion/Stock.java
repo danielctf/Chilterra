@@ -5,15 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cl.a2r.common.AppException;
+import cl.a2r.custom.ActionItem;
+import cl.a2r.custom.AsyncStock;
+import cl.a2r.custom.QuickAction;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.custom.StockAdapter;
 import cl.a2r.custom.Utility;
 import cl.a2r.sap.model.Medicion;
-import cl.a2r.sap.wsservice.WSMedicionCliente;
 import cl.ar2.sqlite.cobertura.Crecimiento;
 import cl.ar2.sqlite.cobertura.MedicionServicio;
 import cl.ar2.sqlite.cobertura.StockM;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -23,15 +26,21 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class Stock extends Activity implements View.OnClickListener, ListView.OnItemClickListener{
+public class Stock extends Activity implements View.OnClickListener, ListView.OnItemClickListener, QuickAction.OnActionItemClickListener{
 
 	private ListView lvStock;
-	private ImageButton goBack, update;
+	private ImageButton goBack, sort;
+	public ImageButton update;
 	private TextView tvCobertura, tvUpdate, tvFundo, tvClick, tvCrecimiento;
+	public TextView tvSync;
 	public static List<StockM> list;
+	private List<StockM> listaPotreros;
 	private int cobertura;
+	private ProgressBar loading;
+	String[] items = {"Materia Seca", "Fecha", "Potrero"};
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,13 +58,18 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 		lvStock.setFocusable(false);
 		goBack = (ImageButton)findViewById(R.id.goBack);
 		goBack.setOnClickListener(this);
+		sort = (ImageButton)findViewById(R.id.sort);
+		sort.setOnClickListener(this);
 		update = (ImageButton)findViewById(R.id.update);
 		update.setOnClickListener(this);
+		tvSync = (TextView)findViewById(R.id.tvSync);
+		tvSync.setOnClickListener(this);
 		tvCobertura = (TextView)findViewById(R.id.tvCobertura);
 		tvUpdate = (TextView)findViewById(R.id.tvUpdate);
 		tvFundo = (TextView)findViewById(R.id.tvFundo);
 		tvClick = (TextView)findViewById(R.id.tvClick);
 		tvCrecimiento = (TextView)findViewById(R.id.tvCrecimiento);
+		loading = (ProgressBar)findViewById(R.id.loading);
 	}
 	
 	public void onClick(View v) {
@@ -64,13 +78,33 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 		case R.id.goBack:
 			finish();
 			break;
+		case R.id.tvSync:
 		case R.id.update:
 			update();
+			break;
+		case R.id.sort:
+			String[] items = {"Ordenar por"};
+			ActionItem t1 = new ActionItem(1, items);
+			QuickAction quickAction = new QuickAction(this, QuickAction.VERTICAL);
+			quickAction.setOnActionItemClickListener(this);
+			quickAction.addActionItem(t1);
+			quickAction.show(v);
 			break;
 		}
 	}
 
-	private void getStock(){
+	public void onItemClick(QuickAction source, int pos, int actionId, int lvPos) {
+		if (lvPos == 0){
+			ShowAlert.selectItem("Ordenar por", items, this, new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int which) {
+					ordenarPor(which);
+				}});
+		} else if (lvPos == 1){
+			
+		}
+	}
+
+	public void getStock(){
 		try {
 			tvFundo.setText(Aplicaciones.predioWS.getCodigo());
 			list = MedicionServicio.traeStockTotal();
@@ -78,22 +112,33 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 				return;
 			}
 			
-			List<StockM> list2 = MedicionServicio.traeStock(list, Aplicaciones.predioWS.getId());
-			if (list2.size() == 0){
+			List<StockM> listaPotreros = MedicionServicio.traeStock(list, Aplicaciones.predioWS.getId());
+			if (listaPotreros.size() == 0){
 				return;
 			}
-			for (StockM sm : list2){
-				double click = ((double) sm.getMed().getClickFinal().intValue() - (double) sm.getMed().getClickInicial().intValue()) / (double) sm.getMed().getMuestras().intValue();
-				sm.getMed().setClick(roundForDisplay(click));
+			this.listaPotreros = listaPotreros;
+			List<StockM> listaPotrerosConMediciones = new ArrayList<StockM>();
+			for (StockM sm : listaPotreros){
+				if (sm.getMed().getClickFinal() != null){
+					double click = ((double) sm.getMed().getClickFinal().intValue() - (double) sm.getMed().getClickInicial().intValue()) / (double) sm.getMed().getMuestras().intValue();
+					sm.getMed().setClick(roundForDisplay(click));
+					listaPotrerosConMediciones.add(sm);
+				}
 			}
-			StockAdapter sAdapter = new StockAdapter(this, list2);
+			StockAdapter sAdapter = new StockAdapter(this, listaPotreros);
 			lvStock.setAdapter(sAdapter);
 			
-			cobertura = calcularCobertura(list2);
-			tvCobertura.setText(Integer.toString(cobertura) + " KgMs/Ha");
-			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-			tvUpdate.setText(/*"Últ. Actualización\n" + */df.format(list2.get(0).getActualizado()));
-			tvClick.setText(Double.toString(calcularClickPromedio(cobertura)) + " Click");
+			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+			if (listaPotrerosConMediciones.size() > 0){
+				cobertura = calcularCobertura(listaPotrerosConMediciones);
+				tvCobertura.setText(Integer.toString(cobertura) + " KgMs/Ha");
+				tvUpdate.setText(/*"Últ. Actualización\n" + */df.format(listaPotrerosConMediciones.get(0).getActualizado()));
+				tvClick.setText(Double.toString(calcularClickPromedio(cobertura)) + " Click");
+			} else if (list.size() > 0){
+				tvCobertura.setText("0 KgMs/Ha");
+				tvUpdate.setText(df.format(list.get(0).getActualizado()));
+				tvClick.setText("0 Click");
+			}
 			
 			calcularCrecimiento();
 			Utility.setListViewHeightBasedOnChildren(lvStock);
@@ -104,23 +149,12 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 	
     Handler hand = new Handler();
     Runnable run = new Runnable() {
-        public void run() { 
-    		try {
-    			List<Medicion> list = WSMedicionCliente.traeStock();
-    			MedicionServicio.deleteStock();
-    			MedicionServicio.insertaStock(list);
-    			ShowAlert.showAlert("Actualización", "Stock Actualizado", Stock.this);
-    			getStock();
-    		} catch (AppException e) {
-    			ShowAlert.showAlert("Error", e.getMessage(), Stock.this);
-    		} finally {
-    			update.setVisibility(View.VISIBLE);
-    		}
+        public void run() {
+        	new AsyncStock(Stock.this).execute();
         }
-    }; 
+    };
 	
 	private void update(){
-		update.setVisibility(View.INVISIBLE);
 		hand.postDelayed(run, 100);
 	}
 	
@@ -174,6 +208,86 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 		}
 	}
 	
+	private void ordenarPor(int which){
+		if (listaPotreros == null){
+			return;
+		}
+		StockAdapter sAdapter;
+		switch (which){
+		case 0:
+			//Cobertura
+			try {
+				listaPotreros = MedicionServicio.traeStock(list, Aplicaciones.predioWS.getId());
+				sAdapter = new StockAdapter(this, listaPotreros);
+				lvStock.setAdapter(sAdapter);
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
+			break;
+		case 1:
+			//Fecha
+			List<StockM> toRemove = new ArrayList<StockM>();
+			List<StockM> blancos = new ArrayList<StockM>();
+			for (int i = 0; i < listaPotreros.size(); i++){
+				if (listaPotreros.get(i).getId() == null){
+					blancos.add(listaPotreros.get(i));
+					toRemove.add(listaPotreros.get(i));
+					continue;
+				}
+				for (int j = 0; j < listaPotreros.size(); j++){
+					if (listaPotreros.get(i).getId() != null &&
+							listaPotreros.get(j).getId() != null &&
+							listaPotreros.get(i).getMed().getFecha().compareTo(listaPotreros.get(j).getMed().getFecha()) > 0){
+						
+						StockM temp = listaPotreros.get(i);
+						listaPotreros.set(i, listaPotreros.get(j));
+						listaPotreros.set(j, temp);
+					}
+				}
+			}
+			listaPotreros.removeAll(toRemove);
+			listaPotreros.addAll(blancos);
+			sAdapter = new StockAdapter(this, listaPotreros);
+			lvStock.setAdapter(sAdapter);
+			break;
+		case 2:
+			//Potrero
+			for (int i = 0; i < listaPotreros.size(); i++){
+				for (int j = 0; j < listaPotreros.size(); j++){
+					if (listaPotreros.get(i).getMed().getPotreroId().intValue() < listaPotreros.get(j).getMed().getPotreroId().intValue()){
+						
+						StockM temp = listaPotreros.get(i);
+						listaPotreros.set(i, listaPotreros.get(j));
+						listaPotreros.set(j, temp);
+					}
+				}
+			}
+			sAdapter = new StockAdapter(this, listaPotreros);
+			lvStock.setAdapter(sAdapter);
+			break;
+		}
+	}
+	
+	public void updateStatus(){
+		try {
+			List<Medicion> list = MedicionServicio.traeMediciones();
+			if (list.size() > 0){
+				tvSync.setText(Integer.toString(list.size()));
+			} else {
+				tvSync.setText("");
+			}
+		} catch (AppException e) {
+			ShowAlert.showAlert("Error", e.getMessage(), this);
+		}
+	}
+	
+	protected void onStart(){
+		super.onStart();
+		
+		loading.setVisibility(View.INVISIBLE);
+		updateStatus();
+	}
+	
 	private void despliegaCrecimiento(List<Crecimiento> cre){
 		double totalSuperficie = 0;
 		double crecimiento = 0;
@@ -190,9 +304,11 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 		switch (id){
 		case R.id.lvStock:
 			Integer numero = ((StockM) arg0.getItemAtPosition(arg2)).getMed().getPotreroId();
+			Integer ms = ((StockM) arg0.getItemAtPosition(arg2)).getMed().getMateriaSeca();
 			Intent i = new Intent(this, StockDetalle.class);
 			i.putExtra("g_fundo_id", Aplicaciones.predioWS.getId());
 			i.putExtra("numero", numero);
+			i.putExtra("ms", ms);
 			startActivity(i);
 			break;
 		}

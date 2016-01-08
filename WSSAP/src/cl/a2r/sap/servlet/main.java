@@ -21,11 +21,7 @@ public class main {
 		m.setPotreroId(2);
 		m.setTipoMuestraId(1);
 		
-		try {
-			WSMedicionCliente.insertaMedicion(m);
-		} catch (AppException e) {
-			System.out.println(e.getMessage());
-		}
+
 	}
 
 }

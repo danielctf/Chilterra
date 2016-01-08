@@ -212,5 +212,3 @@ public class MedicionResiduo extends Activity implements View.OnClickListener, V
 	}
 
 }
-
-

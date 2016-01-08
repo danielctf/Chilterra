@@ -1,5 +1,7 @@
 package cl.ar2.sqlite.dao;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.List;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteStatement;
+import cl.a2r.alimentacion.Aplicaciones;
 import cl.a2r.sap.model.Medicion;
 import cl.ar2.sqlite.cobertura.RegistroMedicion;
 import cl.ar2.sqlite.cobertura.StockM;
@@ -88,12 +91,13 @@ public class MedicionDAO {
     public static void insertaStock(SqLiteTrx trx, List<Medicion> list) throws SQLException {
 
         SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_STOCK);
-
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        
         for (Medicion m : list){
         	statement.clearBindings();
         	byte[] bytes = Util.serializa(m);
         	statement.bindBlob(1, bytes);
-        	statement.bindLong(2, m.getActualizado().getTime());
+        	statement.bindString(2, df.format(m.getActualizado()));
         	statement.executeInsert();
         }
     }
@@ -108,6 +112,7 @@ public class MedicionDAO {
         List<StockM> list = new ArrayList<StockM>();
         boolean hayReg;
 
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Cursor c = trx.getDB().rawQuery(SQL_SELECT_STOCK, null);
         hayReg = c.moveToFirst();
         while ( hayReg ) {
@@ -117,7 +122,13 @@ public class MedicionDAO {
         	byte[] bytes = c.getBlob(c.getColumnIndex("medicion"));
         	Medicion med = (Medicion) Util.desSerializa(bytes);
         	s.setMed(med);
-        	s.setActualizado(med.getActualizado());
+        	
+        	try {
+				s.setActualizado(df.parse(c.getString(c.getColumnIndex("actualizado"))));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	
             list.add(s);
 
@@ -151,10 +162,31 @@ public class MedicionDAO {
         	}
         }
         
+        //Agrega los potreros que no esten solo para q se desplieguen en la lista
+        for (int i = 0; i < Aplicaciones.predioWS.getPotreros().intValue(); i++){
+        	boolean isInList = false;
+        	for (StockM sm : listUpdated){
+        		if (sm.getMed().getPotreroId().intValue() == (i + 1)){
+        			isInList = true;
+        			break;
+        		}
+        	}
+        	if (!isInList){
+        		StockM s = new StockM();
+        		Medicion m = new Medicion();
+        		m.setPotreroId(i+1);
+        		s.setMed(m);
+        		listUpdated.add(s);
+        	}
+        	
+        }
+        
         //Ordena de mayor a menor por materia seca
         for (int i = 0; i < listUpdated.size(); i++){
         	for (int j = 0; j < listUpdated.size(); j++){
-        		if (listUpdated.get(j).getMed().getMateriaSeca().intValue() < listUpdated.get(i).getMed().getMateriaSeca().intValue()){
+        		if (listUpdated.get(i).getMed().getMateriaSeca() != null && 
+        				listUpdated.get(j).getMed().getMateriaSeca() != null &&
+        				listUpdated.get(j).getMed().getMateriaSeca().intValue() < listUpdated.get(i).getMed().getMateriaSeca().intValue()){
         			StockM temp = listUpdated.get(i);
         			listUpdated.set(i, listUpdated.get(j));
         			listUpdated.set(j, temp);
@@ -183,7 +215,8 @@ public class MedicionDAO {
         	}
         }
         
-        //Ordena de mayor a menor por Id
+        //Ordena de mayor a menor por Id (no por fecha por q a simple viste los usuarios tienen
+        //la embarrada en su celular y hasta la fecha la tienen desconfigurada)
         for (int i = 0; i < listUpdated.size(); i++){
         	for (int j = 0; j < listUpdated.size(); j++){
         		if (listUpdated.get(j).getMed().getId().intValue() < listUpdated.get(i).getMed().getId().intValue()){

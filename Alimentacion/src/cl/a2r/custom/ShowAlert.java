@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.widget.AdapterView.OnItemClickListener;
 
 @SuppressWarnings("deprecation")
 public class ShowAlert {
@@ -33,6 +34,14 @@ public class ShowAlert {
 	    alertDialog.setButton2("Si", listener);
 		alertDialog.setButton("No", listener);
 		alertDialog.show();
+	}
+	
+	public static void selectItem(String title, String[] items, Context ctx, OnClickListener listener){
+		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+		builder.setTitle(title);
+		builder.setItems(items, listener);
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 }

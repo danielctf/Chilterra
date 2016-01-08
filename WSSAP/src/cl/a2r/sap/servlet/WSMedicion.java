@@ -40,11 +40,17 @@ public class WSMedicion extends HttpServlet{
 
             String servicio = (String) params.getParam("servicio");
             if (servicio.equals("insertaMedicion") ) {
-            	Medicion med = (Medicion) params.getParam("med");
-                Integer g_usuario_id = AutorizacionService.validaUsuario(med.getCorreo());
-                med.setUsuarioId(g_usuario_id);
-                MedicionService.insertaMedicion(med);
-                retorno = g_usuario_id;
+            	List<Medicion> medList = (List<Medicion>) params.getParam("medList");
+            	String correo = (String) params.getParam("correo");
+            	Integer g_usuario_id = AutorizacionService.validaUsuario(correo);
+            	for (Medicion m : medList){
+                    m.setUsuarioId(g_usuario_id);
+                    MedicionService.insertaMedicion(m);
+            	}
+            	retorno = g_usuario_id;
+            } else if (servicio.equals("traeStock")){
+            	List<Medicion> list = MedicionService.traeStock();
+            	retorno = list;
             } else {
                 retorno = new AppException("Servicio no válido.", null);
             }

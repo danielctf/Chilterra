@@ -54,33 +54,37 @@ public class StockAdapter extends BaseAdapter{
           LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
           grid = new View(mContext);
           grid = inflater.inflate(R.layout.card_layout, null);
-          
-          LinearLayout container = (LinearLayout) grid.findViewById(R.id.container);
-          TextView tvPotrero = (TextView) grid.findViewById(R.id.tvPotrero);
-          TextView tvClick = (TextView) grid.findViewById(R.id.tvClick);
-          TextView tvClickNumber = (TextView) grid.findViewById(R.id.tvClickNumber);
-          TextView tvFecha = (TextView) grid.findViewById(R.id.tvFecha);
-          //TextView tvMS = (TextView) grid.findViewById(R.id.tvMS);
-          TextView tvTipoMuestra = (TextView) grid.findViewById(R.id.tvTipoMuestra);
-          
-          tvPotrero.setText("P" + Integer.toString(((StockM) meds.get(position)).getMed().getPotreroId()));
-          
-          double clickFinal = ((StockM) meds.get(position)).getMed().getClickFinal();
-          double clickInicial = ((StockM) meds.get(position)).getMed().getClickInicial();
-          double muestras = ((StockM) meds.get(position)).getMed().getMuestras();
-          double click = (clickFinal - clickInicial) / muestras;
-          //tvClick.setText("Click: " + Double.toString(roundForDisplay(click)));
-          tvClickNumber.setText(Double.toString(roundForDisplay(click)));
-          
-          tvFecha.setText(df.format(((StockM) meds.get(position)).getMed().getFecha()));
-          
-          
-          //tvMS.setText("MS: " + Integer.toString(((StockM) meds.get(position)).getMed().getMateriaSeca()));
-          tvTipoMuestra.setText(((StockM) meds.get(position)).getMed().getTipoMuestraNombre());
-
-          //container.setBackgroundResource(getColor(click));
-          tvPotrero.setBackgroundResource(getColor(click));
-          
+          if (meds.get(position).getId() != null){
+	          LinearLayout container = (LinearLayout) grid.findViewById(R.id.container);
+	          TextView tvPotrero = (TextView) grid.findViewById(R.id.tvPotrero);
+	          TextView tvClick = (TextView) grid.findViewById(R.id.tvClick);
+	          TextView tvClickNumber = (TextView) grid.findViewById(R.id.tvClickNumber);
+	          TextView tvFecha = (TextView) grid.findViewById(R.id.tvFecha);
+	          //TextView tvMS = (TextView) grid.findViewById(R.id.tvMS);
+	          TextView tvTipoMuestra = (TextView) grid.findViewById(R.id.tvTipoMuestra);
+	          
+	          tvPotrero.setText("P" + Integer.toString(((StockM) meds.get(position)).getMed().getPotreroId()));
+	          
+	          double clickFinal = ((StockM) meds.get(position)).getMed().getClickFinal();
+	          double clickInicial = ((StockM) meds.get(position)).getMed().getClickInicial();
+	          double muestras = ((StockM) meds.get(position)).getMed().getMuestras();
+	          double click = (clickFinal - clickInicial) / muestras;
+	          //tvClick.setText("Click: " + Double.toString(roundForDisplay(click)));
+	          tvClickNumber.setText(Double.toString(roundForDisplay(click)));
+	          
+	          tvFecha.setText(df.format(((StockM) meds.get(position)).getMed().getFecha()));
+	          
+	          
+	          //tvMS.setText("MS: " + Integer.toString(((StockM) meds.get(position)).getMed().getMateriaSeca()));
+	          tvTipoMuestra.setText(((StockM) meds.get(position)).getMed().getTipoMuestraNombre());
+	
+	          //container.setBackgroundResource(getColor(click));
+	          tvPotrero.setBackgroundResource(getColor(click));
+          } else {
+              TextView tvPotrero = (TextView) grid.findViewById(R.id.tvPotrero);
+              tvPotrero.setText("P" + Integer.toString(((StockM) meds.get(position)).getMed().getPotreroId()));
+              tvPotrero.setBackgroundResource(getColor(0));
+          }
           return grid;
       }
       
@@ -93,7 +97,9 @@ public class StockAdapter extends BaseAdapter{
 	}
   	
   	private int getColor(double click){
-  		if (click <= 7){
+  		if (click == 0){
+  			return R.drawable.circlebutton_rojo;
+  		}else if (click > 0 && click <= 7){
   			return R.drawable.circlebutton_amarillo;
   		} else if (click > 7 && click <= 20){
   			return R.drawable.circlebutton_lightgreen;

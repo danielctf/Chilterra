@@ -15,4 +15,5 @@
     <color name="residuo">#F4B400</color> 
     <color name="control">#4285F4</color> 
     <color name="cancelar">#DB4437</color> 
+    <color name="semanal">#ff008d</color> 
 </resources>

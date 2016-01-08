@@ -9,11 +9,12 @@ import cl.a2r.sap.model.Medicion;
 
 public class WSMedicionCliente {
 
-	   public static void insertaMedicion(List<Medicion> medList) throws AppException {
+	   public static void insertaMedicion(List<Medicion> medList, String correo) throws AppException {
 
 	       ParamServlet params = new ParamServlet();
 	       params.add("servicio", "insertaMedicion" );
 	       params.add("medList", medList );
+	       params.add("correo", correo);
 
 	       Object obj = ServiceWS.invocaWS("WSMedicion", params );
 	       if ( obj != null && obj.getClass().getName().contains("AppException")) {

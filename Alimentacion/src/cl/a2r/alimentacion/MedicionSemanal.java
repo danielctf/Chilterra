@@ -37,6 +37,12 @@ public class MedicionSemanal extends Activity implements View.OnClickListener, V
 		setContentView(R.layout.activity_medicion_semanal);
 		
 		cargarInterfaz();
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			Integer numeroPotrero = extras.getInt("numeroPotrero");
+			etPotrero.setText(Integer.toString(numeroPotrero));
+		}
 	}
 	
 	private void cargarInterfaz(){

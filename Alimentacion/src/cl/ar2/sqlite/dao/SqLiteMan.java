@@ -43,7 +43,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
             	+ "CREATE TABLE stock ( "
             	+ " stock_id INTEGER PRIMARY KEY,"
             	+ " medicion BLOB, "
-            	+ " actualizado DATE )");
+            	+ " actualizado TEXT )");
         
     }
 
@@ -58,7 +58,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
             	+ "CREATE TABLE stock ( "
             	+ " stock_id INTEGER PRIMARY KEY,"
             	+ " medicion BLOB, "
-            	+ " actualizado DATE )");
+            	+ " actualizado TEXT )");
         //---------------------------------------------
 
     }

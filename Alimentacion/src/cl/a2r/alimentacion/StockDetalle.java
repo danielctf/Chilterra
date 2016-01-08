@@ -39,8 +39,8 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 	
 	private ListView lvStock;
 	private ImageButton goBack, addMed;
-	private ImageButton btnEntrada, btnResiduo, btnControl;
-	private TextView tvPotrero, tvCobertura, tvUpdate, tvFundo, tvClick, tvCrecimiento, tvEntrada, tvResiduo, tvControl;
+	private ImageButton btnEntrada, btnResiduo, btnControl, btnSemanal;
+	private TextView tvPotrero, tvCobertura, tvUpdate, tvFundo, tvClick, tvCrecimiento, tvEntrada, tvResiduo, tvControl, tvSemanal;
 	private LinearLayout layoutCalculadora;
 	private RelativeLayout toolbar;
 	private ScrollView sv1;
@@ -59,6 +59,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 		if (extras != null) {
 		    g_fundo_id = extras.getInt("g_fundo_id");
 		    numero = extras.getInt("numero");
+		    cobertura = extras.getInt("ms");
 		    this.numero = numero;
 		}
 		
@@ -89,6 +90,8 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 		btnResiduo.setOnClickListener(this);
 		btnControl = (ImageButton)findViewById(R.id.btnControl);
 		btnControl.setOnClickListener(this);
+		btnSemanal = (ImageButton)findViewById(R.id.btnSemanal);
+		btnSemanal.setOnClickListener(this);
 		layoutCalculadora = (LinearLayout)findViewById(R.id.layoutCalculadora);
 		layoutCalculadora.setOnTouchListener(this);
 		toolbar = (RelativeLayout)findViewById(R.id.toolbar);
@@ -98,6 +101,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 		tvEntrada = (TextView)findViewById(R.id.tvEntrada);
 		tvResiduo = (TextView)findViewById(R.id.tvResiduo);
 		tvControl = (TextView)findViewById(R.id.tvControl);
+		tvSemanal = (TextView)findViewById(R.id.tvSemanal);
 	}
 	
 	private void getStockPotrero(Integer g_fundo_id, Integer numero){
@@ -109,15 +113,12 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 			}
 			if (list.size() == 0){
 				return;
-			} else {
-				System.out.println(list.size());
 			}
 			StockDetalleAdapter sAdapter = new StockDetalleAdapter(this, list);
 			lvStock.setAdapter(sAdapter);
 			
-			cobertura = calcularCobertura(list);
 			tvCobertura.setText(Integer.toString(cobertura) + " KgMs/Ha");
-			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 			tvUpdate.setText(/*"Últ. Actualización\n" + */df.format(list.get(0).getActualizado()));
 			tvClick.setText(Double.toString(calcularClickPromedio(cobertura)) + " Click");
 			
@@ -149,6 +150,11 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 			break;
 		case R.id.btnResiduo:
 			i = new Intent(this, MedicionResiduo.class);
+			i.putExtra("numeroPotrero", numero);
+			startActivity(i);
+			break;
+		case R.id.btnSemanal:
+			i = new Intent(this, MedicionSemanal.class);
 			i.putExtra("numeroPotrero", numero);
 			startActivity(i);
 			break;
@@ -233,18 +239,6 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 		return res;
 	}
 	
-	private int calcularCobertura(List<StockM> list){
-		double cobertura = 0;
-		double totalSuperficie = 0;
-		for (StockM sm : list){
-			cobertura = cobertura + ((double) sm.getMed().getMateriaSeca().intValue() * sm.getMed().getSuperficie());
-			totalSuperficie = totalSuperficie + sm.getMed().getSuperficie();
-		}
-		cobertura = cobertura / totalSuperficie;
-		int coberturaPromedio = (int) Math.round(cobertura);
-		return coberturaPromedio;
-	}
-	
 	private double calcularClickPromedio(int ms){
 		double matSeca = ((double) ms - (double) 500) / (double) 140;
 		return roundForDisplay(matSeca);
@@ -253,12 +247,15 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 	private void showMenu(){
 		btnEntrada.setVisibility(View.VISIBLE);
 		btnResiduo.setVisibility(View.VISIBLE);
+		btnSemanal.setVisibility(View.VISIBLE);
 		btnControl.setVisibility(View.VISIBLE);
 		tvEntrada.setVisibility(View.VISIBLE);
 		tvResiduo.setVisibility(View.VISIBLE);
 		tvControl.setVisibility(View.VISIBLE);
+		tvSemanal.setVisibility(View.VISIBLE);
 		Animation controlAnim = AnimationUtils.loadAnimation(this, R.anim.controlappear);
 		Animation residuoAnim = AnimationUtils.loadAnimation(this, R.anim.residuoappear);
+		Animation semanalAnim = AnimationUtils.loadAnimation(this, R.anim.semanalappear);
 		Animation entradaAnim = AnimationUtils.loadAnimation(this, R.anim.entradaappear);
 		btnControl.startAnimation(controlAnim);
 		tvControl.startAnimation(controlAnim);
@@ -266,6 +263,8 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 		tvResiduo.startAnimation(residuoAnim);
 		btnEntrada.startAnimation(entradaAnim);
 		tvEntrada.startAnimation(entradaAnim);
+		tvSemanal.startAnimation(semanalAnim);
+		btnSemanal.startAnimation(semanalAnim);
 		lvStock.setAlpha(0.1f);
 		layoutCalculadora.setAlpha(0.1f);
 		toolbar.setAlpha(0.1f);
@@ -282,6 +281,8 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 		tvEntrada.setVisibility(View.INVISIBLE);
 		tvResiduo.setVisibility(View.INVISIBLE);
 		tvControl.setVisibility(View.INVISIBLE);
+		tvSemanal.setVisibility(View.INVISIBLE);
+		btnSemanal.setVisibility(View.INVISIBLE);
 		lvStock.setAlpha(1);
 		layoutCalculadora.setAlpha(1);
 		toolbar.setAlpha(1);
