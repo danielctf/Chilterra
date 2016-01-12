@@ -2,33 +2,29 @@ package cl.a2r.alimentacion;
 
 import java.util.Date;
 
-import cl.a2r.common.AppException;
 import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sap.model.Medicion;
-import cl.ar2.sqlite.cobertura.CoberturaServicio;
 import cl.ar2.sqlite.cobertura.MedicionServicio;
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MedicionEntrada extends Activity implements View.OnClickListener, View.OnKeyListener {
 
-	private TextView tvClick, tvMS, tvFundo;
-	private EditText etPotrero, etInicial, etFinal, etMuestras;
+	private TextView tvClick, tvMS, tvFundo, tvSuperficie, tvRacion;
+	private EditText etPotrero, etInicial, etFinal, etMuestras, etDieta, etVacas;
 	private ImageButton goBack, logs, confirmarEntrada;
 	private Medicion med;
+	private double clickProm;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,6 +38,8 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 		if (extras != null) {
 			Integer numeroPotrero = extras.getInt("numeroPotrero");
 			etPotrero.setText(Integer.toString(numeroPotrero));
+			double superficie = extras.getDouble("superficie");
+			tvSuperficie.setText(Double.toString(superficie) + " Hás");
 		}
 	}
 	
@@ -54,6 +52,10 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 		etFinal.setOnKeyListener(this);
 		etMuestras = (EditText)findViewById(R.id.etMuestras);
 		etMuestras.setOnKeyListener(this);
+		etDieta = (EditText)findViewById(R.id.etDieta);
+		etDieta.setOnKeyListener(this);
+		etVacas = (EditText)findViewById(R.id.etVacas);
+		etVacas.setOnKeyListener(this);
 		confirmarEntrada = (ImageButton)findViewById(R.id.confirmarEntrada);
 		confirmarEntrada.setOnClickListener(this);
 		goBack = (ImageButton)findViewById(R.id.goBack);
@@ -64,6 +66,8 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 		tvMS = (TextView)findViewById(R.id.tvMS);
 		tvFundo = (TextView)findViewById(R.id.tvFundo);
 		tvFundo.setText(Aplicaciones.predioWS.getCodigo());
+		tvSuperficie = (TextView)findViewById(R.id.tvSuperficie);
+		tvRacion = (TextView)findViewById(R.id.tvRacion);
 		
 		med = new Medicion();
 		Mediciones.tipoMuestraActual = 1;
@@ -150,7 +154,9 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 		if (med.getClickFinal() != null &&
 				med.getClickInicial() != null &&
 				med.getMuestras() != null){
-			med.setClick(roundForDisplay(calculaClick(med)));
+			
+			clickProm = calculaClick(med);
+			med.setClick(roundForDisplay(clickProm));
 			tvClick.setText(Double.toString(roundForDisplay(med.getClick())) + " Click");
 			med.setMateriaSeca(calculaMSVerano(calculaClick(med)));
 			tvMS.setText(Integer.toString(med.getMateriaSeca()) + " KgMs/Ha");
@@ -162,7 +168,13 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 		if (med.getClickFinal() != null &&
 				med.getClickInicial() != null &&
 				med.getMuestras() != null &&
-				med.getPotreroId() != null){
+				med.getPotreroId() != null && 
+				!etDieta.getText().toString().equals("") &&
+				!etVacas.getText().toString().equals("")){
+			
+			double racion = calculaRacion(Integer.parseInt(etDieta.getText().toString()), Integer.parseInt(etVacas.getText().toString()), clickProm);
+			tvRacion.setText(Double.toString(racion) + " Días");
+			med.setAnimales(Integer.parseInt(etVacas.getText().toString()));
 			
 			if (med.getClickInicial().intValue() >= med.getClickFinal().intValue()){
 				confirmarEntrada.setEnabled(false);
@@ -171,7 +183,16 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 			}
 		} else {
 			confirmarEntrada.setEnabled(false);
+			tvRacion.setText("");
 		}
+	}
+	
+	private double calculaRacion(int dieta, int vacas, double click){
+		double demanda = dieta * vacas;
+		double oferta = (click - 7) * 140;
+		double res = oferta / demanda;
+		res = roundForDisplay(res);
+		return res;
 	}
 	
 	private double roundForDisplay(double click){

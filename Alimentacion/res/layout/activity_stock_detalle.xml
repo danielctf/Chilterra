@@ -33,6 +33,17 @@
             android:text="Historial Potrero"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />
+        
+        <ImageButton
+            android:id="@+id/sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="10dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_more_vert_white_36dp" />          
+        
     </RelativeLayout>
 
     <RelativeLayout
@@ -155,6 +166,46 @@
                             android:layout_height="wrap_content" >
 
                             <ImageView
+                                android:id="@+id/ImageView5"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="15dp"
+                                android:src="@drawable/ic_texture_white_24dp" />
+
+                            <TextView
+                                android:id="@+id/tvSuperficie"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:textColor="@color/white"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+                        
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <ImageView
+                                android:id="@+id/ImageView7"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="15dp"
+                                android:src="@drawable/ic_assignment_turned_in_white_24dp" />
+
+                            <TextView
+                                android:id="@+id/tvCalificacion"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:textColor="@color/white"
+                                android:textSize="20sp" />
+                        </LinearLayout>                        
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <ImageView
                                 android:id="@+id/ImageView4"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -169,6 +220,7 @@
                                 android:textColor="@color/white"
                                 android:textSize="20sp" />
                         </LinearLayout>
+
                     </LinearLayout>
                 </LinearLayout>
 
@@ -182,6 +234,31 @@
                 </ListView>
             </LinearLayout>
         </ScrollView>
+        
+        <TextView
+            android:id="@+id/tvCalificacionEntr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/btnCalificacion"
+            android:layout_alignTop="@+id/btnCalificacion"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="8dp"
+            android:text="Calificación"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="25sp"
+            android:textColor="@color/control" />        
+        
+        <ImageButton
+            android:id="@+id/btnCalificacion"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_toLeftOf="@+id/addMed"
+            android:layout_alignTop="@+id/addMed"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/circlebutton_calificacion"
+            android:src="@drawable/ic_assignment_turned_in_white_24dp"
+            android:textSize="30sp" />        
         
         <TextView
             android:id="@+id/tvEntrada"
@@ -256,7 +333,7 @@
             android:background="@drawable/circlebutton_semanal"
             android:src="@drawable/plato"
             android:textColor="@color/white"
-            android:textSize="30sp" />          
+            android:textSize="30sp" />
         
         <TextView
             android:id="@+id/tvControl"

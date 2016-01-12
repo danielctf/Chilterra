@@ -117,7 +117,8 @@
         </activity>
         <activity
             android:name=".MedicionEntrada"
-            android:label="@string/title_activity_medicion_entrada" >
+            android:label="@string/title_activity_medicion_entrada"
+            android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name=".MedicionResiduo"
@@ -138,6 +139,14 @@
         <activity
             android:name=".StockDetalle"
             android:label="@string/title_activity_stock_detalle" >
+        </activity>
+        <activity
+            android:name=".Racion"
+            android:label="@string/title_activity_racion" >
+        </activity>
+        <activity
+            android:name=".Calificacion"
+            android:label="@string/title_activity_calificacion" >
         </activity>
     </application>
 

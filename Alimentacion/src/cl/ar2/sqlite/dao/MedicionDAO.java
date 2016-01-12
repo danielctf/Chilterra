@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteStatement;
 import cl.a2r.alimentacion.Aplicaciones;
+import cl.a2r.sap.model.Calificacion;
 import cl.a2r.sap.model.Medicion;
 import cl.ar2.sqlite.cobertura.RegistroMedicion;
 import cl.ar2.sqlite.cobertura.StockM;
@@ -38,6 +39,17 @@ public class MedicionDAO {
     
     private static final String SQL_SELECT_STOCK = ""
             + "SELECT * FROM stock ";
+    
+    private static final String SQL_INSERT_CALIFICACION = ""
+    		+ "INSERT INTO calificacion "
+    		+ " (fundo_id, numero, calificacion, sincronizado) "
+    		+ " VALUES (?, ?, ?, ?)";
+    
+    private static final String SQL_SELECT_CALIFICACION = ""
+            + "SELECT * FROM calificacion ";
+    
+    private static final String SQL_DELETE_CALIFICACION = ""
+    		+ "DELETE FROM calificacion";
 
     public static void insertaMedicion(SqLiteTrx trx, Medicion med) throws SQLException {
 
@@ -253,6 +265,47 @@ public class MedicionDAO {
         }
         
 		return listFiltrada;
+    }
+    
+    public static void insertaCalificacion(SqLiteTrx trx, List<Calificacion> calList) throws SQLException {
+
+        SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_CALIFICACION);
+
+        for (Calificacion cal : calList){
+	        statement.clearBindings();
+	        statement.bindLong(1, cal.getG_fundo_id());
+	        statement.bindLong(2, cal.getNumero());
+	        statement.bindLong(3, cal.getCalificacion());
+	        statement.bindString(4, cal.getSincronizado());
+	        statement.executeInsert();
+        }
+
+    }
+    
+    public static List selectCalificacion(SqLiteTrx trx) throws SQLException {
+        List<Calificacion> list = new ArrayList<Calificacion>();
+        boolean hayReg;
+
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_CALIFICACION, null);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	
+        	Calificacion cal = new Calificacion();
+        	cal.setG_fundo_id(c.getInt(c.getColumnIndex("fundo_id")));
+        	cal.setNumero(c.getInt(c.getColumnIndex("numero")));
+        	cal.setCalificacion(c.getInt(c.getColumnIndex("calificacion")));
+        	cal.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
+            list.add(cal);
+
+            hayReg = c.moveToNext();
+        }
+		return list;
+    }
+    
+    public static void deleteCalificacion(SqLiteTrx trx) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_CALIFICACION);
+    	statement.clearBindings();
+    	statement.executeUpdateDelete();
     }
     
 }

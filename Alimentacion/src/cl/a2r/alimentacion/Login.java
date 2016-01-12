@@ -1,10 +1,6 @@
 package cl.a2r.alimentacion;
 
-import java.util.List;
-
-import cl.a2r.common.AppException;
 import cl.a2r.custom.ShowAlert;
-import cl.a2r.sap.wsservice.WSAutorizacionCliente;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -14,19 +10,10 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.Plus.PlusOptions;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.os.StrictMode;
 import android.view.View;
 import android.view.Window;

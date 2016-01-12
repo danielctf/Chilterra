@@ -13,6 +13,7 @@ import cl.a2r.alimentacion.Login;
 import cl.a2r.alimentacion.R;
 import cl.a2r.alimentacion.Stock;
 import cl.a2r.common.AppException;
+import cl.a2r.sap.model.Calificacion;
 import cl.a2r.sap.model.Medicion;
 import cl.a2r.sap.wsservice.WSMedicionCliente;
 import cl.ar2.sqlite.cobertura.MedicionServicio;
@@ -45,6 +46,9 @@ public class AsyncStock extends AsyncTask<Void, Void, Void>{
 		sync();
 		if (title.equals("")){
 			getStockWS();
+		}
+		if (title.equals("")){
+			getCalificacionWS();
 		}
 		return null;
 	}
@@ -84,6 +88,30 @@ public class AsyncStock extends AsyncTask<Void, Void, Void>{
 			list = WSMedicionCliente.traeStock();
 			MedicionServicio.deleteStock();
 			MedicionServicio.insertaStock(list);
+		} catch (AppException e) {
+			title = "Error";
+			msg = e.getMessage();
+		}
+    }
+    
+    private void getCalificacionWS(){
+    	try {
+			List<Calificacion> list = MedicionServicio.traeCalificacion();
+			List<Calificacion> noSincronizados = new ArrayList<Calificacion>();
+			for (Calificacion cal : list){
+				if (cal.getSincronizado().equals("N")){
+					noSincronizados.add(cal);
+				}
+			}
+			
+			if (noSincronizados.size() > 0){
+				WSMedicionCliente.insertaCalificacion(noSincronizados, Login.mail);
+			}
+			
+			MedicionServicio.deleteCalificacion();
+			List<Calificacion> calList = WSMedicionCliente.traeCalificacion();
+			MedicionServicio.insertaCalificacion(calList);
+			
 			title = "Sincronización";
 			msg = "Sincronización Completa";
 		} catch (AppException e) {

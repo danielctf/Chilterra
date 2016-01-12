@@ -20,6 +20,7 @@ public class Medicion implements Serializable{
 	private Integer medidorId;
 	private String nombreMedidor;
 	private Integer tipoMuestraId;
+	private Integer animales;
 	private String tipoMuestraNombre;
 	private double superficie;
 	private Date actualizado;
@@ -154,6 +155,14 @@ public class Medicion implements Serializable{
 
 	public String getTipoMuestraNombre() {
 		return tipoMuestraNombre;
+	}
+
+	public Integer getAnimales() {
+		return animales;
+	}
+
+	public void setAnimales(Integer animales) {
+		this.animales = animales;
 	}
 
 	public double getSuperficie() {

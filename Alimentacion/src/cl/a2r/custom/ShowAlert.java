@@ -1,14 +1,15 @@
 package cl.a2r.custom;
 
-import cl.a2r.alimentacion.Aplicaciones;
+import cl.a2r.alimentacion.R;
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
-import android.content.Intent;
-import android.widget.AdapterView.OnItemClickListener;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.NumberPicker;
 
 @SuppressWarnings("deprecation")
 public class ShowAlert {
@@ -53,5 +54,5 @@ public class ShowAlert {
 		alert.setButton("OK", okListener);
 		alert.show();
 	}
-
+	
 }

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sap.common.AppLog;
+import cl.a2r.sap.model.Calificacion;
 import cl.a2r.sap.model.Medicion;
 import cl.a2r.sap.service.AutorizacionService;
 import cl.a2r.sap.service.MedicionService;
@@ -50,6 +51,16 @@ public class WSMedicion extends HttpServlet{
             	retorno = g_usuario_id;
             } else if (servicio.equals("traeStock")){
             	List<Medicion> list = MedicionService.traeStock();
+            	retorno = list;
+            } else if (servicio.equals("insertaCalificacion")){
+            	List<Calificacion> calList = (List<Calificacion>) params.getParam("calList");
+            	String correo = (String) params.getParam("correo");
+            	Integer g_usuario_id = AutorizacionService.validaUsuario(correo);
+            	MedicionService.insertaCalificacion(calList, g_usuario_id);
+            	Integer i = 1;
+            	retorno = i;
+            } else if (servicio.equals("traeCalificacion")){
+            	List<Calificacion> list = MedicionService.traeCalificacion();
             	retorno = list;
             } else {
                 retorno = new AppException("Servicio no válido.", null);

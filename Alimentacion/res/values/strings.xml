@@ -30,5 +30,7 @@
     <string name="title_activity_medicion_control">MedicionControl</string>
     <string name="title_activity_stock">Stock</string>
     <string name="title_activity_stock_detalle">StockDetalle</string>
+    <string name="title_activity_racion">Racion</string>
+    <string name="title_activity_calificacion">Calificacion</string>
 
 </resources>

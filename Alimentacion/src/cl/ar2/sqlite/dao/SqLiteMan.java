@@ -45,6 +45,14 @@ public class SqLiteMan extends SQLiteOpenHelper {
             	+ " medicion BLOB, "
             	+ " actualizado TEXT )");
         
+        db.execSQL(""
+        		+ "CREATE TABLE calificacion ("
+        		+ " cal_id INTEGER PRIMARY KEY,"
+        		+ " fundo_id INTEGER, "
+        		+ " numero INTEGER, "
+        		+ " calificacion INTEGER, "
+        		+ " sincronizado TEXT)");
+        
     }
 
     @Override
@@ -59,6 +67,14 @@ public class SqLiteMan extends SQLiteOpenHelper {
             	+ " stock_id INTEGER PRIMARY KEY,"
             	+ " medicion BLOB, "
             	+ " actualizado TEXT )");
+        
+        db.execSQL(""
+        		+ "CREATE TABLE calificacion ("
+        		+ " cal_id INTEGER PRIMARY KEY,"
+        		+ " fundo_id INTEGER, "
+        		+ " numero INTEGER, "
+        		+ " calificacion INTEGER, "
+        		+ " sincronizado TEXT)");
         //---------------------------------------------
 
     }

@@ -3,8 +3,7 @@
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="cl.a2r.alimentacion.BajaGanado" >
+    android:orientation="vertical" >
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -43,227 +42,334 @@
             android:src="@drawable/ic_search_white_36dp" />
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/layoutCalculadora"
+    <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.2"
-        android:background="@color/green"
-        android:orientation="horizontal" >
+        android:layout_weight="0.9" >
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.4"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/tvFundo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/white"
-                android:textSize="70sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.6"
             android:orientation="vertical" >
 
             <LinearLayout
+                android:id="@+id/layoutCalculadora"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:background="@color/green"
+                android:orientation="horizontal" >
 
-                <ImageView
-                    android:id="@+id/imageView1"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="15dp"
-                    android:src="@drawable/cobertura" />
+                    android:layout_weight="0.4"
+                    android:orientation="vertical" >
 
-                 <TextView
-                     android:id="@+id/tvMS"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:textAppearance="?android:attr/textAppearanceLarge"
-                     android:textColor="@color/white"
-                     android:textSize="23sp" />
+                    <TextView
+                        android:id="@+id/tvFundo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/white"
+                        android:textSize="70sp" />
+                </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:orientation="vertical" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <ImageView
+                            android:id="@+id/imageView1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginRight="15dp"
+                            android:src="@drawable/cobertura" />
+
+                        <TextView
+                            android:id="@+id/tvMS"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/white"
+                            android:textSize="23sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <ImageView
+                            android:id="@+id/imageView2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginRight="15dp"
+                            android:src="@drawable/plato" />
+
+                        <TextView
+                            android:id="@+id/tvClick"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/white"
+                            android:textSize="23sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <ImageView
+                            android:id="@+id/ImageView5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="15dp"
+                            android:src="@drawable/ic_texture_white_24dp" />
+
+                        <TextView
+                            android:id="@+id/tvSuperficie"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/white"
+                            android:textSize="20sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <ImageView
+                            android:id="@+id/ImageView6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="15dp"
+                            android:src="@drawable/ic_event_white_24dp" />
+
+                        <TextView
+                            android:id="@+id/tvRacion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/white"
+                            android:textSize="20sp" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="15dp"
-                    android:src="@drawable/plato" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
 
-                 <TextView
-                     android:id="@+id/tvClick"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:textAppearance="?android:attr/textAppearanceLarge"
-                     android:textColor="@color/white"
-                     android:textSize="23sp" />
+                    <TextView
+                        android:id="@+id/tvPotrero1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="0.5"
+                        android:text="Potrero"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="25sp" />
+
+                    <EditText
+                        android:id="@+id/etPotrero"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/apptheme_edit_text_holo_light"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:maxLength="9"
+                        android:textSize="25sp" >
+
+                        <requestFocus />
+                    </EditText>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/tvClickInicial"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="0.5"
+                        android:text="Click Inicial"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="25sp" />
+
+                    <EditText
+                        android:id="@+id/etClickInicial"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/apptheme_edit_text_holo_light"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:maxLength="9"
+                        android:textSize="25sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/tvClickFinal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="0.5"
+                        android:text="Click Final"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="25sp" />
+
+                    <EditText
+                        android:id="@+id/etClickFinal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/apptheme_edit_text_holo_light"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:maxLength="9"
+                        android:textSize="25sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/tvMuestras"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="0.5"
+                        android:text="N° Muestras"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="25sp" />
+
+                    <EditText
+                        android:id="@+id/etMuestras"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/apptheme_edit_text_holo_light"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:maxLength="9"
+                        android:textSize="25sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/tvVacas"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="0.5"
+                        android:text="Animales"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="25sp" />
+
+                    <EditText
+                        android:id="@+id/etVacas"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/apptheme_edit_text_holo_light"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:maxLength="9"
+                        android:textSize="25sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/tvDieta"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="0.5"
+                        android:text="Dieta Pasto"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="25sp" />
+
+                    <EditText
+                        android:id="@+id/etDieta"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/apptheme_edit_text_holo_light"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:maxLength="9"
+                        android:textSize="25sp" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/confirmarEntrada"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/circlebutton_state"
+                    android:src="@drawable/ic_action_done" />
 
             </LinearLayout>
 
         </LinearLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/LinearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.55"
-        android:orientation="vertical" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/tvPotrero1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_weight="0.5"
-                android:text="Potrero"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/black"
-                android:textSize="25sp" />
-
-            <EditText
-                android:id="@+id/etPotrero"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_weight="0.5"
-                android:background="@drawable/apptheme_edit_text_holo_light"
-                android:ems="10"
-                android:inputType="number"
-                android:maxLength="9"
-                android:textSize="25sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/tvClickInicial"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_weight="0.5"
-                android:text="Click Inicial"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/black"
-                android:textSize="25sp" />
-
-            <EditText
-                android:id="@+id/etClickInicial"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_weight="0.5"
-                android:background="@drawable/apptheme_edit_text_holo_light"
-                android:ems="10"
-                android:inputType="number"
-                android:maxLength="9"
-                android:textSize="25sp" >
-            </EditText>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/tvClickFinal"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_weight="0.5"
-                android:text="Click Final"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/black"
-                android:textSize="25sp" />
-
-            <EditText
-                android:id="@+id/etClickFinal"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_weight="0.5"
-                android:background="@drawable/apptheme_edit_text_holo_light"
-                android:ems="10"
-                android:inputType="number"
-                android:maxLength="9"
-                android:textSize="25sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/tvMuestras"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_weight="0.5"
-                android:text="N° Muestras"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/black"
-                android:textSize="25sp" />
-
-            <EditText
-                android:id="@+id/etMuestras"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_weight="0.5"
-                android:background="@drawable/apptheme_edit_text_holo_light"
-                android:ems="10"
-                android:inputType="number"
-                android:maxLength="9"
-                android:textSize="25sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.15" >
-
-        <ImageButton
-            android:id="@+id/confirmarEntrada"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/circlebutton_state"
-            android:src="@drawable/ic_action_done" />
-    </RelativeLayout>
+    </ScrollView>
 
 </LinearLayout>

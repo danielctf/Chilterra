@@ -11,6 +11,7 @@ import cl.a2r.custom.QuickAction;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.custom.StockAdapter;
 import cl.a2r.custom.Utility;
+import cl.a2r.sap.model.Calificacion;
 import cl.a2r.sap.model.Medicion;
 import cl.ar2.sqlite.cobertura.Crecimiento;
 import cl.ar2.sqlite.cobertura.MedicionServicio;
@@ -40,9 +41,9 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 	private List<StockM> listaPotreros, listaPotrerosMenu;
 	private int cobertura;
 	private ProgressBar loading;
-	String[] items = {"Materia Seca", "Fecha", "Potrero"};
-	String[] filterItems = {"Entrada", "Residuo", "Semanal", "Control"};
-	boolean[] filterChecked = {true, true, true, true};
+	private String[] items = {"Materia Seca", "Fecha", "Potrero"};
+	private String[] filterItems = {"Entrada", "Residuo", "Semanal", "Control"};
+	private boolean[] filterChecked = {true, true, true, true};
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -335,9 +336,17 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 	
 	public void updateStatus(){
 		try {
+			int size = 0;
 			List<Medicion> list = MedicionServicio.traeMediciones();
-			if (list.size() > 0){
-				tvSync.setText(Integer.toString(list.size()));
+			List<Calificacion> list2 = MedicionServicio.traeCalificacion();
+			for (Calificacion cal : list2){
+				if (cal.getSincronizado().equals("N")){
+					size++;
+				}
+			}
+			size = size + list.size();
+			if (size > 0){
+				tvSync.setText(Integer.toString(size));
 			} else {
 				tvSync.setText("");
 			}
@@ -374,6 +383,7 @@ public class Stock extends Activity implements View.OnClickListener, ListView.On
 			i.putExtra("g_fundo_id", Aplicaciones.predioWS.getId());
 			i.putExtra("numero", numero);
 			i.putExtra("ms", ms);
+			i.putExtra("superficie", ((StockM) arg0.getItemAtPosition(arg2)).getMed().getSuperficie());
 			startActivity(i);
 			break;
 		}
