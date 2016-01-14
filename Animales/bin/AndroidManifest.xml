@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cl.a2r.login"
+    package="cl.a2r.animales"
     android:versionCode="132"
     android:versionName="1.32" >
 
@@ -22,7 +22,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light" >
         <activity
-            android:name="cl.a2r.animales.Login"
+            android:name=".Login"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,11 +39,11 @@
             android:value="API_KEY" />
 
         <activity
-            android:name="cl.a2r.animales.Aplicaciones"
+            android:name=".Aplicaciones"
             android:label="Aplicaciones" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.BajaGanado"
+            android:name=".BajaGanado"
             android:label="@string/title_activity_baja_ganado" >
         </activity>
         <activity
@@ -51,51 +51,51 @@
             android:label="@string/title_activity_calculadora" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.Logs"
+            android:name=".Logs"
             android:label="@string/title_activity_logs" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.BajaGanadoEdicion"
+            android:name=".BajaGanadoEdicion"
             android:label="@string/title_activity_baja_ganado_edicion" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.Partos"
+            android:name=".Partos"
             android:label="@string/title_activity_partos" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.Baston"
+            android:name=".Baston"
             android:label="@string/title_activity_baston" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.Candidatos"
+            android:name=".Candidatos"
             android:label="@string/title_activity_candidatos" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.Areteos"
+            android:name=".Areteos"
             android:label="@string/title_activity_areteo" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.Traslados"
+            android:name=".Traslados"
             android:label="@string/title_activity_traslados" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.TrasladosSalida"
+            android:name=".TrasladosSalida"
             android:label="@string/title_activity_traslados_salida" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.TrasladosSalidaDiios"
+            android:name=".TrasladosSalidaDiios"
             android:label="@string/title_activity_traslados_salida_diios" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.TrasladosLogs"
+            android:name=".TrasladosLogs"
             android:label="@string/title_activity_traslados_logs" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.TrasladosConfirmacion"
+            android:name=".TrasladosConfirmacion"
             android:label="@string/title_activity_traslados_confirmacion" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.TrasladosConfirmacionDiios"
+            android:name=".TrasladosConfirmacionDiios"
             android:label="@string/title_activity_traslados_confirmacion_diios" >
         </activity>
         <activity
@@ -103,16 +103,20 @@
             android:label="@string/title_activity_calculadora_gd" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.Salvatajes"
+            android:name=".Salvatajes"
             android:label="@string/title_activity_salvataje" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.SalvatajeDiios"
+            android:name=".SalvatajeDiios"
             android:label="@string/title_activity_salvataje_diios" >
         </activity>
         <activity
-            android:name="cl.a2r.animales.Medicion"
+            android:name=".Medicion"
             android:label="@string/title_activity_medicion" >
+        </activity>
+        <activity
+            android:name=".PredioLibreLobby"
+            android:label="@string/title_activity_predio_libre_lobby" >
         </activity>
     </application>
 

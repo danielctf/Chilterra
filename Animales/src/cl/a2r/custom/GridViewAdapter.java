@@ -16,8 +16,8 @@ import android.widget.TextView;
 import java.util.ArrayList; 
 import java.util.List;
 
-import cl.a2r.login.R;
-import cl.a2r.login.R.color;
+import cl.a2r.animales.R;
+import cl.a2r.animales.R.color;
 import cl.a2r.sip.model.Aplicacion;
 
 public class GridViewAdapter extends BaseAdapter{

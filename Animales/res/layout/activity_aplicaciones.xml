@@ -102,6 +102,14 @@
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:layout_marginTop="10dp" />
+			    
+			    <TextView
+			        android:id="@+id/tvVersion"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_alignParentRight="true"
+			        android:layout_alignParentTop="true"
+			        android:textSize="11sp" />			    
 	    
 	    </RelativeLayout>
         

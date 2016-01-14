@@ -4,7 +4,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import android.database.Cursor;
 import android.database.SQLException;
@@ -159,21 +162,28 @@ public class MedicionDAO {
         }
         
         //Trae la medicion mas actualizada de cada potrero
+        //<numeroPotrero, StockM (del maximo getMed().getId()>
+        HashMap<Integer, StockM> mp = new HashMap<Integer, StockM>();
         List<StockM> listUpdated = new ArrayList<StockM>();
-        for (StockM sm : listFiltrada){
-        	StockM toAdd = new StockM();
-        	for (StockM s : listFiltrada){
-        		if (sm.getMed().getPotreroId().intValue() == s.getMed().getPotreroId().intValue()){
-        			if (s.getMed().getId().intValue() >= sm.getMed().getId().intValue()){
-        				toAdd = s;
-        			}
+        for (StockM sf : listFiltrada){
+        	if (mp.containsKey(sf.getMed().getPotreroId())){
+        		if (mp.get(sf.getMed().getPotreroId()).getMed().getId().intValue() < 
+        				sf.getMed().getId().intValue()){
+        			mp.remove(sf.getMed().getPotreroId());
+        			mp.put(sf.getMed().getPotreroId(), sf);
         		}
-        	}
-        	if (!listUpdated.contains(toAdd)){
-        		listUpdated.add(toAdd);
-        	}
+        	} else {
+    			mp.put(sf.getMed().getPotreroId(), sf);
+    		}
         }
         
+        Iterator it = mp.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            listUpdated.add((StockM) pair.getValue());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+
         //Agrega los potreros que no esten solo para q se desplieguen en la lista
         for (int i = 0; i < Aplicaciones.predioWS.getPotreros().intValue(); i++){
         	boolean isInList = false;

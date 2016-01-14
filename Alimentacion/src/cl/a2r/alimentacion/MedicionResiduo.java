@@ -190,7 +190,7 @@ public class MedicionResiduo extends Activity implements View.OnClickListener, V
 	
 	private int calculaMSVerano(double click){
 		int res = 0;
-		res = (int) Math.round(click * (double)140 + (double)500);
+		res = (int) Math.round(click * (double)165 + (double)1250);
 		return res;
 	}
 	

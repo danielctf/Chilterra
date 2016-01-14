@@ -3,11 +3,11 @@ package cl.a2r.animales;
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
-import cl.a2r.login.R;
 import cl.a2r.sip.model.Camion;
 import cl.a2r.sip.model.Chofer;
 import cl.a2r.sip.model.DctoAdem;

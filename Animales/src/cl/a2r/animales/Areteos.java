@@ -3,13 +3,13 @@ package cl.a2r.animales;
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.EmptyFragment;
 import cl.a2r.custom.ShowAlert;
-import cl.a2r.login.R;
 import cl.a2r.object.AreteoObject;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Traslado;

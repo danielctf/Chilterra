@@ -3,10 +3,10 @@ package cl.a2r.animales;
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ShowAlert;
-import cl.a2r.login.R;
 import cl.a2r.object.SexoObject;
 import cl.a2r.sip.model.CollarParto;
 import cl.a2r.sip.model.Parto;

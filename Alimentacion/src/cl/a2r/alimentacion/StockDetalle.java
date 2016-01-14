@@ -389,7 +389,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 	}
 	
 	private double calcularClickPromedio(int ms){
-		double matSeca = ((double) ms - (double) 500) / (double) 140;
+		double matSeca = ((double) ms - (double) 1250) / (double) 165;
 		return roundForDisplay(matSeca);
 	}
 	

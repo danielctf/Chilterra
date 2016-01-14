@@ -6,6 +6,7 @@ import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sap.model.Medicion;
 import cl.ar2.sqlite.cobertura.MedicionServicio;
+import cl.ar2.sqlite.cobertura.StockM;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -24,7 +25,7 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 	private EditText etPotrero, etInicial, etFinal, etMuestras, etDieta, etVacas;
 	private ImageButton goBack, logs, confirmarEntrada;
 	private Medicion med;
-	private double clickProm;
+	private double clickProm, superficie;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,7 +39,7 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 		if (extras != null) {
 			Integer numeroPotrero = extras.getInt("numeroPotrero");
 			etPotrero.setText(Integer.toString(numeroPotrero));
-			double superficie = extras.getDouble("superficie");
+			superficie = extras.getDouble("superficie");
 			tvSuperficie.setText(Double.toString(superficie) + " Hás");
 		}
 	}
@@ -99,6 +100,8 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 		etInicial.setText("");
 		etFinal.setText("");
 		etMuestras.setText("");
+		etVacas.setText("");
+		etDieta.setText("");
 		updateStatus();
 	}
 	
@@ -128,9 +131,20 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 				return;
 			} else {
 				med.setPotreroId(Integer.parseInt(etPot));
+				for (StockM sm : Stock.list){
+					if (sm.getMed().getFundoId().intValue() == Aplicaciones.predioWS.getId() &&
+							sm.getMed().getPotreroId().intValue() == Integer.parseInt(etPot)){
+						
+						superficie = sm.getMed().getSuperficie();
+						tvSuperficie.setText(Double.toString(superficie) + " Hás");
+						break;
+					}
+				}
 			}
 		} else {
 			med.setPotreroId(null);
+			superficie = 0;
+			tvSuperficie.setText("");
 		}
 		
 		if (!etInicial.getText().toString().equals("")){
@@ -172,8 +186,8 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 				!etDieta.getText().toString().equals("") &&
 				!etVacas.getText().toString().equals("")){
 			
-			double racion = calculaRacion(Integer.parseInt(etDieta.getText().toString()), Integer.parseInt(etVacas.getText().toString()), clickProm);
-			tvRacion.setText(Double.toString(racion) + " Días");
+			double racion = calculaRacion(Integer.parseInt(etDieta.getText().toString()), Integer.parseInt(etVacas.getText().toString()), clickProm, superficie);
+			tvRacion.setText(Double.toString(racion) + " Raciones");
 			med.setAnimales(Integer.parseInt(etVacas.getText().toString()));
 			
 			if (med.getClickInicial().intValue() >= med.getClickFinal().intValue()){
@@ -187,10 +201,11 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 		}
 	}
 	
-	private double calculaRacion(int dieta, int vacas, double click){
+	private double calculaRacion(int dieta, int vacas, double click, double superficie){
 		double demanda = dieta * vacas;
-		double oferta = (click - 7) * 140;
+		double oferta = (click - 7) * 165 * superficie;
 		double res = oferta / demanda;
+		res = res * 2;
 		res = roundForDisplay(res);
 		return res;
 	}
@@ -212,8 +227,9 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 	private int calculaMSVerano(double click){
 		//Hay 4 calculaMSVerano, uno en entrada, residuo, control y semanal
 		//tambien en la clase Stock y StockDetalle ir a funcion calcularClickPromedio()
+		//calculaRacion()
 		int res = 0;
-		res = (int) Math.round(click * (double)140 + (double)500);
+		res = (int) Math.round(click * (double)165 + (double)1250);
 		return res;
 	}
 	

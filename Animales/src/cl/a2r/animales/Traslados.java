@@ -2,10 +2,10 @@ package cl.a2r.animales;
 
 import java.util.List;
 
+import cl.a2r.animales.R;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
-import cl.a2r.login.R;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;

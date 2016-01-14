@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import cl.a2r.animales.R;
 import cl.a2r.custom.AppLauncher;
 import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.LogsArrayAdapter;
 import cl.a2r.custom.ShowAlert;
-import cl.a2r.login.R;
 import cl.a2r.sip.model.GanadoLogs;
 import android.annotation.SuppressLint;
 import android.app.Activity;

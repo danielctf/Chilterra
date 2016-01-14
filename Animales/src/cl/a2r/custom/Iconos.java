@@ -1,6 +1,6 @@
 package cl.a2r.custom;
 
-import cl.a2r.login.R;
+import cl.a2r.animales.R;
 
 public class Iconos {
 	

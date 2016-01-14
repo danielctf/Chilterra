@@ -3,8 +3,8 @@ package cl.a2r.custom;
 import java.util.List;
 
 import cl.a2r.animales.Login;
+import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
-import cl.a2r.login.R;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import android.app.Activity;
@@ -195,6 +195,10 @@ public class Calculadora extends Activity implements View.OnClickListener {
 	}
 	
 	private boolean validarDiioInverso(){
+		if (diioActual.length() != diioActualInverso.length()){
+			return false;
+		}
+		
 		for (int i = 0; i < diioActual.length(); i++){
 			if (diioActual.charAt(i) != diioActualInverso.charAt(diioActualInverso.length() - 1 - i)){
 				return false;

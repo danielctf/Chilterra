@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import cl.a2r.animales.R;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
-import cl.a2r.login.R;
 import cl.a2r.object.BastonObject;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;

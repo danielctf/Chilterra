@@ -47,7 +47,7 @@
             android:layout_centerVertical="true"
             android:textSize="50sp"
             android:textColor="@color/white"
-            android:maxLength="10"
+            android:maxLength="9"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
     </RelativeLayout>

@@ -24,5 +24,6 @@
     <string name="title_activity_salvataje">Salvataje</string>
     <string name="title_activity_salvataje_diios">SalvatajeDiios</string>
     <string name="title_activity_medicion">Medicion</string>
+    <string name="title_activity_predio_libre_lobby">PredioLibreLobby</string>
 
 </resources>

@@ -26,6 +26,8 @@ import com.google.android.gms.plus.model.people.Person;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -65,7 +67,7 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 	private ListView lvPredios, lvOptions;
 	private ArrayAdapter<Predio> mAdapter;
 	private ImageView circleView;
-	private TextView predio, nombrePerfil, correoPerfil;
+	private TextView predio, nombrePerfil, correoPerfil, tvVersion;
 	private int width, height;
 	private static boolean openMeOnce = true;
 	private List<Aplicacion> apps;
@@ -110,6 +112,15 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 		correoPerfil = (TextView)findViewById(R.id.profile_email);
 		nombrePerfil = (TextView)findViewById(R.id.profile_name);
 		circleView = (ImageView)findViewById(R.id.circleView);
+		tvVersion = (TextView)findViewById(R.id.tvVersion);
+		
+		try {
+			PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			tvVersion.setText("v"+pInfo.versionName);
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
