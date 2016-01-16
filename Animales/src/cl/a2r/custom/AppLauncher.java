@@ -8,6 +8,7 @@ import cl.a2r.animales.Areteos;
 import cl.a2r.animales.BajaGanado;
 import cl.a2r.animales.Login;
 import cl.a2r.animales.Partos;
+import cl.a2r.animales.PredioLibreLobby;
 import cl.a2r.animales.Salvatajes;
 import cl.a2r.animales.Traslados;
 import cl.a2r.common.AppException;
@@ -49,6 +50,9 @@ public class AppLauncher {
 			launchApp = Salvatajes.class;
 			hasLogAccess = true;
 			break;
+		case 13:
+			launchApp = PredioLibreLobby.class;
+			hasLogAccess = false;
 		}
 	}
 	

@@ -28,6 +28,10 @@
   <servlet-name>WSMedicion</servlet-name> 
   <servlet-class>cl.a2r.sip.servlet.WSMedicion</servlet-class> 
   </servlet>
+  <servlet>
+  <servlet-name>WSPredioLibre</servlet-name> 
+  <servlet-class>cl.a2r.sip.servlet.WSPredioLibre</servlet-class> 
+  </servlet>
  <servlet-mapping>
   <servlet-name>WSAutorizacion</servlet-name> 
   <url-pattern>/WSAutorizacion</url-pattern> 
@@ -55,6 +59,10 @@
   <servlet-mapping>
   <servlet-name>WSMedicion</servlet-name> 
   <url-pattern>/WSMedicion</url-pattern> 
+  </servlet-mapping>
+  <servlet-mapping>
+  <servlet-name>WSPredioLibre</servlet-name> 
+  <url-pattern>/WSPredioLibre</url-pattern> 
   </servlet-mapping>
  <session-config>
   <session-timeout>30</session-timeout> 

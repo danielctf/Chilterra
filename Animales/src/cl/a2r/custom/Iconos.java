@@ -44,6 +44,9 @@ public class Iconos {
 		case 12:
 			icon = R.drawable.iconosalvataje;
 			break;
+		case 13:
+			icon = R.drawable.iconoprediolibre;
+			break;
 		}
 		return icon;
 	}

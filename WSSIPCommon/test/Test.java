@@ -16,6 +16,7 @@ import cl.a2r.sip.model.Movimiento;
 import cl.a2r.sip.model.Parto;
 import cl.a2r.sip.model.Persona;
 import cl.a2r.sip.model.Predio;
+import cl.a2r.sip.model.PredioLibre;
 import cl.a2r.sip.model.Raza;
 import cl.a2r.sip.model.TipoGanado;
 import cl.a2r.sip.model.Transportista;
@@ -25,6 +26,7 @@ import cl.a2r.sip.wsservice.WSAutorizacionCliente;
 import cl.a2r.sip.wsservice.WSBajasCliente;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
+import cl.a2r.sip.wsservice.WSPredioLibreCliente;
 import cl.a2r.sip.wsservice.WSTrasladosCliente;
 
 import java.awt.Button;
@@ -47,6 +49,15 @@ public class Test {
 
     public static void main(String[] arg) {
     	
+    	try {
+			List<Ganado> list = WSPredioLibreCliente.traeAllDiio();
+			for (Ganado g : list){
+				System.out.println(g.getId()+" "+g.getDiio());
+			}
+		} catch (AppException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
     }
     

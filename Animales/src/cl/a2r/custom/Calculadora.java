@@ -7,6 +7,7 @@ import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
+import cl.ar2.sqlite.servicio.PredioLibreServicio;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -33,8 +34,9 @@ public class Calculadora extends Activity implements View.OnClickListener {
 	private String diioActual, diioActualInverso;
 	
 	public static int ganadoId, diio, predio, tipoGanado;
+	public static Ganado gan;
 	public static String activa ="", sexo = "";
-	public static boolean isAreteo = false, isSalvataje = false;
+	public static boolean isAreteo = false, isSalvataje = false, isPredioLibre = false;
 	private String errMsg;
 
 	@Override
@@ -161,6 +163,25 @@ public class Calculadora extends Activity implements View.OnClickListener {
 		if (isSalvataje){
 			this.diio = diio;
 			return true;
+		}
+		
+		if (isPredioLibre){
+			try {
+				Ganado g = PredioLibreServicio.traeDiio(diio);
+				if (g != null){
+					gan = new Ganado();
+					gan.setId(g.getId());
+					gan.setDiio(g.getDiio());
+					gan.setEid(g.getEid());
+					return true;
+				} else {
+					errMsg = "DIIO no existe";
+					return false;
+				}
+				
+			} catch (AppException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		List<Ganado> list = null;

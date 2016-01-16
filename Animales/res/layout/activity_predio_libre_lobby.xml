@@ -29,15 +29,26 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="Stock"
+            android:text="Predio Libre"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />
+        
+        <ImageButton
+            android:id="@+id/sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_cloud_white_36dp" />        
         
         <TextView
             android:id="@+id/tvSync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/sync"
             android:layout_marginRight="10dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />
@@ -112,7 +123,7 @@
                 </LinearLayout>
 
                 <ListView
-                    android:id="@+id/lvStock"
+                    android:id="@+id/lvPredioLibre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#ffffff"
@@ -121,6 +132,17 @@
                 </ListView>
             </LinearLayout>
         </ScrollView>
+        
+        <ImageButton
+            android:id="@+id/addPredioLibre"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/circlebutton_state"
+            android:src="@drawable/ic_add_white_36dp" />        
         
 		<ProgressBar
 		    android:id="@+id/loading"
