@@ -2,6 +2,7 @@ package cl.a2r.animales;
 
 import java.util.List;
 
+import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;

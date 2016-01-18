@@ -1,19 +1,27 @@
 package cl.a2r.animales;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.AsyncPLDiio;
+import cl.a2r.custom.AsyncPredioLibre;
+import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.custom.Utility;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.PredioLibre;
+import cl.a2r.sip.wsservice.WSAreteosCliente;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
 import cl.ar2.sqlite.dao.SqLiteTrx;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
@@ -29,6 +37,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PredioLibreLobby extends Activity implements View.OnClickListener, ListView.OnItemClickListener{
 
@@ -36,6 +45,7 @@ public class PredioLibreLobby extends Activity implements View.OnClickListener, 
 	private ImageButton goBack, sync, addPredioLibre;
 	private ProgressBar loading;
 	private ListView lvPredioLibre;
+	private List<InyeccionTB> syncPendientes;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,7 +60,7 @@ public class PredioLibreLobby extends Activity implements View.OnClickListener, 
 	
 	private void cargarInterfaz(){
 		tvSync = (TextView)findViewById(R.id.tvSync);
-		tvUpdate = (TextView)findViewById(R.id.tvUpdate);
+		//tvUpdate = (TextView)findViewById(R.id.tvUpdate);
 		tvFundo = (TextView)findViewById(R.id.tvFundo);
 		goBack = (ImageButton)findViewById(R.id.goBack);
 		goBack.setOnClickListener(this);
@@ -79,6 +89,8 @@ public class PredioLibreLobby extends Activity implements View.OnClickListener, 
 		int id = arg0.getId();
 		switch (id){
 		case R.id.lvPredioLibre:
+			Integer instancia = ((PredioLibre) arg0.getItemAtPosition(arg2)).getId();
+			new AsyncPLDiio(this, instancia).execute(instancia);
 			break;
 		}
 	}
@@ -87,11 +99,50 @@ public class PredioLibreLobby extends Activity implements View.OnClickListener, 
 		int id = arg0.getId();
 		switch (id){
 		case R.id.goBack:
-			startActivity(new Intent(this, PredioLibreDiio.class));
+			finish();
 			break;
 		case R.id.sync:
-			new AsyncPLDiio(this).execute();
+			new AsyncPredioLibre(this).execute(syncPendientes);
 			break;
+		case R.id.addPredioLibre:
+			addPredioLibre.setVisibility(View.INVISIBLE);
+			hand.postDelayed(run, 100);
+			break;
+		}
+	}
+	
+    Handler hand = new Handler();
+    Runnable run = new Runnable() { 
+        public void run() { 
+			try {
+				WSPredioLibreCliente.insertaPredioLibre(Login.user, Aplicaciones.predioWS.getId());
+				getPrediosLibreWS();
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), PredioLibreLobby.this);
+			} finally {
+				addPredioLibre.setVisibility(View.VISIBLE);
+			}
+        }
+    }; 
+	
+	public void syncPendientes(){
+		try {
+			List<InyeccionTB> list = PredioLibreServicio.traeGanadoPL();
+			syncPendientes = new ArrayList<InyeccionTB>();
+			for (InyeccionTB tb : list){
+				if (tb.getSincronizado().equals("N")){
+					tb.setUsuarioId(Login.user);
+					tb.setFecha_dosis(new Date());
+					syncPendientes.add(tb);
+				}
+			}
+			if (syncPendientes.size() > 0){
+				tvSync.setText(Integer.toString(syncPendientes.size()));
+			} else {
+				tvSync.setText("");
+			}
+		} catch (AppException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -101,6 +152,8 @@ public class PredioLibreLobby extends Activity implements View.OnClickListener, 
 		if (Login.user == 0){
 			finish();
 		}
+		
+		syncPendientes();
 		
 		ConnectThread.setHandler(mHandler);
 	}

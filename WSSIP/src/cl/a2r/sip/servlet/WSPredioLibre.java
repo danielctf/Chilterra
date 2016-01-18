@@ -3,6 +3,7 @@ package cl.a2r.sip.servlet;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sip.common.AppLog;
+import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.Sesion;
 import cl.a2r.sip.service.AutorizacionService;
 import cl.a2r.sip.service.PredioLibreService;
@@ -49,6 +50,24 @@ public class WSPredioLibre extends HttpServlet {
             } else if (servicio.equals("traeAllDiio")){
             	List list = PredioLibreService.traeAllDiio();
             	retorno = list;
+            } else if (servicio.equals("traeGanadoTuberculina")){
+            	Integer instancia = (Integer) params.getParam("instancia");
+            	List list = PredioLibreService.traeGanadoTuberculina(instancia);
+            	retorno = list;
+            } else if (servicio.equals("insertaGanadoTuberculina")){
+            	List<InyeccionTB> list = (List<InyeccionTB>) params.getParam("ganList");
+            	PredioLibreService.insertaGanadoTuberculina(list);
+            	Integer i = 1;
+            	retorno = i;
+            } else if (servicio.equals("traeTuberculinaPPD")){
+            	List list = PredioLibreService.traeTuberculinaPPD();
+            	retorno = list;
+            } else if (servicio.equals("insertaPredioLibre")){
+            	Integer p_usuario_id = (Integer) params.getParam("p_usuario_id");
+            	Integer g_fundo_id = (Integer) params.getParam("g_fundo_id");
+            	PredioLibreService.insertaPredioLibre(p_usuario_id, g_fundo_id);
+            	Integer i = 1;
+            	retorno = i;
             } else {
             	retorno = new AppException("Servicio no válido.", null);
             }

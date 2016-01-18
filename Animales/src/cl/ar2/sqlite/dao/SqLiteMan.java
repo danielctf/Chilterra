@@ -29,13 +29,17 @@ public class SqLiteMan extends SQLiteOpenHelper {
             + "CREATE TABLE diio ( "
         	+ " id INTEGER,"
             + " diio INTEGER,"
-            + " eid TEXT)");
+            + " eid TEXT,"
+            + " fundoId INTEGER)");
         
         db.execSQL( ""
             + "CREATE TABLE predio_libre ( "
         	+ " ganadoId INTEGER,"
+        	+ " fundoId INTEGER,"
+        	+ " instancia INTEGER,"
             + " ganadoDiio INTEGER,"
-            + " tuboPPDId INTEGER)");
+            + " tuboPPDId INTEGER,"
+            + " sincronizado TEXT)");
     }
 
     @Override

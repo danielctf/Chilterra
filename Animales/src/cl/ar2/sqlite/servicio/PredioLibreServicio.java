@@ -197,5 +197,73 @@ public class PredioLibreServicio {
 
         return exists;
     }
+    
+    public static void deleteSincronizado() throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                PredioLibreDAO.deleteSincronizado(trx);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
 	
+    public static void deletePL() throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                PredioLibreDAO.deletePL(trx);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
+    public static List traeDiioFundo(Integer g_fundo_id) throws AppException {
+        List list = new ArrayList();
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                list = PredioLibreDAO.selectDiioFundo(trx, g_fundo_id);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return list;
+    }
+    
 }

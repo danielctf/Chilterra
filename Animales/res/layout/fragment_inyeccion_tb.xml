@@ -28,6 +28,7 @@
             android:orientation="horizontal" >
 
             <LinearLayout
+                android:id="@+id/llFaltantes"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
@@ -43,11 +44,13 @@
                     android:id="@+id/tvFaltantes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/white" />
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/llEncontrados"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
@@ -57,12 +60,13 @@
                     android:id="@+id/ImageView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_update_white_24dp" />
+                    android:src="@drawable/ic_search_24" />
 
                 <TextView
                     android:id="@+id/tvEncontrados"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/white" />
             </LinearLayout>

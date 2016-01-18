@@ -10,6 +10,7 @@ import cl.a2r.custom.ShowAlert;
 import cl.a2r.sip.model.Areteo;
 import cl.a2r.sip.model.CollarParto;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.Movimiento;
 import cl.a2r.sip.wsservice.WSAreteosCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
@@ -129,6 +130,16 @@ public class Candidatos extends Activity implements View.OnClickListener, ListVi
 			List<Ganado> list2 = TrasladosConfirmacion.confirmacion.getGanado();
 			ArrayAdapter<Ganado> mAdapter2 = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, list2);
 			lvCandidatos.setAdapter(mAdapter2);
+			break;
+		case "predioLibreEncontrados":
+			tvApp.setText("Candidatos Encontrados");
+			ArrayAdapter<InyeccionTB> mAdapter3 = new ArrayAdapter<InyeccionTB>(this, android.R.layout.simple_list_item_1, PredioLibreInyeccionTB.listEncontrados);
+			lvCandidatos.setAdapter(mAdapter3);
+			break;
+		case "predioLibreFaltantes":
+			tvApp.setText("Candidatos Faltantes");
+			ArrayAdapter<Ganado> mAdapter4 = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, PredioLibreInyeccionTB.listFaltantes);
+			lvCandidatos.setAdapter(mAdapter4);
 			break;
 		}
 		

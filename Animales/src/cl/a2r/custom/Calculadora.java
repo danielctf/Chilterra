@@ -173,6 +173,7 @@ public class Calculadora extends Activity implements View.OnClickListener {
 					gan.setId(g.getId());
 					gan.setDiio(g.getDiio());
 					gan.setEid(g.getEid());
+					gan.setPredio(g.getPredio());
 					return true;
 				} else {
 					errMsg = "DIIO no existe";

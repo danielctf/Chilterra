@@ -3,6 +3,7 @@ package cl.a2r.animales;
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ConnectThread;
@@ -10,6 +11,8 @@ import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.InyeccionTB;
+import cl.a2r.sip.model.PPD;
+import cl.a2r.sip.wsservice.WSPredioLibreCliente;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
 import android.app.Activity;
 import android.app.Fragment;
@@ -24,7 +27,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +42,11 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 	private Spinner spinnerPPD;
 	private View v;
 	private TextView tvDiio, tvFaltantes, tvEncontrados;
+	private LinearLayout llEncontrados, llFaltantes;
 	private InyeccionTB ganTB;
+	private Integer instancia;
+	public static List<InyeccionTB> listEncontrados;
+	public static List<Ganado> listFaltantes;
 	
 	public PredioLibreInyeccionTB(Activity act){
 		this.act = act;
@@ -51,18 +60,45 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
     	tvEncontrados = (TextView)v.findViewById(R.id.tvEncontrados);
     	confirmarAnimal = (ImageButton)v.findViewById(R.id.confirmarAnimal);
     	confirmarAnimal.setOnClickListener(this);
+    	llEncontrados = (LinearLayout)v.findViewById(R.id.llEncontrados);
+    	llEncontrados.setOnClickListener(this);
+    	llFaltantes = (LinearLayout)v.findViewById(R.id.llFaltantes);
+    	llFaltantes.setOnClickListener(this);
     	spinnerPPD = (Spinner)v.findViewById(R.id.spinnerPPD);
     	ganTB = new InyeccionTB();
     	cargarListeners();
     	mostrarCandidatos();
+    	getPPDWS();
+    	
+		Bundle extras = act.getIntent().getExtras();
+		if (extras != null) {
+		    instancia = extras.getInt("instancia");
+		}
+    
     	return v;
+	}
+	
+	private void getPPDWS(){
+		try {
+			List<PPD> list = WSPredioLibreCliente.traeTuberculinaPPD();
+			ArrayAdapter<PPD> mApdater = new ArrayAdapter<PPD>(act, android.R.layout.simple_list_item_1, list);
+			spinnerPPD.setAdapter(mApdater);
+		} catch (AppException e) {
+			ShowAlert.showAlert("Error", e.getMessage(), act);
+		}
 	}
 	
 	private void mostrarCandidatos(){
 		try {
-			List<InyeccionTB> listEncontrados = PredioLibreServicio.traeGanadoPL();
-			List<Ganado> listTodos = PredioLibreServicio.traeAll();
-			List<Ganado> listFaltantes = new ArrayList<Ganado>();
+			List<InyeccionTB> list = PredioLibreServicio.traeGanadoPL();
+			listEncontrados = new ArrayList<InyeccionTB>();
+			for (InyeccionTB tb : list){
+				if (tb.getFundoId().intValue() == Aplicaciones.predioWS.getId()){
+					listEncontrados.add(tb);
+				}
+			}
+			List<Ganado> listTodos = PredioLibreServicio.traeDiioFundo(Aplicaciones.predioWS.getId());
+			listFaltantes = new ArrayList<Ganado>();
 			for (Ganado g : listTodos){
 				boolean isEncontrado = false;
 				for (InyeccionTB tb : listEncontrados){
@@ -84,6 +120,7 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 	private void cargarListeners(){
 		spinnerPPD.setOnItemSelectedListener(new OnItemSelectedListener(){
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				ganTB.setTuboPPDId(((PPD) arg0.getItemAtPosition(arg2)).getId());
 				updateStatus();
 			}
 			public void onNothingSelected(AdapterView<?> arg0) {
@@ -99,9 +136,8 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 		}
 		
 		if (ganTB.getGanadoID() != null &&
-				ganTB.getGanadoDiio() != null
-				//ganTB.getTuboPPDId() != null
-				){
+				ganTB.getGanadoDiio() != null &&
+				ganTB.getTuboPPDId() != null){
 			
 			confirmarAnimal.setEnabled(true);
 		} else {
@@ -113,18 +149,31 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 	
 	public void onClick(View v) {
 		int id = v.getId();
+		Intent i;
 		switch (id){
 		case R.id.confirmarAnimal:
 			agregarAnimal();
 			break;
 		case R.id.tvDiio:
 			startActivity(new Intent(act, Calculadora.class));
+			break;
+		case R.id.llFaltantes:
+			i = new Intent(act, Candidatos.class);
+			i.putExtra("stance", "predioLibreFaltantes");
+			startActivity(i);
+			break;
+		case R.id.llEncontrados:
+			i = new Intent(act, Candidatos.class);
+			i.putExtra("stance", "predioLibreEncontrados");
+			startActivity(i);
+			break;
 		}
 	}
 	
 	private void agregarAnimal(){
 		try {
-			ganTB.setTuboPPDId(1);
+			ganTB.setSincronizado("N");
+			ganTB.setInstancia(instancia);
 			boolean exists = PredioLibreServicio.existsGanadoPL(ganTB.getGanadoID());
 			if (!exists){
 				PredioLibreServicio.insertaGanadoPL(ganTB);
@@ -133,6 +182,7 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 				Toast.makeText(act, "Animal ya existe", Toast.LENGTH_LONG).show();
 			}
 			ganTB = new InyeccionTB();
+			ganTB.setTuboPPDId(((PPD) spinnerPPD.getSelectedItem()).getId());
 			updateStatus();
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), act);
@@ -147,6 +197,7 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 		if (gan != null){
 			ganTB.setGanadoID(gan.getId());
 			ganTB.setGanadoDiio(gan.getDiio());
+			ganTB.setFundoId(gan.getPredio());
 			tvDiio.setText(Integer.toString(ganTB.getGanadoDiio()));
 			tvDiio.setGravity(Gravity.CENTER_HORIZONTAL);
 		}

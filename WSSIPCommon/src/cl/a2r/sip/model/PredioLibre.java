@@ -1,6 +1,7 @@
 package cl.a2r.sip.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PredioLibre implements Serializable{
@@ -53,7 +54,10 @@ public class PredioLibre implements Serializable{
 	}
 	
 	public String toString(){
-		return "Fundo: " + this.getNombreFundo() + "\n" + "Id: " + this.getId(); 
+		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+		return "Fundo: " + this.getNombreFundo() + "\n" + 
+				"Fecha Inicio: " + df.format(this.fecha_inicio) + "\n" +
+				"Estado: " + this.estado;
 	}
 	
 }

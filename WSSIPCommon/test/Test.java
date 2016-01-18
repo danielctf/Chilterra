@@ -11,8 +11,10 @@ import cl.a2r.sip.model.DctoAdem;
 import cl.a2r.sip.model.FMA;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.GanadoLogs;
+import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.MotivoBaja;
 import cl.a2r.sip.model.Movimiento;
+import cl.a2r.sip.model.PPD;
 import cl.a2r.sip.model.Parto;
 import cl.a2r.sip.model.Persona;
 import cl.a2r.sip.model.Predio;
@@ -31,6 +33,7 @@ import cl.a2r.sip.wsservice.WSTrasladosCliente;
 
 import java.awt.Button;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -50,10 +53,8 @@ public class Test {
     public static void main(String[] arg) {
     	
     	try {
-			List<Ganado> list = WSPredioLibreCliente.traeAllDiio();
-			for (Ganado g : list){
-				System.out.println(g.getId()+" "+g.getDiio());
-			}
+    		WSPredioLibreCliente.insertaPredioLibre(1, 9);
+
 		} catch (AppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
