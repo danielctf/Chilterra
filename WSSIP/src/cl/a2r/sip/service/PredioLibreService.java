@@ -10,6 +10,7 @@ import cl.a2r.sip.dao.AreteosDAO;
 import cl.a2r.sip.dao.PredioLibreDAO;
 import cl.a2r.sip.dao.Transaccion;
 import cl.a2r.sip.model.Areteo;
+import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.InyeccionTB;
 
 public class PredioLibreService {
@@ -123,6 +124,98 @@ public class PredioLibreService {
             } catch (SQLException ex) {
                 trx.rollback();
             	AppLog.logSevere("PredioLibreService.insertaPredioLibre()", ex);
+                if (ex.getSQLState().equals("SIP02")){
+                	throw new AppException(ex.getMessage(), null);
+                } else {
+                	throw new AppException("No se pudo recuperar los registros.", null);
+                }
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+    }
+    
+    public static void updateLecturaTB(List<InyeccionTB> list) throws AppException {
+
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                PredioLibreDAO.updateLecturaTB(trx, list);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("PredioLibreService.updateLecturaTB()", ex);
+                if (ex.getSQLState().equals("SIP02")){
+                	throw new AppException(ex.getMessage(), null);
+                } else {
+                	throw new AppException("No se pudo recuperar los registros.", null);
+                }
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+    }
+    
+    public static List traeGanadoBrucelosis(Integer instancia) throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = PredioLibreDAO.selectGanadoBrucelosis(trx, instancia);
+            } catch (SQLException ex) {
+                AppLog.logSevere("PredioLibreService.traeGanadoBrucelosis()", ex);
+                if (ex.getSQLState().equals("SIP03")){
+                	throw new AppException(ex.getMessage(), null);
+                } else {
+                	throw new AppException("No se pudo recuperar los registros.", null);
+                }
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
+    public static void insertaGanadoBrucelosis(List<Brucelosis> list) throws AppException {
+
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                PredioLibreDAO.insertGanadoBrucelosis(trx, list);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("PredioLibreService.insertaGanadoBrucelosis()", ex);
+                if (ex.getSQLState().equals("SIP02")){
+                	throw new AppException(ex.getMessage(), null);
+                } else {
+                	throw new AppException("No se pudo recuperar los registros.", null);
+                }
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+    }
+    
+    public static void cerrarInstancia(Integer g_usuario_id, Integer instancia) throws AppException {
+
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                PredioLibreDAO.cerrarInstancia(trx, g_usuario_id, instancia);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("PredioLibreService.cerrarInstancia()", ex);
                 if (ex.getSQLState().equals("SIP02")){
                 	throw new AppException(ex.getMessage(), null);
                 } else {

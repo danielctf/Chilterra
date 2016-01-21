@@ -14,9 +14,11 @@ public class InyeccionTB implements Serializable{
 	private Integer ganadoDiio;
 	private Integer tuboPPDId;
 	private Integer tuboPPDSerie;
+	private String lecturaTB;
 	private Integer instancia;
 	private Integer fundoId;
 	private Date fecha_dosis;
+	private Date fecha_lectura;
 	private String sincronizado;
 	
 	public Integer getGanadoID() {
@@ -93,6 +95,22 @@ public class InyeccionTB implements Serializable{
 	
 	public String toString(){
 		return Integer.toString(this.ganadoDiio);
+	}
+
+	public String getLecturaTB() {
+		return lecturaTB;
+	}
+
+	public void setLecturaTB(String lecturaTB) {
+		this.lecturaTB = lecturaTB;
+	}
+
+	public Date getFecha_lectura() {
+		return fecha_lectura;
+	}
+
+	public void setFecha_lectura(Date fecha_lectura) {
+		this.fecha_lectura = fecha_lectura;
 	}
 
 	

@@ -28,7 +28,7 @@ import android.widget.TextView;
 
 public class PredioLibreDiio extends Activity implements View.OnClickListener{
 
-	private Fragment frInyeccionTB;
+	private Fragment frInyeccionTB, frBrucelosis;
 	private TextView app, tvFaltantes, tvEncontrados;
 	private ImageButton goBack;
 	private Button btnInyeccion, btnMuestra;
@@ -55,24 +55,36 @@ public class PredioLibreDiio extends Activity implements View.OnClickListener{
 		btnMuestra = (Button)findViewById(R.id.btnMuestra);
 		btnMuestra.setOnClickListener(this);
 		frInyeccionTB = new PredioLibreInyeccionTB(this);
+		frBrucelosis = new PredioLibreBrucelosis(this);
 		
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		transaction.replace(R.id.container, frInyeccionTB);
 		btnInyeccion.setBackgroundResource(R.drawable.tab_state_activated);
 		btnMuestra.setBackgroundResource(R.drawable.tab_state_deactivated);
 		transaction.commit();
-		//getFragmentManager().executePendingTransactions();
+		getFragmentManager().executePendingTransactions();
 	}
 
 	public void onClick(View arg0) {
 		int id = arg0.getId();
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		switch (id){
 		case R.id.goBack:
 			finish();
 			break;
 		case R.id.btnInyeccion:
+			transaction.replace(R.id.container, frInyeccionTB);
+			btnInyeccion.setBackgroundResource(R.drawable.tab_state_activated);
+			btnMuestra.setBackgroundResource(R.drawable.tab_state_deactivated);
+			transaction.commit();
+			getFragmentManager().executePendingTransactions();
 			break;
 		case R.id.btnMuestra:
+			transaction.replace(R.id.container, frBrucelosis);
+			btnInyeccion.setBackgroundResource(R.drawable.tab_state_deactivated);
+			btnMuestra.setBackgroundResource(R.drawable.tab_state_activated);
+			transaction.commit();
+			getFragmentManager().executePendingTransactions();
 			break;
 		}
 	}

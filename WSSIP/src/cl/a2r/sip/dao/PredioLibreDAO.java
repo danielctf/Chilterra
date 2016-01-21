@@ -9,6 +9,7 @@ import java.util.List;
 
 import cl.a2r.sip.common.Util;
 import cl.a2r.sip.model.Areteo;
+import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.PPD;
@@ -34,6 +35,18 @@ public class PredioLibreDAO {
     
     private static final String SQL_INSERT_PREDIO_LIBRE = ""
     		+ "select * from sip.ws_insert_predio_libre(?, ?)";
+    
+    private static final String SQL_UPDATE_LECTURA_TB = ""
+    		+ "select * from sip.ws_insert_tratamiento_tuberculosis(?, ?, ?, ?, ?)";
+    
+    private static final String SQL_SELECT_GAN_BRUCELOSIS = ""
+    		+ "select * from sip.ws_select_gan_muestra(?)";
+    
+    private static final String SQL_INSERT_GAN_BRUCELOSIS = ""
+    		+ "select * from sip.ws_insert_gan_muestra(?, ?, ?, ?, ?)";
+    
+    private static final String SQL_CERRAR_INSTANCIA = ""
+    		+ "select * from sip.ws_cerrar_instancia(?, ?)";
     
     public static List selectPredioLibre(Transaccion trx, Integer g_fundo_id) throws SQLException {
         List list = new ArrayList();
@@ -168,6 +181,85 @@ public class PredioLibreDAO {
 	    pst.setObject(2, g_fundo_id);
 	    pst.executeQuery();
 
+	    pst.close();
+    }
+    
+    public static void updateLecturaTB(Transaccion trx, List<InyeccionTB> list) throws SQLException {
+	    Connection conn = null;
+	    PreparedStatement pst = null;
+	    ResultSet res = null;
+	
+	    conn = trx.getConn();
+	    pst = conn.prepareStatement( SQL_UPDATE_LECTURA_TB );
+	    for (InyeccionTB tb : list){
+	    	pst.setObject(1, tb.getUsuarioId());
+	    	pst.setObject(2, tb.getGanadoID());
+	    	pst.setObject(3, Util.dateToSqlDate(tb.getFecha_lectura()));
+	    	pst.setObject(4, tb.getLecturaTB());
+	    	pst.setObject(5, tb.getInstancia());
+	    	pst.executeQuery();
+	    }
+
+	    pst.close();
+    }
+    
+    public static List selectGanadoBrucelosis(Transaccion trx, Integer instancia) throws SQLException {
+        List list = new ArrayList();
+
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_GAN_BRUCELOSIS );
+        pst.setObject(1, instancia);
+        res = pst.executeQuery();
+        while (res.next() ){
+        	Brucelosis b = new Brucelosis();
+        	b.getGanado().setId(res.getInt("g_ganado_id"));
+        	b.getGanado().setPredio(res.getInt("g_fundo_id"));
+        	b.setInstancia(res.getInt("g_procedimiento_instancia_id"));
+        	b.getGanado().setDiio(res.getInt("diio"));
+        	b.setCodBarra(res.getString("codigo"));
+        	b.setSincronizado("Y");
+        	list.add(b);
+        }
+        res.close();
+        pst.close();
+
+        return list;
+    }
+    
+    public static void insertGanadoBrucelosis(Transaccion trx, List<Brucelosis> list) throws SQLException {
+	    Connection conn = null;
+	    PreparedStatement pst = null;
+	    ResultSet res = null;
+	
+	    conn = trx.getConn();
+	    pst = conn.prepareStatement( SQL_INSERT_GAN_BRUCELOSIS );
+	    for (Brucelosis b : list){
+	    	pst.setObject(1, b.getUsuarioId());
+	    	pst.setObject(2, b.getCodBarra());
+	    	pst.setObject(3, Util.dateToSqlDate(b.getFecha_muestra()));
+	    	pst.setObject(4, b.getInstancia());
+	    	pst.setObject(5, b.getGanado().getId());
+	    	pst.executeQuery();
+	    }
+
+	    pst.close();
+    }
+    
+    public static void cerrarInstancia(Transaccion trx, Integer g_usuario_id, Integer instancia) throws SQLException {
+	    Connection conn = null;
+	    PreparedStatement pst = null;
+	    ResultSet res = null;
+	
+	    conn = trx.getConn();
+	    pst = conn.prepareStatement( SQL_CERRAR_INSTANCIA );
+	    pst.setObject(1, g_usuario_id);
+	    pst.setObject(2, instancia);
+	    pst.executeQuery();
+	    
 	    pst.close();
     }
 	

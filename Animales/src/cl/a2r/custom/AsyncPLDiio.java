@@ -5,6 +5,7 @@ import java.util.List;
 import cl.a2r.animales.PredioLibreDiio;
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
+import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
@@ -16,7 +17,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-public class AsyncPLDiio extends AsyncTask<Integer, Void, Void>{
+public class AsyncPLDiio extends AsyncTask<Void, Void, Void>{
 
 	private Activity act;
 	private ProgressBar loading;
@@ -38,13 +39,20 @@ public class AsyncPLDiio extends AsyncTask<Integer, Void, Void>{
 		lvPredioLibre.setEnabled(false);
 	}
 	
-	protected Void doInBackground(Integer... params) {
+	protected Void doInBackground(Void... params) {
 		try {
-			List<InyeccionTB> listEncontrados = WSPredioLibreCliente.traeGanadoTuberculina(params[0]);
+			List<InyeccionTB> listEncontrados = WSPredioLibreCliente.traeGanadoTuberculina(instancia);
 			for (InyeccionTB tb : listEncontrados){
 				boolean exists = PredioLibreServicio.existsGanadoPL(tb.getGanadoID());
 				if (!exists){
 					PredioLibreServicio.insertaGanadoPL(tb);
+				}
+			}
+			List<Brucelosis> listEncontradosBrucelosis = WSPredioLibreCliente.traeGanadoBrucelosis(instancia);
+			for (Brucelosis b : listEncontradosBrucelosis){
+				boolean exists = PredioLibreServicio.existsGanadoPLBrucelosis(b.getGanado().getId());
+				if (!exists){
+					PredioLibreServicio.insertaGanadoPLBrucelosis(b);
 				}
 			}
 			List<Ganado> list = WSPredioLibreCliente.traeAllDiio();

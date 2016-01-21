@@ -2,10 +2,10 @@ package cl.a2r.custom;
 
 import java.util.List;
 
-import cl.a2r.animales.PredioLibreDiio;
 import cl.a2r.animales.PredioLibreLobby;
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
+import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
@@ -15,15 +15,20 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
-public class AsyncPredioLibre extends AsyncTask<List<InyeccionTB>, Void, Void>{
+public class AsyncPredioLibre extends AsyncTask<Void, Void, Void>{
 
 	private Activity act;
 	private ProgressBar loading;
 	private ImageButton sync;
 	private String title, msg;
+	private List<InyeccionTB> syncPendientes, syncLecturaTB;
+	private List<Brucelosis> syncBrucelosis;
 	
-	public AsyncPredioLibre(Activity act){
+	public AsyncPredioLibre(Activity act, List<InyeccionTB> syncPendientes, List<InyeccionTB> syncLecturaTB, List<Brucelosis> syncBrucelosis){
 		this.act = act;
+		this.syncPendientes = syncPendientes;
+		this.syncLecturaTB = syncLecturaTB;
+		this.syncBrucelosis = syncBrucelosis;
 		loading = (ProgressBar) this.act.findViewById(R.id.loading);
 		sync = (ImageButton) this.act.findViewById(R.id.sync);
 		title = "";
@@ -35,12 +40,15 @@ public class AsyncPredioLibre extends AsyncTask<List<InyeccionTB>, Void, Void>{
 		sync.setVisibility(View.INVISIBLE);
 	}
 	
-	protected Void doInBackground(List<InyeccionTB>... params) {
+	protected Void doInBackground(Void... params) {
 		try {
-			WSPredioLibreCliente.insertaGanadoTuberculina(params[0]);
+			WSPredioLibreCliente.insertaGanadoTuberculina(syncPendientes);
+			WSPredioLibreCliente.updateLecturaTB(syncLecturaTB);
+			WSPredioLibreCliente.insertaGanadoBrucelosis(syncBrucelosis);
 			PredioLibreServicio.deletePL();
+			PredioLibreServicio.deletePLBrucelosis();
 			title = "Sincronización";
-			msg = "Sincronozación Completa";
+			msg = "Sincronización Completa";
 		} catch (AppException e) {
 			title = "Error";
 			msg = e.getMessage();
@@ -54,7 +62,5 @@ public class AsyncPredioLibre extends AsyncTask<List<InyeccionTB>, Void, Void>{
 		((PredioLibreLobby) act).syncPendientes();
 		sync.setVisibility(View.VISIBLE);
 	}
-
-
 
 }

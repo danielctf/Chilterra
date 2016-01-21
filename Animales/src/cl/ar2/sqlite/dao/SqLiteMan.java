@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="animales";
-    private static final int version = 1;
+    private static final int version = 2;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
@@ -39,7 +39,17 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " instancia INTEGER,"
             + " ganadoDiio INTEGER,"
             + " tuboPPDId INTEGER,"
+            + " lecturaTB TEXT,"
             + " sincronizado TEXT)");
+        
+        db.execSQL( ""
+            + "CREATE TABLE predio_libre_brucelosis ( "
+        	+ " ganadoId INTEGER,"
+        	+ " fundoId INTEGER,"
+        	+ " instancia INTEGER,"
+            + " ganadoDiio INTEGER,"
+            + " codBarra TEXT,"
+            + " sincronizado TEXT)");        
     }
 
     @Override
@@ -48,6 +58,27 @@ public class SqLiteMan extends SQLiteOpenHelper {
         // Las actualizaciones debieran borrar la tabla anterior y crear las nuevas
         // Siempre debieran estar todos los pasos de cambios desde la version 1 
     	
+        db.execSQL( ""
+            + "DROP TABLE IF EXISTS predio_libre");
+    	
+        db.execSQL( ""
+            + "CREATE TABLE predio_libre ( "
+        	+ " ganadoId INTEGER,"
+        	+ " fundoId INTEGER,"
+        	+ " instancia INTEGER,"
+            + " ganadoDiio INTEGER,"
+            + " tuboPPDId INTEGER,"
+            + " lecturaTB TEXT,"
+            + " sincronizado TEXT)");
+    	
+        db.execSQL( ""
+            + "CREATE TABLE predio_libre_brucelosis ( "
+        	+ " ganadoId INTEGER,"
+        	+ " fundoId INTEGER,"
+        	+ " instancia INTEGER,"
+            + " ganadoDiio INTEGER,"
+            + " codBarra TEXT,"
+            + " sincronizado TEXT)");     
 
     }
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.database.SQLException;
 import cl.a2r.common.AppException;
+import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.ar2.sqlite.dao.PredioLibreDAO;
@@ -197,28 +198,6 @@ public class PredioLibreServicio {
 
         return exists;
     }
-    
-    public static void deleteSincronizado() throws AppException {
-        SqLiteTrx trx;
-
-        try {
-            trx = SqLiteTrx.getTrx(true);
-        } catch (Exception ex) {
-            throw new AppException(ex.getMessage(), ex);
-        }
-
-        if (trx != null) {
-            try {
-                PredioLibreDAO.deleteSincronizado(trx);
-                trx.commit();
-            } catch ( SQLException ex ) {
-                trx.rollback();
-                throw new AppException(ex.getMessage(), null);
-            } finally {
-                trx.close();
-            }
-        }
-    }
 	
     public static void deletePL() throws AppException {
         SqLiteTrx trx;
@@ -264,6 +243,144 @@ public class PredioLibreServicio {
         }
 
         return list;
+    }
+    
+    public static void insertaGanadoPLBrucelosis(Brucelosis b) throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                PredioLibreDAO.insertaGanadoPLBrucelosis(trx, b);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
+    public static List traeGanadoPLBrucelosis() throws AppException {
+        List list = new ArrayList();
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                list = PredioLibreDAO.selectGanadoPLBrucelosis(trx);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return list;
+    }
+    
+    public static boolean existsGanadoPLBrucelosis(Integer ganadoId) throws AppException {
+    	boolean exists = false;
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                exists = PredioLibreDAO.existsGanadoPLBrucelosis(trx, ganadoId);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return exists;
+    }
+    
+    public static boolean existsCodigoBarra(String codBarra) throws AppException {
+    	boolean exists = false;
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                exists = PredioLibreDAO.existsCodigoBarra(trx, codBarra);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return exists;
+    }
+    
+    public static void deletePLBrucelosis() throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                PredioLibreDAO.deletePLBrucelosis(trx);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
+    public static void insertaLecturaTuberculosis(String lecturaTB, Integer ganadoId) throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                PredioLibreDAO.insertLecturaTuberculosis(trx, lecturaTB, ganadoId);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
     }
     
 }

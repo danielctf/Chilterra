@@ -5,6 +5,7 @@ import java.util.List;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.common.wsutils.ServiceWS;
+import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.InyeccionTB;
 
 public class WSPredioLibreCliente {
@@ -103,7 +104,65 @@ public class WSPredioLibreCliente {
         } else if (obj == null){
         	throw new AppException("Error de conexión a Internet", null);
         }
+    }
+    
+    public static void updateLecturaTB(List<InyeccionTB> list) throws AppException {
+
+        ParamServlet params = new ParamServlet();
+        params.add("servicio", "updateLecturaTB" );
+        params.add("list", list);
+
+        Object obj = ServiceWS.invocaWS("WSPredioLibre", params );
+        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+            throw (AppException) obj;
+        } else if (obj == null){
+        	throw new AppException("Error de conexión a Internet", null);
+        }
+    }
+    
+    public static List traeGanadoBrucelosis(Integer instancia) throws AppException {
+
+        ParamServlet params = new ParamServlet();
+        params.add("servicio", "traeGanadoBrucelosis" );
+        params.add("instancia", instancia );
+
+        Object obj = ServiceWS.invocaWS("WSPredioLibre", params );
+        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+            throw (AppException) obj;
+        } else if (obj == null){
+        	throw new AppException("Error de conexión a Internet", null);
+        } else {
+            return (List) obj;
+        }
 
     }
     
+    public static void insertaGanadoBrucelosis(List<Brucelosis> list) throws AppException {
+
+        ParamServlet params = new ParamServlet();
+        params.add("servicio", "insertaGanadoBrucelosis" );
+        params.add("list", list);
+
+        Object obj = ServiceWS.invocaWS("WSPredioLibre", params );
+        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+            throw (AppException) obj;
+        } else if (obj == null){
+        	throw new AppException("Error de conexión a Internet", null);
+        }
+    }
+    
+    public static void cerrarInstancia(Integer g_usuario_id, Integer instancia) throws AppException {
+
+        ParamServlet params = new ParamServlet();
+        params.add("servicio", "cerrarInstancia" );
+        params.add("g_usuario_id", g_usuario_id);
+        params.add("instancia", instancia);
+
+        Object obj = ServiceWS.invocaWS("WSPredioLibre", params );
+        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+            throw (AppException) obj;
+        } else if (obj == null){
+        	throw new AppException("Error de conexión a Internet", null);
+        }
+    }
 }

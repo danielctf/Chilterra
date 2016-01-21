@@ -3,6 +3,7 @@ package cl.a2r.sip.servlet;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sip.common.AppLog;
+import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.Sesion;
 import cl.a2r.sip.service.AutorizacionService;
@@ -41,7 +42,7 @@ public class WSPredioLibre extends HttpServlet {
 
         try {
             params = (ParamServlet) inputFromApplet.readObject();
-
+            Integer i = 1;
             String servicio = (String) params.getParam("servicio");
             if (servicio.equals("traePredioLibre")){
             	Integer g_fundo_id = (Integer) params.getParam("g_fundo_id");
@@ -57,7 +58,6 @@ public class WSPredioLibre extends HttpServlet {
             } else if (servicio.equals("insertaGanadoTuberculina")){
             	List<InyeccionTB> list = (List<InyeccionTB>) params.getParam("ganList");
             	PredioLibreService.insertaGanadoTuberculina(list);
-            	Integer i = 1;
             	retorno = i;
             } else if (servicio.equals("traeTuberculinaPPD")){
             	List list = PredioLibreService.traeTuberculinaPPD();
@@ -66,7 +66,23 @@ public class WSPredioLibre extends HttpServlet {
             	Integer p_usuario_id = (Integer) params.getParam("p_usuario_id");
             	Integer g_fundo_id = (Integer) params.getParam("g_fundo_id");
             	PredioLibreService.insertaPredioLibre(p_usuario_id, g_fundo_id);
-            	Integer i = 1;
+            	retorno = i;
+            } else if (servicio.equals("updateLecturaTB")){
+            	List<InyeccionTB> list = (List<InyeccionTB>) params.getParam("list");
+            	PredioLibreService.updateLecturaTB(list);
+            	retorno = i;
+            } else if (servicio.equals("traeGanadoBrucelosis")){
+            	Integer instancia = (Integer) params.getParam("instancia");
+            	List list = PredioLibreService.traeGanadoBrucelosis(instancia);
+            	retorno = list;
+            } else if (servicio.equals("insertaGanadoBrucelosis")){
+            	List<Brucelosis> list = (List<Brucelosis>) params.getParam("list");
+            	PredioLibreService.insertaGanadoBrucelosis(list);
+            	retorno = i;
+            } else if (servicio.equals("cerrarInstancia")){
+            	Integer g_usuario_id = (Integer) params.getParam("g_usuario_id");
+            	Integer instancia = (Integer) params.getParam("instancia");
+            	PredioLibreService.cerrarInstancia(g_usuario_id, instancia);
             	retorno = i;
             } else {
             	retorno = new AppException("Servicio no válido.", null);

@@ -3,6 +3,7 @@ import cl.a2r.common.AppException;
 import cl.a2r.sip.model.Aplicacion;
 import cl.a2r.sip.model.Areteo;
 import cl.a2r.sip.model.Baja;
+import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.Camion;
 import cl.a2r.sip.model.CausaBaja;
 import cl.a2r.sip.model.Chofer;
@@ -53,8 +54,11 @@ public class Test {
     public static void main(String[] arg) {
     	
     	try {
-    		WSPredioLibreCliente.insertaPredioLibre(1, 9);
-
+    		List<Brucelosis> list = WSPredioLibreCliente.traeGanadoBrucelosis(45);
+    		for (Brucelosis b : list){
+    			System.out.println(b.getGanado().getDiio());
+    		}
+    		
 		} catch (AppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

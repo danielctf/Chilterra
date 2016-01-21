@@ -5,16 +5,13 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.BaseAdapter;
 import cl.a2r.alimentacion.R;
-import cl.a2r.sap.model.Medicion;
 import cl.ar2.sqlite.cobertura.StockM;
 
 public class StockAdapter extends BaseAdapter{

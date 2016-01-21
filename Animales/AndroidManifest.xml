@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cl.a2r.animales"
     android:installLocation="preferExternal"
-    android:versionCode="134"
-    android:versionName="1.34" >
+    android:versionCode="135"
+    android:versionName="1.35" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -56,10 +57,6 @@
             android:label="@string/title_activity_logs" >
         </activity>
         <activity
-            android:name=".BajaGanadoEdicion"
-            android:label="@string/title_activity_baja_ganado_edicion" >
-        </activity>
-        <activity
             android:name=".Partos"
             android:label="@string/title_activity_partos" >
         </activity>
@@ -100,20 +97,12 @@
             android:label="@string/title_activity_traslados_confirmacion_diios" >
         </activity>
         <activity
-            android:name="cl.a2r.custom.CalculadoraGD"
-            android:label="@string/title_activity_calculadora_gd" >
-        </activity>
-        <activity
             android:name=".Salvatajes"
             android:label="@string/title_activity_salvataje" >
         </activity>
         <activity
             android:name=".SalvatajeDiios"
             android:label="@string/title_activity_salvataje_diios" >
-        </activity>
-        <activity
-            android:name=".Medicion"
-            android:label="@string/title_activity_medicion" >
         </activity>
         <activity
             android:name=".PredioLibreLobby"
@@ -123,6 +112,12 @@
             android:name=".PredioLibreDiio"
             android:label="@string/title_activity_predio_libre" >
         </activity>
+        
+        <activity
+            android:name="com.google.zxing.client.android.CaptureActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        
     </application>
 
 </manifest>

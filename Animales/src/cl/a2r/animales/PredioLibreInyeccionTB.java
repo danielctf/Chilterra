@@ -93,7 +93,7 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			List<InyeccionTB> list = PredioLibreServicio.traeGanadoPL();
 			listEncontrados = new ArrayList<InyeccionTB>();
 			for (InyeccionTB tb : list){
-				if (tb.getFundoId().intValue() == Aplicaciones.predioWS.getId()){
+				if (tb.getFundoId().intValue() == Aplicaciones.predioWS.getId().intValue()){
 					listEncontrados.add(tb);
 				}
 			}
@@ -177,12 +177,14 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			boolean exists = PredioLibreServicio.existsGanadoPL(ganTB.getGanadoID());
 			if (!exists){
 				PredioLibreServicio.insertaGanadoPL(ganTB);
+				Toast.makeText(act, "Animal Registrado", Toast.LENGTH_LONG).show();
 				mostrarCandidatos();
 			} else {
 				Toast.makeText(act, "Animal ya existe", Toast.LENGTH_LONG).show();
 			}
 			ganTB = new InyeccionTB();
 			ganTB.setTuboPPDId(((PPD) spinnerPPD.getSelectedItem()).getId());
+			resetCalculadora();
 			updateStatus();
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), act);

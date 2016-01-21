@@ -8,6 +8,7 @@ import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sip.model.Areteo;
+import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.CollarParto;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.InyeccionTB;
@@ -140,6 +141,16 @@ public class Candidatos extends Activity implements View.OnClickListener, ListVi
 			tvApp.setText("Candidatos Faltantes");
 			ArrayAdapter<Ganado> mAdapter4 = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, PredioLibreInyeccionTB.listFaltantes);
 			lvCandidatos.setAdapter(mAdapter4);
+			break;
+		case "predioLibreBrucelosisEncontrados":
+			tvApp.setText("Candidatos Encontrados");
+			ArrayAdapter<Brucelosis> mAdapter5 = new ArrayAdapter<Brucelosis>(this, android.R.layout.simple_list_item_1, PredioLibreBrucelosis.listEncontrados);
+			lvCandidatos.setAdapter(mAdapter5);
+			break;
+		case "predioLibreBrucelosisFaltantes":
+			tvApp.setText("Candidatos Faltantes");
+			ArrayAdapter<Ganado> mAdapter6 = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, PredioLibreBrucelosis.listFaltantes);
+			lvCandidatos.setAdapter(mAdapter6);
 			break;
 		}
 		
