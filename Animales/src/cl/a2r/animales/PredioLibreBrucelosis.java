@@ -76,13 +76,14 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
     	llFaltantes.setOnClickListener(this);
     	spinnerTB = (Spinner)v.findViewById(R.id.spinnerTB);
     	bru = new Brucelosis();
-    	mostrarCandidatos();
-    	setSpinner();
     	
 		Bundle extras = act.getIntent().getExtras();
 		if (extras != null) {
 		    instancia = extras.getInt("instancia");
 		}
+		
+    	mostrarCandidatos();
+    	setSpinner();
     
     	return v;
 	}
@@ -111,7 +112,12 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 			List<Brucelosis> list = PredioLibreServicio.traeGanadoPLBrucelosis();
 			listEncontrados = new ArrayList<Brucelosis>();
 			for (Brucelosis b : list){
+				/*
 				if (b.getGanado().getPredio().intValue() == Aplicaciones.predioWS.getId().intValue()){
+					listEncontrados.add(b);
+				}
+				*/
+				if (b.getInstancia().intValue() == instancia){
 					listEncontrados.add(b);
 				}
 			}
@@ -151,21 +157,6 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 			confirmarAnimal.setEnabled(true);
 		} else {
 			confirmarAnimal.setEnabled(false);
-		}
-		
-		try {
-			if (bru.getGanado().getId() != null){
-				boolean exists = PredioLibreServicio.existsGanadoPL(bru.getGanado().getId());
-				ArrayAdapter<LecturaTBObject> mAdapter;
-				if (exists){
-					mAdapter = new ArrayAdapter<LecturaTBObject>(act, android.R.layout.simple_list_item_1, aplicaTB);
-				} else {
-					mAdapter = new ArrayAdapter<LecturaTBObject>(act, android.R.layout.simple_list_item_1, noAplicaTB);
-				}
-				spinnerTB.setAdapter(mAdapter);
-			}
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), act);
 		}
 		
 	}
@@ -260,6 +251,19 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 			bru.getGanado().setPredio(gan.getPredio());
 			tvDiio.setText(Integer.toString(bru.getGanado().getDiio()));
 			tvDiio.setGravity(Gravity.CENTER_HORIZONTAL);
+			
+			try {
+				boolean exists = PredioLibreServicio.existsGanadoPL(bru.getGanado().getId());
+				ArrayAdapter<LecturaTBObject> mAdapter;
+				if (exists){
+					mAdapter = new ArrayAdapter<LecturaTBObject>(act, android.R.layout.simple_list_item_1, aplicaTB);
+				} else {
+					mAdapter = new ArrayAdapter<LecturaTBObject>(act, android.R.layout.simple_list_item_1, noAplicaTB);
+				}
+				spinnerTB.setAdapter(mAdapter);
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), act);
+			}
 		}
 		updateStatus();
 	}

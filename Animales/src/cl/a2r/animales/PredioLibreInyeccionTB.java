@@ -66,15 +66,16 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
     	llFaltantes.setOnClickListener(this);
     	spinnerPPD = (Spinner)v.findViewById(R.id.spinnerPPD);
     	ganTB = new InyeccionTB();
-    	cargarListeners();
-    	mostrarCandidatos();
-    	getPPDWS();
     	
 		Bundle extras = act.getIntent().getExtras();
 		if (extras != null) {
 		    instancia = extras.getInt("instancia");
 		}
-    
+		
+    	cargarListeners();
+    	mostrarCandidatos();
+    	getPPDWS();
+
     	return v;
 	}
 	
@@ -93,7 +94,12 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			List<InyeccionTB> list = PredioLibreServicio.traeGanadoPL();
 			listEncontrados = new ArrayList<InyeccionTB>();
 			for (InyeccionTB tb : list){
+				/*
 				if (tb.getFundoId().intValue() == Aplicaciones.predioWS.getId().intValue()){
+					listEncontrados.add(tb);
+				}
+				*/
+				if (tb.getInstancia().intValue() == instancia){
 					listEncontrados.add(tb);
 				}
 			}

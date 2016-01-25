@@ -27,5 +27,6 @@
     <string name="title_activity_predio_libre_lobby">PredioLibreLobby</string>
     <string name="title_activity_predio_libre">PredioLibre</string>
     <string name="title_activity_predio_libre_brucelosis">PredioLibreBrucelosis</string>
+    <string name="title_activity_object_logs">ObjectLogs</string>
 
 </resources>

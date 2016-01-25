@@ -112,12 +112,14 @@
             android:name=".PredioLibreDiio"
             android:label="@string/title_activity_predio_libre" >
         </activity>
-        
         <activity
             android:name="com.google.zxing.client.android.CaptureActivity"
             android:screenOrientation="portrait" >
         </activity>
-        
+        <activity
+            android:name=".ObjectLogs"
+            android:label="@string/title_activity_object_logs" >
+        </activity>
     </application>
 
 </manifest>

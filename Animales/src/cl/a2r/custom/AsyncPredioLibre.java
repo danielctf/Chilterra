@@ -21,14 +21,18 @@ public class AsyncPredioLibre extends AsyncTask<Void, Void, Void>{
 	private ProgressBar loading;
 	private ImageButton sync;
 	private String title, msg;
+	private Integer instancia;
+	private boolean showMsg;
 	private List<InyeccionTB> syncPendientes, syncLecturaTB;
 	private List<Brucelosis> syncBrucelosis;
 	
-	public AsyncPredioLibre(Activity act, List<InyeccionTB> syncPendientes, List<InyeccionTB> syncLecturaTB, List<Brucelosis> syncBrucelosis){
+	public AsyncPredioLibre(Activity act, List<InyeccionTB> syncPendientes, List<InyeccionTB> syncLecturaTB, List<Brucelosis> syncBrucelosis, boolean showMsg, Integer instancia){
 		this.act = act;
 		this.syncPendientes = syncPendientes;
 		this.syncLecturaTB = syncLecturaTB;
 		this.syncBrucelosis = syncBrucelosis;
+		this.showMsg = showMsg;
+		this.instancia = instancia;
 		loading = (ProgressBar) this.act.findViewById(R.id.loading);
 		sync = (ImageButton) this.act.findViewById(R.id.sync);
 		title = "";
@@ -57,9 +61,13 @@ public class AsyncPredioLibre extends AsyncTask<Void, Void, Void>{
 	}
 	
 	protected void onPostExecute(Void result){
-		ShowAlert.showAlert(title, msg, act);
-		loading.setVisibility(View.INVISIBLE);
-		((PredioLibreLobby) act).syncPendientes();
+		if (showMsg){
+			ShowAlert.showAlert(title, msg, act);
+			loading.setVisibility(View.INVISIBLE);
+			((PredioLibreLobby) act).syncPendientes();
+		} else {
+			new AsyncPLDiio(act, instancia).execute();
+		}
 		sync.setVisibility(View.VISIBLE);
 	}
 
