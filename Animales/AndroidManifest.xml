@@ -117,7 +117,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".PredioLibreLogs"
+            android:name=".PredioLibreLogsTB"
             android:label="@string/title_activity_object_logs" >
         </activity>
     </application>

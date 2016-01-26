@@ -26,14 +26,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class PredioLibreInyeccionTB extends Fragment implements View.OnClickListener{
 
@@ -74,25 +72,16 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
     	tvAnimalesMangada = (TextView)v.findViewById(R.id.tvAnimalesMangada);
     	ganTB = new InyeccionTB();
     	
-    	isMangadaCerrada = true;
+    	isMangadaCerrada = false;
     	totalAnimales = 0;
     	animalesMangada = 0;
     	mangadaActual = 0;
-    	try {
-			Integer mang = PredioLibreServicio.traeMangadaActual();
-			if (mang != null){
-				mangadaActual = mang.intValue();
-			}
-		} catch (AppException e) {
-			e.printStackTrace();
-		}
+
 		Bundle extras = act.getIntent().getExtras();
 		if (extras != null) {
 		    instancia = extras.getInt("instancia");
 		}
 		
-    	cargarListeners();
-    	mostrarCandidatos();
     	getPPDWS();
 
     	return v;
@@ -142,30 +131,16 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 		}
 	}
 	
-	private void cargarListeners(){
-		spinnerPPD.setOnItemSelectedListener(new OnItemSelectedListener(){
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				ganTB.setTuboPPDId(((PPD) arg0.getItemAtPosition(arg2)).getId());
-				updateStatus();
-			}
-			public void onNothingSelected(AdapterView<?> arg0) {
-			}
-		});
-	}
-	
 	private void updateStatus(){
-		if (ganTB.getGanadoDiio() == null &&
-				ganTB.getGanadoID() == null){
-			tvDiio.setGravity(Gravity.LEFT);
-			tvDiio.setText("DIIO:");
-		}
-		
 		if (ganTB.getGanadoID() != null &&
-				ganTB.getGanadoDiio() != null &&
-				ganTB.getTuboPPDId() != null){
+				ganTB.getGanadoDiio() != null){
 			
+			tvDiio.setText(Integer.toString(ganTB.getGanadoDiio()));
+			tvDiio.setGravity(Gravity.CENTER_HORIZONTAL);
 			confirmarAnimal.setEnabled(true);
 		} else {
+			tvDiio.setGravity(Gravity.LEFT);
+			tvDiio.setText("DIIO:");
 			confirmarAnimal.setEnabled(false);
 		}
 		
@@ -211,7 +186,7 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			startActivity(i);
 			break;
 		case R.id.llEncontrados:
-			i = new Intent(act, PredioLibreLogs.class);
+			i = new Intent(act, PredioLibreLogsTB.class);
 			i.putExtra("stance", "predioLibreEncontrados");
 			i.putExtra("cantMangadas", mangadaActual);
 			startActivity(i);
@@ -232,6 +207,8 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			ganTB.setSincronizado("N");
 			ganTB.setInstancia(instancia);
 			ganTB.setMangada(mangadaActual);
+			ganTB.setTuboPPDId(((PPD) spinnerPPD.getSelectedItem()).getId());
+			ganTB.setTuboPPDSerie(((PPD) spinnerPPD.getSelectedItem()).getSerie());
 			boolean exists = PredioLibreServicio.existsGanadoPL(ganTB.getGanadoID());
 			if (!exists){
 				PredioLibreServicio.insertaGanadoPL(ganTB);
@@ -241,7 +218,6 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 				Toast.makeText(act, "Animal ya existe", Toast.LENGTH_LONG).show();
 			}
 			ganTB = new InyeccionTB();
-			ganTB.setTuboPPDId(((PPD) spinnerPPD.getSelectedItem()).getId());
 			resetCalculadora();
 			updateStatus();
 		} catch (AppException e) {
@@ -258,8 +234,6 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			ganTB.setGanadoID(gan.getId());
 			ganTB.setGanadoDiio(gan.getDiio());
 			ganTB.setFundoId(gan.getPredio());
-			tvDiio.setText(Integer.toString(ganTB.getGanadoDiio()));
-			tvDiio.setGravity(Gravity.CENTER_HORIZONTAL);
 		}
 		updateStatus();
 	}
@@ -273,7 +247,18 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 	
 	public void onStart(){
 		super.onStart();
-		
+    	try {
+			Integer mang = PredioLibreServicio.traeMangadaActual();
+			if (mang != null){
+				mangadaActual = mang.intValue();
+				if (mangadaActual == 0){
+					isMangadaCerrada = true;
+				}
+			}
+		} catch (AppException e) {
+			e.printStackTrace();
+		}
+		mostrarCandidatos();
 		Calculadora.isPredioLibre = true;
 		ConnectThread.setHandler(mHandler);
 		

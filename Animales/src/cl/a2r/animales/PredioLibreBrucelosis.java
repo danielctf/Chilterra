@@ -44,13 +44,15 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 
     private static int SCANNER_REQUEST_CODE = 123;
 	private Activity act;
-	private ImageButton confirmarAnimal, btnCodBarra;
+	private ImageButton confirmarAnimal, btnCodBarra, cerrarMangada;
 	private Spinner spinnerTB;
 	private View v;
-	private TextView tvDiio, tvFaltantes, tvEncontrados, tvCodBarra;
+	private TextView tvDiio, tvFaltantes, tvEncontrados, tvCodBarra, tvTotalAnimales, tvMangada, tvAnimalesMangada;
 	private LinearLayout llEncontrados, llFaltantes;
 	private Brucelosis bru;
 	private Integer instancia;
+	private boolean isMangadaCerrada;
+	private int totalAnimales, animalesMangada, mangadaActual;
 	private List<LecturaTBObject> aplicaTB, noAplicaTB;
 	public static List<Brucelosis> listEncontrados;
 	public static List<Ganado> listFaltantes;
@@ -75,14 +77,24 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
     	llFaltantes = (LinearLayout)v.findViewById(R.id.llFaltantes);
     	llFaltantes.setOnClickListener(this);
     	spinnerTB = (Spinner)v.findViewById(R.id.spinnerTB);
+    	cerrarMangada = (ImageButton)v.findViewById(R.id.cerrarMangada);
+    	cerrarMangada.setOnClickListener(this);
+    	tvTotalAnimales = (TextView)v.findViewById(R.id.tvTotalAnimales);
+    	tvMangada = (TextView)v.findViewById(R.id.tvMangada);
+    	tvAnimalesMangada = (TextView)v.findViewById(R.id.tvAnimalesMangada);
     	bru = new Brucelosis();
     	
+    	isMangadaCerrada = false;
+    	totalAnimales = 0;
+    	animalesMangada = 0;
+    	mangadaActual = 0;
+    	
+    	//CODIG ONO SE PUEDE REPETIR DSP DE SINCRONIZAR
 		Bundle extras = act.getIntent().getExtras();
 		if (extras != null) {
 		    instancia = extras.getInt("instancia");
 		}
 		
-    	mostrarCandidatos();
     	setSpinner();
     
     	return v;
@@ -177,8 +189,9 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 			startActivity(i);
 			break;
 		case R.id.llEncontrados:
-			i = new Intent(act, Candidatos.class);
-			i.putExtra("stance", "predioLibreBrucelosisEncontrados");
+			i = new Intent(act, PredioLibreLogsTB.class);
+			i.putExtra("stance", "predioLibreEncontradosBrucelosis");
+			i.putExtra("cantMangadas", mangadaActual);
 			startActivity(i);
 			break;
 		case R.id.btnCodBarra:
@@ -222,7 +235,6 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 				return;
 			}
 			String lecturaTB = ((LecturaTBObject) spinnerTB.getSelectedItem()).getCodigo();
-			System.out.println("fucked");
 			PredioLibreServicio.insertaLecturaTuberculosis(lecturaTB, bru.getGanado().getId());
 			PredioLibreServicio.insertaGanadoPLBrucelosis(bru);
 			Toast.makeText(act, "Animal Registrado", Toast.LENGTH_LONG).show();
@@ -277,7 +289,18 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 	
 	public void onStart(){
 		super.onStart();
-		
+    	try {
+			Integer mang = PredioLibreServicio.traeMangadaActualBrucelosis();
+			if (mang != null){
+				mangadaActual = mang.intValue();
+				if (mangadaActual == 0){
+					isMangadaCerrada = true;
+				}
+			}
+		} catch (AppException e) {
+			e.printStackTrace();
+		}
+		mostrarCandidatos();
 		Calculadora.isPredioLibre = true;
 		ConnectThread.setHandler(mHandler);
 		

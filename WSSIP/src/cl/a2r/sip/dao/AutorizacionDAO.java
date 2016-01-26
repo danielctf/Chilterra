@@ -8,11 +8,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cl.a2r.sip.dao.Transaccion;
+import cl.a2r.sip.mail.Correo;
 import cl.a2r.sip.model.Aplicacion;
+import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Predio;
 import cl.a2r.sip.model.Sesion;
 
@@ -154,16 +158,45 @@ public class AutorizacionDAO {
         return sesionId;
     }
     
-    public static void insertX1Z1(Transaccion trx) throws SQLException {
+    public static void insertX1Z1(Transaccion trx, List<Ganado> list, String correoDestino) throws SQLException {
+    	Integer id = null;
         Connection conn = null;
         PreparedStatement pst = null;
         ResultSet res = null;
 
         conn = trx.getConn();
         pst = conn.prepareStatement( SQL_INSERT_X1_Z1 );
-        pst.executeQuery();
-
+        res = pst.executeQuery();
+        if (res.next()){
+        	id = res.getInt(1);
+        }
+        res.close();
         pst.close();
+        
+        String xmlMsg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "\n"
+        		+ "<xmlMessage><body>" + "\n";
+
+        for (Ganado g : list){
+        	xmlMsg = xmlMsg + "<DIIO><numero>" + Integer.toString(g.getDiio())
+        			+ "</numero></DIIO>" + "\n";
+        }
+        
+        xmlMsg = xmlMsg + "</body></xmlMessage>";
+        
+        byte[] byteXML = xmlMsg.getBytes();
+        
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm dd-MM-yyyy");
+        Date date = new Date();
+        Correo correo = new Correo();
+        correo.setUser("dsantamaria@chilterra.com");
+        correo.setPass("awNxz111");
+        correo.setFrom("danielctf@gmail.com");
+        correo.setTo(correoDestino);
+        correo.setSubject("FMA " + df.format(date));
+        correo.setBody("XML válido para generar un FMA en sitio web SIPEC" + "\n"
+        		+ "http://sipecweb.sag.gob.cl/");
+        correo.addAdjunto(byteXML, "application/xml", "FMA " + Integer.toString(id) + ".xml" );
+        correo.enviar();
     }
 
 }

@@ -41,7 +41,7 @@ public class TrasladosDAO {
 	private static final String SQL_INSERTA_MOVIMIENTO_GANADO = ""
 			+ "select * from sip.ws_insert_movimiento_ganado(?, ?, ?)";
 	
-	private static final String SQL_GENERA_XML_TRASLADO = ""
+	public static final String SQL_GENERA_XML_TRASLADO = ""
 			+ "select * from sip.ws_select_xml_traslado(?, ?, ?, ?)";
 	
 	private static final String SQL_CONFIRMA_MOVIMIENTO = ""

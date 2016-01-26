@@ -8,6 +8,7 @@ package cl.a2r.sip.wsservice;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.common.wsutils.ServiceWS;
+import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Sesion;
 
 import java.util.List;
@@ -101,10 +102,13 @@ public class WSAutorizacionCliente {
 
    }
    
-   public static void insertaX1Z1() throws AppException {
+   public static void insertaX1Z1(List<Ganado> ganList, String correoDestino) throws AppException {
 
        ParamServlet params = new ParamServlet();
        params.add("servicio", "insertaX1Z1");
+       params.add("ganList", ganList);
+       params.add("correoDestino", correoDestino);
+       
        Object obj = ServiceWS.invocaWS("WSAutorizacion", params );
        if ( obj != null && obj.getClass().getName().contains("AppException")) {
            throw (AppException) obj;

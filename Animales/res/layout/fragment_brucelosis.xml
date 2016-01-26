@@ -118,11 +118,73 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/circlebutton_state"
+            android:src="@drawable/ic_action_done" />
+        
+        <ImageButton
+            android:id="@+id/cerrarMangada"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="20dp"
             android:layout_marginRight="20dp"
-            android:background="@drawable/circlebutton_state"
-            android:src="@drawable/ic_action_done" />
+            android:background="@drawable/circlebutton_lock"
+            android:src="@drawable/ic_lock_outline_white_36dp" />   
+            
+        <TextView
+	        android:id="@+id/tvTotalAnimales"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/tvMangada"
+			android:layout_toLeftOf="@+id/dot1"
+	        android:text="0"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textSize="30sp" />
+        
+        <TextView
+	        android:id="@+id/dot1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/tvMangada"
+			android:layout_toLeftOf="@+id/tvMangada"
+	        android:text="•"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:textSize="30sp" />
+        
+        <TextView
+	        android:id="@+id/tvMangada"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+			android:layout_centerHorizontal="true"
+			android:layout_alignParentBottom="true"
+			android:layout_marginBottom="30dp"
+	        android:text="0"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textSize="30sp" />
+        
+        <TextView
+	        android:id="@+id/dot2"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/tvMangada"
+			android:layout_toRightOf="@+id/tvMangada"
+	        android:text="•"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:textSize="30sp" />
+                
+        <TextView
+	        android:id="@+id/tvAnimalesMangada"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+			android:layout_alignTop="@+id/tvMangada"
+			android:layout_toRightOf="@+id/dot2"
+	        android:text="0"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:textSize="30sp" />        
 
     </RelativeLayout>
 

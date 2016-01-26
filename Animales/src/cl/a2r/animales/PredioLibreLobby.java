@@ -89,7 +89,16 @@ public class PredioLibreLobby extends Activity implements View.OnClickListener, 
 		switch (id){
 		case R.id.lvPredioLibre:
 			Integer instancia = ((PredioLibre) arg0.getItemAtPosition(arg2)).getId();
-			new AsyncPredioLibre(this, syncPendientes, syncLecturaTB, syncBrucelosis, false, instancia).execute();
+			try {
+				boolean isTheSame = PredioLibreServicio.checkIfSameInstance(instancia);
+				if (!isTheSame){
+					ShowAlert.showAlert("Sincronización", "Debe sincronizar antes de ingresar a éste Predio Libre", this);
+				} else {
+					new AsyncPLDiio(this, instancia).execute();
+				}
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
 			break;
 		}
 	}
@@ -101,7 +110,7 @@ public class PredioLibreLobby extends Activity implements View.OnClickListener, 
 			finish();
 			break;
 		case R.id.sync:
-			new AsyncPredioLibre(this, syncPendientes, syncLecturaTB, syncBrucelosis, true, 0).execute();
+			new AsyncPredioLibre(this, syncPendientes, syncLecturaTB, syncBrucelosis).execute();
 			break;
 		case R.id.addPredioLibre:
 			addPredioLibre.setVisibility(View.INVISIBLE);

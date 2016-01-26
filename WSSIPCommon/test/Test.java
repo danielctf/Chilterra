@@ -53,8 +53,19 @@ public class Test {
 
     public static void main(String[] arg) {
     	
+    	List<Ganado> list = new ArrayList<Ganado>();
+    	Ganado g = new Ganado();
+    	g.setDiio(6401919);
+    	list.add(g);
+    	g = new Ganado();
+    	g.setDiio(2330673);
+    	list.add(g);
+    	g = new Ganado();
+    	g.setDiio(2331101);
+    	list.add(g);
+    	
     	try {
-    		WSAutorizacionCliente.insertaX1Z1();
+    		WSAutorizacionCliente.insertaX1Z1(list, "danielctf@gmail.com");
 
 		} catch (AppException e) {
 			// TODO Auto-generated catch block

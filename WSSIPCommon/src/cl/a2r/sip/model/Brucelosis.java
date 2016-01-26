@@ -9,6 +9,7 @@ public class Brucelosis implements Serializable{
 	private Integer usuarioId;
 	private Ganado ganado;
 	private String codBarra;
+	private Integer mangada;
 	private Integer instancia;
 	private Date fecha_muestra;
 	private String sincronizado;
@@ -57,12 +58,21 @@ public class Brucelosis implements Serializable{
 		return sincronizado;
 	}
 
+	public Integer getMangada() {
+		return mangada;
+	}
+
+	public void setMangada(Integer mangada) {
+		this.mangada = mangada;
+	}
+
 	public void setSincronizado(String sincronizado) {
 		this.sincronizado = sincronizado;
 	}
 
 	public String toString(){
-		return Integer.toString(getGanado().getDiio());
+		return "DIIO: " + Integer.toString(getGanado().getDiio())
+				+ "   Codigo: " + this.codBarra;
 	}
 	
 }

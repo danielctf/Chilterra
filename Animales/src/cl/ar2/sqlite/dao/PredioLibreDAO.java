@@ -76,8 +76,15 @@ public class PredioLibreDAO {
 			+ "SELECT MAX(mangada) mangada"
 			+ " FROM predio_libre";
 	
+	private static final String SQL_SELECT_MANGADA_ACTUAL_BRUCELOSIS = ""
+			+ "SELECT MAX(mangada) mangada"
+			+ " FROM predio_libre_brucelosis";
+	
 	private static final String SQL_DELETE_PL_LOG = ""
 			+ " DELETE FROM predio_libre WHERE ganadoId = ?";
+	
+	private static final String SQL_CHECK_IF_SAME_INSTANCE = ""
+			+ " SELECT instancia FROM predio_libre";
 	
     public static void deleteDiio(SqLiteTrx trx) throws SQLException {
     	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_DIIO);
@@ -343,6 +350,40 @@ public class PredioLibreDAO {
     	statement.clearBindings();
     	statement.bindLong(1, ganadoId);
     	statement.executeUpdateDelete();
+    }
+    
+    public static boolean checkIfSameInstance(SqLiteTrx trx, Integer instancia) throws SQLException {
+        boolean isTheSame = true;
+        boolean hayReg;
+
+        Cursor c = trx.getDB().rawQuery(SQL_CHECK_IF_SAME_INSTANCE, null);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	if (c.getInt(c.getColumnIndex("instancia")) != instancia.intValue()){
+        		isTheSame = false;
+        		break;
+        	}
+            hayReg = c.moveToNext();
+        }
+
+        return isTheSame;
+    }
+    
+    public static Integer selectMangadaActualBrucelosis(SqLiteTrx trx) throws SQLException {
+        Integer mangadaActual = null;
+        boolean hayReg;
+
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_MANGADA_ACTUAL_BRUCELOSIS, null);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	if (c.isNull(c.getColumnIndex("mangada"))){
+        		return null;
+        	}
+        	mangadaActual = c.getInt(c.getColumnIndex("mangada"));
+            hayReg = c.moveToNext();
+        }
+
+        return mangadaActual;
     }
 
 }

@@ -8,6 +8,7 @@ package cl.a2r.sip.servlet;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sip.common.AppLog;
+import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Sesion;
 import cl.a2r.sip.service.AutorizacionService;
 
@@ -67,7 +68,9 @@ public class WSAutorizacion extends HttpServlet {
             	Integer sesionId = AutorizacionService.insertaSesion(sesion);
             	retorno = sesionId;
             } else if (servicio.equals("insertaX1Z1")){
-            	AutorizacionService.insertaX1Z1();
+            	List<Ganado> list = (List<Ganado>) params.getParam("ganList");
+            	String correoDestino = (String) params.getParam("correoDestino");
+            	AutorizacionService.insertaX1Z1(list, correoDestino);
             	Integer i = 1;
             	retorno = i;
             } else {

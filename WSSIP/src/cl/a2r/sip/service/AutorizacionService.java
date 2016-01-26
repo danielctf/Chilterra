@@ -10,6 +10,7 @@ import cl.a2r.sip.dao.AreteosDAO;
 import cl.a2r.sip.dao.AutorizacionDAO;
 import cl.a2r.sip.dao.Transaccion;
 import cl.a2r.sip.model.Areteo;
+import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Sesion;
 
 import java.sql.SQLException;
@@ -119,12 +120,12 @@ public class AutorizacionService {
         return sesionId;
     }
     
-    public static void insertaX1Z1() throws AppException {
+    public static void insertaX1Z1(List<Ganado> list, String correoDestino) throws AppException {
 
         Transaccion trx = Transaccion.getTransaccion(true);
         if (trx != null){
             try {
-            	AutorizacionDAO.insertX1Z1(trx);
+            	AutorizacionDAO.insertX1Z1(trx, list, correoDestino);
             	trx.commit();
             } catch (SQLException ex) {
             	trx.rollback();

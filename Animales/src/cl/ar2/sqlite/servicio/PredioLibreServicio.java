@@ -429,4 +429,52 @@ public class PredioLibreServicio {
         }
     }
     
+    public static boolean checkIfSameInstance(Integer instancia) throws AppException {
+        boolean isTheSame = true;
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+            	isTheSame = PredioLibreDAO.checkIfSameInstance(trx, instancia);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return isTheSame;
+    }
+    
+    public static Integer traeMangadaActualBrucelosis() throws AppException {
+        Integer mangadaActual = null;
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+            	mangadaActual = PredioLibreDAO.selectMangadaActualBrucelosis(trx);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return mangadaActual;
+    }
+    
 }
