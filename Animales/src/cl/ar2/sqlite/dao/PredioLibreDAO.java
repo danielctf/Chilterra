@@ -31,10 +31,10 @@ public class PredioLibreDAO {
 			+ "SELECT id, diio, eid, fundoId FROM diio WHERE fundoId = ?";
 	
 	private static final String SQL_INSERTA_GANADO_PL = ""
-			+ "INSERT INTO predio_libre (ganadoId, fundoId, instancia, ganadoDiio, tuboPPDId, sincronizado) VALUES (?, ?, ?, ?, ?, ?)";
+			+ "INSERT INTO predio_libre (ganadoId, fundoId, instancia, ganadoDiio, mangada, tuboPPDId, tuboPPDSerie, sincronizado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	
 	private static final String SQL_SELECT_GANADO_PL = ""
-			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, tuboPPDId, lecturaTB, sincronizado FROM predio_libre";
+			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, mangada, tuboPPDId, tuboPPDSerie, lecturaTB, sincronizado FROM predio_libre";
 	
 	private static final String SQL_EXISTS_GANADO_PL = ""
 			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, tuboPPDId, sincronizado FROM predio_libre WHERE ganadoId = ?";
@@ -47,11 +47,11 @@ public class PredioLibreDAO {
 	
 	private static final String SQL_INSERT_GANADO_PL_BRUCELOSIS = ""
 			+ "INSERT INTO predio_libre_brucelosis "
-			+ " (ganadoId, fundoId, instancia, ganadoDiio, codBarra, sincronizado) "
-			+ " VALUES (?, ?, ?, ?, ?, ?)";
+			+ " (ganadoId, fundoId, instancia, ganadoDiio, mangada, codBarra, sincronizado) "
+			+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
 	
 	private static final String SQL_SELECT_GANADO_PL_BRUCELOSIS = ""
-			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, codBarra, sincronizado "
+			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, mangada, codBarra, sincronizado "
 			+ " FROM predio_libre_brucelosis";
 
 	private static final String SQL_EXISTS_GANADO_PL_BRUCELOSIS = ""
@@ -71,6 +71,13 @@ public class PredioLibreDAO {
 			+ " UPDATE predio_libre"
 			+ " SET lecturaTB = ?"
 			+ " WHERE ganadoId = ?";
+	
+	private static final String SQL_SELECT_MANGADA_ACTUAL = ""
+			+ "SELECT MAX(mangada) mangada"
+			+ " FROM predio_libre";
+	
+	private static final String SQL_DELETE_PL_LOG = ""
+			+ " DELETE FROM predio_libre WHERE ganadoId = ?";
 	
     public static void deleteDiio(SqLiteTrx trx) throws SQLException {
     	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_DIIO);
@@ -161,8 +168,10 @@ public class PredioLibreDAO {
     	statement.bindLong(2, tb.getFundoId());
     	statement.bindLong(3, tb.getInstancia());
     	statement.bindLong(4, tb.getGanadoDiio());
-    	statement.bindLong(5, tb.getTuboPPDId());
-    	statement.bindString(6, tb.getSincronizado());
+    	statement.bindLong(5, tb.getMangada());
+    	statement.bindLong(6, tb.getTuboPPDId());
+    	statement.bindLong(7, tb.getTuboPPDSerie());
+    	statement.bindString(8, tb.getSincronizado());
     	statement.executeInsert();
     }
     
@@ -178,7 +187,9 @@ public class PredioLibreDAO {
         	i.setFundoId(c.getInt(c.getColumnIndex("fundoId")));
         	i.setInstancia(c.getInt(c.getColumnIndex("instancia")));
         	i.setGanadoDiio(c.getInt(c.getColumnIndex("ganadoDiio")));
+        	i.setMangada(c.getInt(c.getColumnIndex("mangada")));
         	i.setTuboPPDId(c.getInt(c.getColumnIndex("tuboPPDId")));
+        	i.setTuboPPDSerie(c.getInt(c.getColumnIndex("tuboPPDSerie")));
         	i.setLecturaTB(c.getString(c.getColumnIndex("lecturaTB")));
         	i.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
         	list.add(i);
@@ -238,8 +249,9 @@ public class PredioLibreDAO {
     	statement.bindLong(2, b.getGanado().getPredio());
     	statement.bindLong(3, b.getInstancia());
     	statement.bindLong(4, b.getGanado().getDiio());
-    	statement.bindString(5, b.getCodBarra());
-    	statement.bindString(6, b.getSincronizado());
+    	statement.bindLong(5, b.getGanado().getMangada());
+    	statement.bindString(6, b.getCodBarra());
+    	statement.bindString(7, b.getSincronizado());
     	statement.executeInsert();
     }
     
@@ -255,6 +267,7 @@ public class PredioLibreDAO {
         	b.getGanado().setPredio(c.getInt(c.getColumnIndex("fundoId")));
         	b.setInstancia(c.getInt(c.getColumnIndex("instancia")));
         	b.getGanado().setDiio(c.getInt(c.getColumnIndex("ganadoDiio")));
+        	b.getGanado().setMangada(c.getInt(c.getColumnIndex("mangada")));
         	b.setCodBarra(c.getString(c.getColumnIndex("codBarra")));
         	b.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
         	list.add(b);
@@ -305,6 +318,30 @@ public class PredioLibreDAO {
     	statement.clearBindings();
     	statement.bindString(1, lecturaTB);
     	statement.bindLong(2, ganadoId);
+    	statement.executeUpdateDelete();
+    }
+    
+    public static Integer selectMangadaActual(SqLiteTrx trx) throws SQLException {
+        Integer mangadaActual = null;
+        boolean hayReg;
+
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_MANGADA_ACTUAL, null);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	if (c.isNull(c.getColumnIndex("mangada"))){
+        		return null;
+        	}
+        	mangadaActual = c.getInt(c.getColumnIndex("mangada"));
+            hayReg = c.moveToNext();
+        }
+
+        return mangadaActual;
+    }
+    
+    public static void deletePLLog(SqLiteTrx trx, Integer ganadoId) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_PL_LOG);
+    	statement.clearBindings();
+    	statement.bindLong(1, ganadoId);
     	statement.executeUpdateDelete();
     }
 

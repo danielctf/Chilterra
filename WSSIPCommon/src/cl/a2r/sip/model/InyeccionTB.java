@@ -5,13 +5,11 @@ import java.util.Date;
 
 public class InyeccionTB implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Integer usuarioId;
 	private Integer ganadoID;
 	private Integer ganadoDiio;
+	private Integer mangada;
 	private Integer tuboPPDId;
 	private Integer tuboPPDSerie;
 	private String lecturaTB;
@@ -94,7 +92,8 @@ public class InyeccionTB implements Serializable{
 	}
 	
 	public String toString(){
-		return Integer.toString(this.ganadoDiio);
+		return "DIIO: " + Integer.toString(this.ganadoDiio)
+				+ "   Tubo: " + Integer.toString(this.tuboPPDSerie);
 	}
 
 	public String getLecturaTB() {
@@ -113,5 +112,12 @@ public class InyeccionTB implements Serializable{
 		this.fecha_lectura = fecha_lectura;
 	}
 
-	
+	public Integer getMangada() {
+		return mangada;
+	}
+
+	public void setMangada(Integer mangada) {
+		this.mangada = mangada;
+	}
+
 }

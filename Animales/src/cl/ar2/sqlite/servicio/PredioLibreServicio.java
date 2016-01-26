@@ -383,4 +383,50 @@ public class PredioLibreServicio {
         }
     }
     
+    public static Integer traeMangadaActual() throws AppException {
+        Integer mangadaActual = null;
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+            	mangadaActual = PredioLibreDAO.selectMangadaActual(trx);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return mangadaActual;
+    }
+    
+    public static void deletePLLog(Integer ganadoId) throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                PredioLibreDAO.deletePLLog(trx, ganadoId);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
 }

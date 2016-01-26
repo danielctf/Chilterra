@@ -36,6 +36,9 @@ public class AutorizacionDAO {
     private static final String SQL_INSERT_SESION = ""
     		+ "select * from sip.ws_insert_sesion(?, ?, ?, ?)";
     
+    private static final String SQL_INSERT_X1_Z1 = ""
+    		+ "select * from sip.ws_x1_z1()";
+    
     public static List selectPredios(Transaccion trx) throws SQLException {
         List list = new ArrayList();
 
@@ -149,6 +152,18 @@ public class AutorizacionDAO {
         pst.close();
 
         return sesionId;
+    }
+    
+    public static void insertX1Z1(Transaccion trx) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_INSERT_X1_Z1 );
+        pst.executeQuery();
+
+        pst.close();
     }
 
 }

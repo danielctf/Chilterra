@@ -23,11 +23,11 @@ import javax.net.ssl.SSLSession;
  */
 public class ServiceWS {
 
-    //private static final String sURL = "http://200.6.115.179/WSSIP/";
-    //private static final String sURLSSL = "http://200.6.115.179/WSSIP/secure/";
+    private static final String sURL = "http://200.6.115.179/WSSIP/";
+    private static final String sURLSSL = "http://200.6.115.179/WSSIP/secure/";
     
-    private static final String sURL = "http://201.187.98.131:9090/WSSIP/";
-    private static final String sURLSSL = "http://201.187.98.131:9443/WSSIP/secure/";
+    //private static final String sURL = "http://201.187.98.131:9090/WSSIP/";
+    //private static final String sURLSSL = "http://201.187.98.131:9443/WSSIP/secure/";
 
 
     public static Object invocaWS(String servlet, ParamServlet params) {

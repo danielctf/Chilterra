@@ -45,6 +45,7 @@ public class AsyncPLDiio extends AsyncTask<Void, Void, Void>{
 			for (InyeccionTB tb : listEncontrados){
 				boolean exists = PredioLibreServicio.existsGanadoPL(tb.getGanadoID());
 				if (!exists){
+					tb.setMangada(0);
 					PredioLibreServicio.insertaGanadoPL(tb);
 				}
 			}
@@ -52,6 +53,7 @@ public class AsyncPLDiio extends AsyncTask<Void, Void, Void>{
 			for (Brucelosis b : listEncontradosBrucelosis){
 				boolean exists = PredioLibreServicio.existsGanadoPLBrucelosis(b.getGanado().getId());
 				if (!exists){
+					b.getGanado().setMangada(0);
 					PredioLibreServicio.insertaGanadoPLBrucelosis(b);
 				}
 			}

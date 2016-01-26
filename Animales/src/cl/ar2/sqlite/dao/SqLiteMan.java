@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="animales";
-    private static final int version = 2;
+    private static final int version = 3;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
@@ -38,7 +38,9 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " fundoId INTEGER,"
         	+ " instancia INTEGER,"
             + " ganadoDiio INTEGER,"
+        	+ " mangada INTEGER,"
             + " tuboPPDId INTEGER,"
+        	+ " tuboPPDSerie INTEGER,"
             + " lecturaTB TEXT,"
             + " sincronizado TEXT)");
         
@@ -48,6 +50,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " fundoId INTEGER,"
         	+ " instancia INTEGER,"
             + " ganadoDiio INTEGER,"
+            + " mangada INTEGER,"
             + " codBarra TEXT,"
             + " sincronizado TEXT)");        
     }
@@ -60,6 +63,9 @@ public class SqLiteMan extends SQLiteOpenHelper {
     	
         db.execSQL( ""
             + "DROP TABLE IF EXISTS predio_libre");
+
+        db.execSQL( ""
+            + "DROP TABLE IF EXISTS predio_libre_brucelosis");
     	
         db.execSQL( ""
             + "CREATE TABLE predio_libre ( "
@@ -67,7 +73,9 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " fundoId INTEGER,"
         	+ " instancia INTEGER,"
             + " ganadoDiio INTEGER,"
+            + " mangada INTEGER,"
             + " tuboPPDId INTEGER,"
+            + " tuboPPDSerie INTEGER,"
             + " lecturaTB TEXT,"
             + " sincronizado TEXT)");
     	
@@ -77,6 +85,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " fundoId INTEGER,"
         	+ " instancia INTEGER,"
             + " ganadoDiio INTEGER,"
+            + " mangada INTEGER,"
             + " codBarra TEXT,"
             + " sincronizado TEXT)");     
 

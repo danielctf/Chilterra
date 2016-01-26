@@ -100,5 +100,17 @@ public class WSAutorizacionCliente {
        }
 
    }
+   
+   public static void insertaX1Z1() throws AppException {
+
+       ParamServlet params = new ParamServlet();
+       params.add("servicio", "insertaX1Z1");
+       Object obj = ServiceWS.invocaWS("WSAutorizacion", params );
+       if ( obj != null && obj.getClass().getName().contains("AppException")) {
+           throw (AppException) obj;
+       } else if (obj == null){
+    	   throw new AppException("Error de conexión a Internet", null);
+       }
+   }
 
 }

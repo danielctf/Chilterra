@@ -38,13 +38,15 @@ import android.widget.AdapterView.OnItemSelectedListener;
 public class PredioLibreInyeccionTB extends Fragment implements View.OnClickListener{
 
 	private Activity act;
-	private ImageButton confirmarAnimal;
+	private ImageButton confirmarAnimal, cerrarMangada;
 	private Spinner spinnerPPD;
 	private View v;
-	private TextView tvDiio, tvFaltantes, tvEncontrados;
+	private TextView tvDiio, tvFaltantes, tvEncontrados, tvTotalAnimales, tvMangada, tvAnimalesMangada;
 	private LinearLayout llEncontrados, llFaltantes;
 	private InyeccionTB ganTB;
 	private Integer instancia;
+	private boolean isMangadaCerrada;
+	private int totalAnimales, animalesMangada, mangadaActual;
 	public static List<InyeccionTB> listEncontrados;
 	public static List<Ganado> listFaltantes;
 	
@@ -60,13 +62,30 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
     	tvEncontrados = (TextView)v.findViewById(R.id.tvEncontrados);
     	confirmarAnimal = (ImageButton)v.findViewById(R.id.confirmarAnimal);
     	confirmarAnimal.setOnClickListener(this);
+    	cerrarMangada = (ImageButton)v.findViewById(R.id.cerrarMangada);
+    	cerrarMangada.setOnClickListener(this);
     	llEncontrados = (LinearLayout)v.findViewById(R.id.llEncontrados);
     	llEncontrados.setOnClickListener(this);
     	llFaltantes = (LinearLayout)v.findViewById(R.id.llFaltantes);
     	llFaltantes.setOnClickListener(this);
     	spinnerPPD = (Spinner)v.findViewById(R.id.spinnerPPD);
+    	tvTotalAnimales = (TextView)v.findViewById(R.id.tvTotalAnimales);
+    	tvMangada = (TextView)v.findViewById(R.id.tvMangada);
+    	tvAnimalesMangada = (TextView)v.findViewById(R.id.tvAnimalesMangada);
     	ganTB = new InyeccionTB();
     	
+    	isMangadaCerrada = true;
+    	totalAnimales = 0;
+    	animalesMangada = 0;
+    	mangadaActual = 0;
+    	try {
+			Integer mang = PredioLibreServicio.traeMangadaActual();
+			if (mang != null){
+				mangadaActual = mang.intValue();
+			}
+		} catch (AppException e) {
+			e.printStackTrace();
+		}
 		Bundle extras = act.getIntent().getExtras();
 		if (extras != null) {
 		    instancia = extras.getInt("instancia");
@@ -148,7 +167,30 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			confirmarAnimal.setEnabled(true);
 		} else {
 			confirmarAnimal.setEnabled(false);
-			
+		}
+		
+		//Actualizar contadores de mangada
+		try {
+			List<InyeccionTB> list = PredioLibreServicio.traeGanadoPL();
+			totalAnimales = list.size();
+			animalesMangada = 0;
+			for (InyeccionTB tb : list){
+				if (tb.getMangada().intValue() == mangadaActual){
+					animalesMangada++;
+				}
+			}
+			tvTotalAnimales.setText(Integer.toString(totalAnimales));
+			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
+			tvMangada.setText(Integer.toString(mangadaActual));
+		} catch (AppException e) {
+			ShowAlert.showAlert("Error", e.getMessage(), act);
+		}
+		
+		//Actualiza boton cerrar mangada
+		if (isMangadaCerrada){
+			cerrarMangada.setEnabled(false);
+		} else {
+			cerrarMangada.setEnabled(true);
 		}
 		
 	}
@@ -169,17 +211,27 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			startActivity(i);
 			break;
 		case R.id.llEncontrados:
-			i = new Intent(act, Candidatos.class);
+			i = new Intent(act, PredioLibreLogs.class);
 			i.putExtra("stance", "predioLibreEncontrados");
+			i.putExtra("cantMangadas", mangadaActual);
 			startActivity(i);
+			break;
+		case R.id.cerrarMangada:
+			isMangadaCerrada = true;
+			updateStatus();
 			break;
 		}
 	}
 	
 	private void agregarAnimal(){
 		try {
+			if (isMangadaCerrada){
+				mangadaActual++;
+				isMangadaCerrada = false;
+			}
 			ganTB.setSincronizado("N");
 			ganTB.setInstancia(instancia);
+			ganTB.setMangada(mangadaActual);
 			boolean exists = PredioLibreServicio.existsGanadoPL(ganTB.getGanadoID());
 			if (!exists){
 				PredioLibreServicio.insertaGanadoPL(ganTB);

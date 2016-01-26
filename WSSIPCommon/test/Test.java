@@ -54,11 +54,8 @@ public class Test {
     public static void main(String[] arg) {
     	
     	try {
-    		List<Brucelosis> list = WSPredioLibreCliente.traeGanadoBrucelosis(45);
-    		for (Brucelosis b : list){
-    			System.out.println(b.getGanado().getDiio());
-    		}
-    		
+    		WSAutorizacionCliente.insertaX1Z1();
+
 		} catch (AppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

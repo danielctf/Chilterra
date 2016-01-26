@@ -66,6 +66,10 @@ public class WSAutorizacion extends HttpServlet {
             	Sesion sesion = (Sesion) params.getParam("sesion");
             	Integer sesionId = AutorizacionService.insertaSesion(sesion);
             	retorno = sesionId;
+            } else if (servicio.equals("insertaX1Z1")){
+            	AutorizacionService.insertaX1Z1();
+            	Integer i = 1;
+            	retorno = i;
             } else {
             	retorno = new AppException("Servicio no válido.", null);
             }

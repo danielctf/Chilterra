@@ -118,5 +118,24 @@ public class AutorizacionService {
         }
         return sesionId;
     }
+    
+    public static void insertaX1Z1() throws AppException {
+
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+            	AutorizacionDAO.insertX1Z1(trx);
+            	trx.commit();
+            } catch (SQLException ex) {
+            	trx.rollback();
+                AppLog.logSevere("AutorizacionService.insertaX1Z1()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+    }
 
 }
