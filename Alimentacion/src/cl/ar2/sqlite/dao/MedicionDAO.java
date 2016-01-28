@@ -13,18 +13,29 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteStatement;
 import cl.a2r.alimentacion.Aplicaciones;
+import cl.a2r.common.wsutils.Util;
 import cl.a2r.sap.model.Calificacion;
 import cl.a2r.sap.model.Medicion;
 import cl.ar2.sqlite.cobertura.RegistroMedicion;
 import cl.ar2.sqlite.cobertura.StockM;
-import cl.ar2.sqlite.cobertura.Util;
 
 public class MedicionDAO {
 	
     private static final String SQL_INSERT_MEDICION = ""
-            + "INSERT INTO registro_medicion "
-            + "       (fecha_hora, medicion, sincronizado) "
-            + "VALUES ( ?, ?, ? )";
+            + "INSERT INTO medicion "
+            + " (a_medicion_id, isactive, createdby, fecha_medicion, inicial, final, "
+            + " muestra, materia_seca, medidor, a_tipo_medicion_id, a_potrero_id, "
+            + " animales, sincronizado) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    private static final String SQL_INSERT_ACTUALIZADO = ""
+    		+ "INSERT INTO actualizado (fecha_actualizado) VALUES (?)";
+    
+    private static final String SQL_DELETE_ACTUALIZADO = ""
+    		+ "DELETE FROM actualizado";
+    
+    private static final String SQL_SELECT_ACTUALIZADO = ""
+    		+ "SELECT fecha_actualizado FROM actualizado";
 
     private static final String SQL_SELECT_MEDICION = ""
             + "SELECT * FROM registro_medicion";
@@ -54,17 +65,36 @@ public class MedicionDAO {
     private static final String SQL_DELETE_CALIFICACION = ""
     		+ "DELETE FROM calificacion";
 
-    public static void insertaMedicion(SqLiteTrx trx, Medicion med) throws SQLException {
-
-        byte[] bytes = Util.serializa(med);
-
+    public static void insertaMedicion(SqLiteTrx trx, List<Medicion> medList, boolean comesFromCloud) throws SQLException {
         SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_MEDICION);
-
-        statement.clearBindings();
-        statement.bindLong(1, new Date().getTime() );
-        statement.bindBlob(2, bytes);
-        statement.bindString(3, "N");
-        statement.executeInsert();
+       
+        for (Medicion med : medList){
+	        statement.clearBindings();
+	        statement.bindLong(1, med.getId());
+	        statement.bindString(2, med.getActiva());
+	        statement.bindLong(3, med.getUsuarioId());
+	        statement.bindString(4, Util.dateToString(med.getFecha(), "dd-MM-yyyy HH:mm"));
+	        statement.bindLong(5, med.getClickInicial());
+	        statement.bindLong(6, med.getClickFinal());
+	        statement.bindLong(7, med.getMuestras());
+	        statement.bindLong(8, med.getMateriaSeca());
+	        statement.bindNull(9);
+	        statement.bindLong(10, med.getTipoMuestraId());
+	        statement.bindLong(11, med.getPotreroId());
+	        statement.bindLong(12, med.getAnimales());
+	        statement.bindString(13, med.getSincronizado());
+	        statement.executeInsert();
+        }
+        
+        if (comesFromCloud){
+        	statement = trx.getDB().compileStatement(SQL_DELETE_ACTUALIZADO);
+        	statement.clearBindings();
+        	statement.executeUpdateDelete();
+        	statement = trx.getDB().compileStatement(SQL_INSERT_ACTUALIZADO);
+        	statement.clearBindings();
+        	statement.bindString(1, Util.dateToString(medList.get(0).getActualizado(), "dd-MM-yyyy HH:mm"));
+        	statement.executeInsert();
+        }
 
     }
 

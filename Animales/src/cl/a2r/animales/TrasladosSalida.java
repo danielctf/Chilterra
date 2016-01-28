@@ -431,13 +431,47 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
 			}
 		}
 		
-		tvVacas.setText("V: " + Integer.toString(contVacas));
-		tvVaquillas.setText("Vq: " + Integer.toString(contVaquillas));
-		tvTerneras.setText("Ta: " + Integer.toString(contTerneras));
-		tvToros.setText("T: " + Integer.toString(contToros));
-		tvToretes.setText("Te: " + Integer.toString(contToretes));
-		tvTerneros.setText("To: " + Integer.toString(contTerneros));
-		tvBueyes.setText("B: " + Integer.toString(contBueyes));
+		if (contVacas > 0){
+			tvVacas.setText("V: " + Integer.toString(contVacas));
+		} else {
+			tvVacas.setText("V:");
+		}
+		
+		if (contVaquillas > 0){
+			tvVaquillas.setText("Vq: " + Integer.toString(contVaquillas));
+		} else {
+			tvVaquillas.setText("Vq:");
+		}
+		
+		if (contTerneras > 0){
+			tvTerneras.setText("Ta: " + Integer.toString(contTerneras));
+		} else {
+			tvTerneras.setText("Ta:");
+		}
+		
+		if (contToros > 0){
+			tvToros.setText("T: " + Integer.toString(contToros));
+		} else {
+			tvToros.setText("T:");
+		}
+		
+		if (contToretes > 0){
+			tvToretes.setText("Te: " + Integer.toString(contToretes));
+		} else {
+			tvToretes.setText("Te:");
+		}
+		
+		if (contTerneros > 0){
+			tvTerneros.setText("To: " + Integer.toString(contTerneros));
+		} else {
+			tvTerneros.setText("To:");
+		}
+		
+		if (contBueyes > 0){
+			tvBueyes.setText("B: " + Integer.toString(contBueyes));
+		} else {
+			tvBueyes.setText("B:");
+		}
 		
 		//Actualizar interfaz
 		if ((trasladoSalida.getFundoDestinoId() != null) &&

@@ -25,6 +25,38 @@ public class SqLiteMan extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+    	
+    	db.execSQL(""
+            + "CREATE TABLE actualizado ( "
+			+ " fecha_actualizado TEXT) ");
+    	
+    	db.execSQL(""
+            + "CREATE TABLE potrero ( "
+    		+ " a_potrero_id INTEGER PRIMARY KEY, "
+    		+ " numero INTEGER, "
+    		+ " superficie REAL, "
+    		+ " g_fundo_id INTEGER, "
+    		+ " a_tipo_siembra_id INTEGER, "
+    		+ " calificacion INTEGER, "
+    		+ " sincronizado TEXT ) ");
+    	
+    	db.execSQL(""
+            + "CREATE TABLE medicion ( "
+            + " a_medicion_id INTEGER PRIMARY KEY, "
+            + " isactive TEXT, "
+            + " createdby INTEGER, "
+            + " fecha_medicion TEXT, "
+            + " inicial INTEGER, "
+            + " final INTEGER, "
+            + " muestra INTEGER, "
+            + " materia_seca INTEGER, "
+            + " medidor INTEGER, "
+            + " a_tipo_medicion_id INTEGER, "
+            + " a_potrero_id INTEGER, "
+            + " animales INTEGER, "
+            + " sincronizado TEXT, "
+            + " FOREIGN KEY (a_potrero_id) REFERENCES potrero (a_potrero_id) ) ");
+    	
         db.execSQL( ""
             + "CREATE TABLE registro_medicion ( "
             + " registro_medicion_id INTEGER PRIMARY KEY, "

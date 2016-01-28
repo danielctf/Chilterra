@@ -8,10 +8,12 @@ public class Medicion implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private Integer id;
+	private String activa;
 	private Integer usuarioId;
 	private String correo;
 	private Integer fundoId;
 	private Integer potreroId;
+	private Integer numeroPotrero;
 	private Integer clickInicial;
 	private Integer clickFinal;
 	private double click;
@@ -22,6 +24,7 @@ public class Medicion implements Serializable{
 	private Integer tipoMuestraId;
 	private Integer animales;
 	private String tipoMuestraNombre;
+	private String sincronizado;
 	private double superficie;
 	private Date actualizado;
 	private Date fecha;
@@ -33,6 +36,14 @@ public class Medicion implements Serializable{
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getActiva() {
+		return activa;
+	}
+
+	public void setActiva(String activa) {
+		this.activa = activa;
 	}
 
 	public Integer getUsuarioId() {
@@ -183,6 +194,22 @@ public class Medicion implements Serializable{
 
 	public void setSqliteId(Integer sqliteId) {
 		this.sqliteId = sqliteId;
+	}
+
+	public String getSincronizado() {
+		return sincronizado;
+	}
+
+	public void setSincronizado(String sincronizado) {
+		this.sincronizado = sincronizado;
+	}
+
+	public Integer getNumeroPotrero() {
+		return numeroPotrero;
+	}
+
+	public void setNumeroPotrero(Integer numeroPotrero) {
+		this.numeroPotrero = numeroPotrero;
 	}
 
 	public String toString(){

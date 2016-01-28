@@ -6,7 +6,6 @@ import cl.a2r.common.AppException;
 import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sap.model.Medicion;
-import cl.ar2.sqlite.cobertura.CoberturaServicio;
 import cl.ar2.sqlite.cobertura.MedicionServicio;
 import android.app.Activity;
 import android.app.FragmentTransaction;

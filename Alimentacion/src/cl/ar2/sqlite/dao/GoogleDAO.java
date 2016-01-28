@@ -1,13 +1,9 @@
 package cl.ar2.sqlite.dao;
 
-import java.util.Date;
-
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteStatement;
-import cl.a2r.sap.model.Medicion;
 import cl.a2r.sap.model.Persona;
-import cl.ar2.sqlite.cobertura.Util;
 
 public class GoogleDAO {
 	

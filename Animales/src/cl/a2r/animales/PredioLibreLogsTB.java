@@ -42,7 +42,7 @@ public class PredioLibreLogsTB extends Activity implements View.OnClickListener{
 		super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		setContentView(R.layout.activity_predio_libre_logs);
+		setContentView(R.layout.activity_mangada_logs);
 		
 		cargarInterfaz();
 		cargarListeners();
@@ -74,6 +74,7 @@ public class PredioLibreLogsTB extends Activity implements View.OnClickListener{
 		}
 		ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mangList);
 		spinnerMangada.setAdapter(mAdapter);
+		spinnerMangada.setSelection(cantMangadas);
 	}
 	
 	private void cargarListeners(){
@@ -87,14 +88,6 @@ public class PredioLibreLogsTB extends Activity implements View.OnClickListener{
 	}
 	
 	private void getDiiosMangada(){
-		String stance = null;
-		Integer cantMangadas = null;
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			stance = extras.getString("stance");
-			cantMangadas = extras.getInt("cantMangadas");
-		}
-
 		app.setText("Candidatos Encontrados");
 		List<InyeccionTB> list = PredioLibreInyeccionTB.listEncontrados;
 		List<InyeccionTB> listFiltrada = new ArrayList<InyeccionTB>();

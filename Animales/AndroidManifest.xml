@@ -120,6 +120,14 @@
             android:name=".PredioLibreLogsTB"
             android:label="@string/title_activity_object_logs" >
         </activity>
+        <activity
+            android:name=".PredioLibreLogsBR"
+            android:label="@string/title_activity_predio_libre_logs_br" >
+        </activity>
+        <activity
+            android:name="cl.a2r.custom.CalculadoraAsync"
+            android:label="CalculadoraAsync" >
+        </activity>
     </application>
 
 </manifest>

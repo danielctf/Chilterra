@@ -34,6 +34,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
         
         db.execSQL( ""
             + "CREATE TABLE predio_libre ( "
+        	+ " id INTEGER PRIMARY KEY,"
         	+ " ganadoId INTEGER,"
         	+ " fundoId INTEGER,"
         	+ " instancia INTEGER,"
@@ -46,6 +47,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
         
         db.execSQL( ""
             + "CREATE TABLE predio_libre_brucelosis ( "
+            + " id INTEGER PRIMARY KEY,"
         	+ " ganadoId INTEGER,"
         	+ " fundoId INTEGER,"
         	+ " instancia INTEGER,"
@@ -69,6 +71,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
     	
         db.execSQL( ""
             + "CREATE TABLE predio_libre ( "
+            + " id INTEGER PRIMARY KEY,"
         	+ " ganadoId INTEGER,"
         	+ " fundoId INTEGER,"
         	+ " instancia INTEGER,"
@@ -81,6 +84,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
     	
         db.execSQL( ""
             + "CREATE TABLE predio_libre_brucelosis ( "
+            + " id INTEGER PRIMARY KEY,"
         	+ " ganadoId INTEGER,"
         	+ " fundoId INTEGER,"
         	+ " instancia INTEGER,"

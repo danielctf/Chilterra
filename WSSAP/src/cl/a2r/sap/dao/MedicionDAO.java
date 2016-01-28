@@ -64,19 +64,22 @@ public class MedicionDAO {
         	Medicion med = new Medicion();
         	med.setId(res.getInt("a_medicion_id"));
         	med.setUsuarioId(res.getInt("createdby"));
-        	med.setFecha(res.getDate("fecha_medicion"));
+        	med.setActiva(res.getString("isactive"));
+        	med.setFecha(res.getTimestamp("fecha_medicion"));
         	med.setClickInicial(res.getInt("inicial"));
         	med.setClickFinal(res.getInt("final"));
         	med.setMuestras(res.getInt("muestra"));
         	med.setMateriaSeca(res.getInt("materia_seca"));
         	med.setMedidorId(res.getInt("medidor"));
-        	med.setPotreroId(res.getInt("numero"));
+        	med.setPotreroId(res.getInt("a_potrero_id"));
+        	med.setNumeroPotrero(res.getInt("numero"));
         	med.setTipoMuestraId(res.getInt("a_tipo_medicion_id"));
         	med.setTipoMuestraNombre(res.getString("value"));
         	med.setActualizado(res.getTimestamp(("actualizado")));
         	med.setSuperficie(res.getDouble("superficie"));
         	med.setFundoId(res.getInt("g_fundo_id"));
         	med.setAnimales(res.getInt("animales"));
+        	med.setSincronizado("Y");
         	list.add(med);
         }
         pst.close();

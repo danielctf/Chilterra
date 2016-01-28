@@ -4,7 +4,7 @@ import java.util.List;
 
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
-import cl.a2r.custom.Calculadora;
+import cl.a2r.custom.CalculadoraAsync;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +41,7 @@ public class TrasladosSalidaDiios extends Activity implements View.OnClickListen
 	private ImageButton goBack, undo, logs, confirmarAnimal, cerrarMangada;
 	private Integer ganadoId, diio, predio, tipoGanado;
 	private RelativeLayout layoutCalculadora;
+	private ProgressBar loading;
 	public static int mangadaActual = 0;
 	public static boolean isMangadaLocked = true;
 	private int inputText;
@@ -76,6 +79,8 @@ public class TrasladosSalidaDiios extends Activity implements View.OnClickListen
 		cerrarMangada.setOnClickListener(this);
 		layoutCalculadora = (RelativeLayout)findViewById(R.id.layoutCalculadora);
 		layoutCalculadora.setOnClickListener(this);
+		loading = (ProgressBar)findViewById(R.id.loading);
+		loading.setVisibility(View.INVISIBLE);
 		
 		ganadoId = 0;
 		diio = 0;
@@ -190,7 +195,7 @@ public class TrasladosSalidaDiios extends Activity implements View.OnClickListen
 		case R.id.textViewDiio:
 		case R.id.despliegaDiio:
 		case R.id.layoutCalculadora:
-			i = new Intent(this, Calculadora.class);
+			i = new Intent(this, CalculadoraAsync.class);
 			startActivity(i);
 			break;
 		case R.id.logs:
@@ -257,7 +262,13 @@ public class TrasladosSalidaDiios extends Activity implements View.OnClickListen
 			return;
 		}
 		
-		checkDiioStatus(Calculadora.diio, Calculadora.ganadoId, Calculadora.activa, Calculadora.predio, Calculadora.tipoGanado);
+		if (CalculadoraAsync.gan != null){
+			checkDiioStatus(CalculadoraAsync.gan.getDiio(), CalculadoraAsync.gan.getId(),
+					CalculadoraAsync.gan.getActiva(), CalculadoraAsync.gan.getPredio(),
+					CalculadoraAsync.gan.getTipoGanadoId());
+		} else {
+			updateStatus();
+		}
 		
 	}
 	
@@ -274,12 +285,7 @@ public class TrasladosSalidaDiios extends Activity implements View.OnClickListen
 	}
 	
 	private void resetCalculadora(){
-		Calculadora.ganadoId = 0;
-		Calculadora.diio = 0;
-		Calculadora.predio = 0;
-		Calculadora.activa = "";
-		Calculadora.sexo = "";
-		Calculadora.tipoGanado = 0;
+		CalculadoraAsync.gan = null;
 	}
 	
 	private boolean isOnline() {
@@ -318,6 +324,49 @@ public class TrasladosSalidaDiios extends Activity implements View.OnClickListen
 		updateStatus();
 	}
 	
+	private void traeGanadoBastonAsync(final String EID){
+		new AsyncTask<Void, Void, Void>(){
+			
+			Ganado gan = null;
+			String errMsg;
+			
+			protected void onPreExecute(){
+				loading.setVisibility(View.VISIBLE);
+			}
+			
+			protected Void doInBackground(Void... params) {
+				try {
+					List<Ganado> list = WSGanadoCliente.traeGanadoBaston(EID);
+					if (list.size() == 0){
+						errMsg = "DIIO no existe";
+						return null;
+					}
+					for (Ganado g: list){
+						gan = new Ganado();
+						gan.setDiio(g.getDiio());
+						gan.setId(g.getId());
+						gan.setActiva(g.getActiva());
+						gan.setPredio(g.getPredio());
+						gan.setTipoGanadoId(g.getTipoGanadoId());
+					}
+				} catch (AppException e) {
+					errMsg = e.getMessage();
+				}
+				return null;
+			}
+			
+			protected void onPostExecute(Void result){
+				loading.setVisibility(View.INVISIBLE);
+				if (gan != null){
+					checkDiioStatus(gan.getDiio(), gan.getId(), gan.getActiva(), gan.getPredio(), gan.getTipoGanadoId());
+				} else {
+					ShowAlert.showAlert("Error", errMsg, TrasladosSalidaDiios.this);
+				}
+			}
+			
+		}.execute();
+	}
+	
 	//---------------------------------------------------------------------------
 	//------------------------DATOS ENVIADOS DESDE BASTÓN------------------------
 	//---------------------------------------------------------------------------
@@ -338,18 +387,7 @@ public class TrasladosSalidaDiios extends Activity implements View.OnClickListen
     				return;
     			}
     			String EID = (String) msg.obj;
-    			try {
-					List<Ganado> list = WSGanadoCliente.traeGanadoBaston(EID);
-					if (list.size() == 0){
-						ShowAlert.showAlert("Error", "DIIO no existe", TrasladosSalidaDiios.this);
-						return;
-					}
-					for (Ganado g: list){
-						checkDiioStatus(g.getDiio(), g.getId(), g.getActiva(), g.getPredio(), g.getTipoGanadoId());
-					}
-				} catch (AppException ex) {
-					ShowAlert.showAlert("Error", ex.getMessage(), TrasladosSalidaDiios.this);
-				}
+    			traeGanadoBastonAsync(EID);
     			break;
     		case ConnectedThread.CONNECTION_INTERRUPTED:
     			ShowAlert.askReconnect("Error", "Se perdió la conexión con el bastón\n¿Intentar reconectar?", TrasladosSalidaDiios.this, (BluetoothDevice) msg.obj);

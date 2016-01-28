@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.pm.ActivityInfo;
@@ -27,6 +28,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -138,7 +140,20 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 			return;
 		}
 		if (!(upToDate)){
-			ShowAlert.showAlert("Actualización", "La aplicación no está actualizada a su versión mas reciente. Descargue la última versión desde Play Store", this);
+			ShowAlert.askYesNo("Actualización", "La aplicación no está actualizada a su versión mas reciente.\n¿Desea descargarla ahora?", this,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							if (which == -2){
+								final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+								try {
+								    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+								} catch (android.content.ActivityNotFoundException anfe) {
+								    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+								}
+							}
+						}
+					});
 			return;
 		}
 		int id = v.getId();

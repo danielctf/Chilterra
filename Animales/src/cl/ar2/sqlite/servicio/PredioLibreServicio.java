@@ -477,4 +477,48 @@ public class PredioLibreServicio {
         return mangadaActual;
     }
     
+    public static void deletePLBrucelosisLog(Integer ganadoId) throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                PredioLibreDAO.deletePLBrucelosisLog(trx, ganadoId);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
+    public static void deletePLBrucelosisLogLecturaTB(Integer ganadoId) throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                PredioLibreDAO.deletePLBrucelosisLogLecturaTB(trx, ganadoId);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
 }

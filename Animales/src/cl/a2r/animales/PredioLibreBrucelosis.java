@@ -89,7 +89,6 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
     	animalesMangada = 0;
     	mangadaActual = 0;
     	
-    	//CODIG ONO SE PUEDE REPETIR DSP DE SINCRONIZAR
 		Bundle extras = act.getIntent().getExtras();
 		if (extras != null) {
 		    instancia = extras.getInt("instancia");
@@ -171,6 +170,30 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 			confirmarAnimal.setEnabled(false);
 		}
 		
+		//Actualizar contadores de mangada
+		try {
+			List<Brucelosis> list = PredioLibreServicio.traeGanadoPLBrucelosis();
+			totalAnimales = list.size();
+			animalesMangada = 0;
+			for (Brucelosis b : list){
+				if (b.getGanado().getMangada().intValue() == mangadaActual){
+					animalesMangada++;
+				}
+			}
+			tvTotalAnimales.setText(Integer.toString(totalAnimales));
+			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
+			tvMangada.setText(Integer.toString(mangadaActual));
+		} catch (AppException e) {
+			ShowAlert.showAlert("Error", e.getMessage(), act);
+		}
+		
+		//Actualiza boton cerrar mangada
+		if (isMangadaCerrada){
+			cerrarMangada.setEnabled(false);
+		} else {
+			cerrarMangada.setEnabled(true);
+		}
+		
 	}
 	
 	public void onClick(View v) {
@@ -189,8 +212,7 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 			startActivity(i);
 			break;
 		case R.id.llEncontrados:
-			i = new Intent(act, PredioLibreLogsTB.class);
-			i.putExtra("stance", "predioLibreEncontradosBrucelosis");
+			i = new Intent(act, PredioLibreLogsBR.class);
 			i.putExtra("cantMangadas", mangadaActual);
 			startActivity(i);
 			break;
@@ -201,6 +223,10 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
             intent.putExtra("SCAN_FORMATS", "PRODUCT_MODE, QR_CODE_MODE");
             intent.putExtra("PROMPT_MESSAGE", "Leer codigo");
             startActivityForResult(intent, SCANNER_REQUEST_CODE);
+			break;
+		case R.id.cerrarMangada:
+			isMangadaCerrada = true;
+			updateStatus();
 			break;
 		}
 	}
@@ -220,9 +246,14 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 	
 	private void agregarAnimal(){
 		try {
+			if (isMangadaCerrada){
+				mangadaActual++;
+				isMangadaCerrada = false;
+			}
 			bru.setInstancia(instancia);
 			bru.setSincronizado("N");
 			bru.setFecha_muestra(new Date());
+			bru.getGanado().setMangada(mangadaActual);
 			boolean exists = PredioLibreServicio.existsGanadoPLBrucelosis(bru.getGanado().getId());
 			boolean existsCodBarra = PredioLibreServicio.existsCodigoBarra(bru.getCodBarra());
 			if (exists){
@@ -296,6 +327,9 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 				if (mangadaActual == 0){
 					isMangadaCerrada = true;
 				}
+			} else {
+				isMangadaCerrada = true;
+				mangadaActual = 0;
 			}
 		} catch (AppException e) {
 			e.printStackTrace();

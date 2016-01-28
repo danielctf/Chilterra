@@ -34,7 +34,7 @@ public class PredioLibreDAO {
 			+ "INSERT INTO predio_libre (ganadoId, fundoId, instancia, ganadoDiio, mangada, tuboPPDId, tuboPPDSerie, sincronizado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	
 	private static final String SQL_SELECT_GANADO_PL = ""
-			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, mangada, tuboPPDId, tuboPPDSerie, lecturaTB, sincronizado FROM predio_libre";
+			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, mangada, tuboPPDId, tuboPPDSerie, lecturaTB, sincronizado FROM predio_libre ORDER BY id DESC";
 	
 	private static final String SQL_EXISTS_GANADO_PL = ""
 			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, tuboPPDId, sincronizado FROM predio_libre WHERE ganadoId = ?";
@@ -52,7 +52,7 @@ public class PredioLibreDAO {
 	
 	private static final String SQL_SELECT_GANADO_PL_BRUCELOSIS = ""
 			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, mangada, codBarra, sincronizado "
-			+ " FROM predio_libre_brucelosis";
+			+ " FROM predio_libre_brucelosis ORDER BY id DESC";
 
 	private static final String SQL_EXISTS_GANADO_PL_BRUCELOSIS = ""
 			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, codBarra, sincronizado "
@@ -85,6 +85,14 @@ public class PredioLibreDAO {
 	
 	private static final String SQL_CHECK_IF_SAME_INSTANCE = ""
 			+ " SELECT instancia FROM predio_libre";
+	
+	private static final String SQL_DELETE_PL_BRUCELOSIS_LOG = ""
+			+ " DELETE FROM predio_libre_brucelosis WHERE ganadoId = ?";
+	
+	private static final String SQL_DELETE_PL_BRUCELOSIS_LOG_LECTURA_TB = ""
+			+ " UPDATE predio_libre"
+			+ " SET lecturaTB = null"
+			+ " WHERE ganadoId = ?";
 	
     public static void deleteDiio(SqLiteTrx trx) throws SQLException {
     	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_DIIO);
@@ -384,6 +392,20 @@ public class PredioLibreDAO {
         }
 
         return mangadaActual;
+    }
+    
+    public static void deletePLBrucelosisLog(SqLiteTrx trx, Integer ganadoId) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_PL_BRUCELOSIS_LOG);
+    	statement.clearBindings();
+    	statement.bindLong(1, ganadoId);
+    	statement.executeUpdateDelete();
+    }
+    
+    public static void deletePLBrucelosisLogLecturaTB(SqLiteTrx trx, Integer ganadoId) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_PL_BRUCELOSIS_LOG_LECTURA_TB);
+    	statement.clearBindings();
+    	statement.bindLong(1, ganadoId);
+    	statement.executeUpdateDelete();
     }
 
 }

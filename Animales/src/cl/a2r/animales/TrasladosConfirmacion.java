@@ -33,7 +33,7 @@ import android.widget.Toast;
 
 public class TrasladosConfirmacion extends Activity implements View.OnClickListener{
 	
-	private Spinner spinnerOrigen, spinnerDestino, spinnerTransportista, spinnerChofer, spinnerCamion, spinnerAcoplado;
+	//private Spinner spinnerOrigen, spinnerDestino, spinnerTransportista, spinnerChofer, spinnerCamion, spinnerAcoplado;
 	private static TextView tvVacas, tvVaquillas, tvTerneras, tvToros, tvToretes, tvTerneros, tvAnimales, tvBueyes;
 	private static TextView despliegaGD, tvApp, deshacer;
 	private static int contVacas, contVaquillas, contTerneras, contToros, contToretes, contTerneros, contBueyes;
@@ -74,6 +74,7 @@ public class TrasladosConfirmacion extends Activity implements View.OnClickListe
 		layoutAnimales = (LinearLayout)findViewById(R.id.layoutAnimales);
 		layoutAnimales.setOnClickListener(this);
 		
+		/*
 		spinnerChofer = (Spinner)findViewById(R.id.spinnerChofer);
 		spinnerCamion = (Spinner)findViewById(R.id.spinnerCamion);
 		spinnerAcoplado = (Spinner)findViewById(R.id.spinnerAcoplado);
@@ -86,7 +87,7 @@ public class TrasladosConfirmacion extends Activity implements View.OnClickListe
 		spinnerTransportista.setEnabled(false);
 		spinnerOrigen.setEnabled(false);
 		spinnerDestino.setEnabled(false);
-		
+		*/
 		despliegaGD = (TextView)findViewById(R.id.despliegaGD);
 		guias = (ImageButton)findViewById(R.id.guias);
 		guias.setOnClickListener(this);
@@ -171,13 +172,47 @@ public class TrasladosConfirmacion extends Activity implements View.OnClickListe
 			}
 		}
 		
-		tvVacas.setText("V: " + Integer.toString(contVacas));
-		tvVaquillas.setText("Vq: " + Integer.toString(contVaquillas));
-		tvTerneras.setText("Ta: " + Integer.toString(contTerneras));
-		tvToros.setText("T: " + Integer.toString(contToros));
-		tvToretes.setText("Te: " + Integer.toString(contToretes));
-		tvTerneros.setText("To: " + Integer.toString(contTerneros));
-		tvBueyes.setText("B: " + Integer.toString(contBueyes));
+		if (contVacas > 0){
+			tvVacas.setText("V: " + Integer.toString(contVacas));
+		} else {
+			tvVacas.setText("V:");
+		}
+		
+		if (contVaquillas > 0){
+			tvVaquillas.setText("Vq: " + Integer.toString(contVaquillas));
+		} else {
+			tvVaquillas.setText("Vq:");
+		}
+		
+		if (contTerneras > 0){
+			tvTerneras.setText("Ta: " + Integer.toString(contTerneras));
+		} else {
+			tvTerneras.setText("Ta:");
+		}
+		
+		if (contToros > 0){
+			tvToros.setText("T: " + Integer.toString(contToros));
+		} else {
+			tvToros.setText("T:");
+		}
+		
+		if (contToretes > 0){
+			tvToretes.setText("Te: " + Integer.toString(contToretes));
+		} else {
+			tvToretes.setText("Te:");
+		}
+		
+		if (contTerneros > 0){
+			tvTerneros.setText("To: " + Integer.toString(contTerneros));
+		} else {
+			tvTerneros.setText("To:");
+		}
+		
+		if (contBueyes > 0){
+			tvBueyes.setText("B: " + Integer.toString(contBueyes));
+		} else {
+			tvBueyes.setText("B:");
+		}
 		
 		if (size > 0){
 			goBack.setVisibility(View.INVISIBLE);

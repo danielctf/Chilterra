@@ -187,7 +187,6 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			break;
 		case R.id.llEncontrados:
 			i = new Intent(act, PredioLibreLogsTB.class);
-			i.putExtra("stance", "predioLibreEncontrados");
 			i.putExtra("cantMangadas", mangadaActual);
 			startActivity(i);
 			break;
@@ -254,6 +253,9 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 				if (mangadaActual == 0){
 					isMangadaCerrada = true;
 				}
+			} else {
+				isMangadaCerrada = true;
+				mangadaActual = 0;
 			}
 		} catch (AppException e) {
 			e.printStackTrace();

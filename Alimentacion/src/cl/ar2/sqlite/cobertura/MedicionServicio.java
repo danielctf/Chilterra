@@ -7,13 +7,12 @@ import android.database.SQLException;
 import cl.a2r.common.AppException;
 import cl.a2r.sap.model.Calificacion;
 import cl.a2r.sap.model.Medicion;
-import cl.ar2.sqlite.dao.CoberturaDAO;
 import cl.ar2.sqlite.dao.MedicionDAO;
 import cl.ar2.sqlite.dao.SqLiteTrx;
 
 public class MedicionServicio {
 
-    public static void insertaMedicion(Medicion med) throws AppException {
+    public static void insertaMedicion(List<Medicion> medList, boolean comesFromCloud) throws AppException {
         SqLiteTrx trx;
 
         try {
@@ -24,7 +23,7 @@ public class MedicionServicio {
 
         if (trx != null) {
             try {
-                MedicionDAO.insertaMedicion(trx, med);
+                MedicionDAO.insertaMedicion(trx, medList, comesFromCloud);
                 trx.commit();
             } catch ( SQLException ex ) {
                 trx.rollback();
