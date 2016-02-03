@@ -65,7 +65,6 @@ public class MedicionResiduo extends Activity implements View.OnClickListener, V
 		tvFundo.setText(Aplicaciones.predioWS.getCodigo());
 		
 		med = new Medicion();
-		Mediciones.tipoMuestraActual = 2;
 	}
 
 	public void onClick(View v) {
@@ -105,12 +104,13 @@ public class MedicionResiduo extends Activity implements View.OnClickListener, V
 	}
 	
 	private void insertaEntrada(){
+		/*
         try {
             MedicionServicio.insertaMedicion(med);
         } catch (Exception ex) {
         	ex.printStackTrace();
         }
-		
+		*/
 		Toast.makeText(this, "Registro guardado", Toast.LENGTH_LONG).show();
 	}
 	

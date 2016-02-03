@@ -1,23 +1,20 @@
 package cl.a2r.custom;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import cl.a2r.alimentacion.Login;
 import cl.a2r.alimentacion.R;
 import cl.a2r.alimentacion.Stock;
 import cl.a2r.common.AppException;
-import cl.a2r.sap.model.Calificacion;
 import cl.a2r.sap.model.Medicion;
+import cl.a2r.sap.model.Potrero;
+import cl.a2r.sap.model.TipoMedicion;
 import cl.a2r.sap.wsservice.WSMedicionCliente;
 import cl.ar2.sqlite.cobertura.MedicionServicio;
-import cl.ar2.sqlite.cobertura.RegistroMedicion;
 
 public class AsyncStock extends AsyncTask<Void, Void, Void>{
 
@@ -31,7 +28,7 @@ public class AsyncStock extends AsyncTask<Void, Void, Void>{
 		targetActivity = act;
 		tvSync = (TextView) targetActivity.findViewById(R.id.tvSync);
 		update = (ImageButton) targetActivity.findViewById(R.id.update);
-		loading = (ProgressBar) targetActivity.findViewById(R.id.loading);
+		loading = (ProgressBar) targetActivity.findViewById(R.id.loading3);
 		title = "";
 		msg = "";
 	}
@@ -43,12 +40,25 @@ public class AsyncStock extends AsyncTask<Void, Void, Void>{
 	}
 	
 	protected Void doInBackground(Void... params) {
-		sync();
-		if (title.equals("")){
-			getStockWS();
-		}
-		if (title.equals("")){
-			getCalificacionWS();
+		try {
+			boolean exists = MedicionServicio.existsPotrero();
+			if (!exists){
+				List<Potrero> list = WSMedicionCliente.traePotreros();
+				MedicionServicio.insertaPotrero(list);
+			}
+			exists = MedicionServicio.existsTipoMedicion();
+			if (!exists){
+				List<TipoMedicion> tList = WSMedicionCliente.traeTipoMedicion();
+				MedicionServicio.insertaTipoMedicion(tList);
+			}
+			List<Medicion> medList = WSMedicionCliente.traeStock();
+			MedicionServicio.deleteAllMediciones();
+			MedicionServicio.insertaMedicion(medList, true);
+			title = "Sincronización";
+			msg = "Sincronización Completa";
+		} catch (AppException e) {
+			title = "Error";
+			msg = e.getMessage();
 		}
 		return null;
 	}
@@ -61,63 +71,5 @@ public class AsyncStock extends AsyncTask<Void, Void, Void>{
 		((Stock) targetActivity).updateStatus();
 		((Stock) targetActivity).getStock();
 	}
-	
-    private void sync(){
-		try {
-			List<RegistroMedicion> list = MedicionServicio.traeMediciones();
-			if (list.size() == 0){
-				return;
-			}
-			List<Medicion> medList = new ArrayList<Medicion>();
-			for (RegistroMedicion rm : list){
-				medList.add(rm.getMedicion());
-			}
-			WSMedicionCliente.insertaMedicion(medList, Login.mail);
-			for (RegistroMedicion rm : list){
-				MedicionServicio.deleteMedicion(rm.getId());
-			}
-		} catch (AppException e) {
-			title = "Error";
-			msg = e.getMessage();
-		}
-    }
-
-    private void getStockWS(){
-    	List<Medicion> list = null;
-		try {
-			list = WSMedicionCliente.traeStock();
-			MedicionServicio.deleteStock();
-			MedicionServicio.insertaStock(list);
-		} catch (AppException e) {
-			title = "Error";
-			msg = e.getMessage();
-		}
-    }
-    
-    private void getCalificacionWS(){
-    	try {
-			List<Calificacion> list = MedicionServicio.traeCalificacion();
-			List<Calificacion> noSincronizados = new ArrayList<Calificacion>();
-			for (Calificacion cal : list){
-				if (cal.getSincronizado().equals("N")){
-					noSincronizados.add(cal);
-				}
-			}
-			
-			if (noSincronizados.size() > 0){
-				WSMedicionCliente.insertaCalificacion(noSincronizados, Login.mail);
-			}
-			
-			MedicionServicio.deleteCalificacion();
-			List<Calificacion> calList = WSMedicionCliente.traeCalificacion();
-			MedicionServicio.insertaCalificacion(calList);
-			
-			title = "Sincronización";
-			msg = "Sincronización Completa";
-		} catch (AppException e) {
-			title = "Error";
-			msg = e.getMessage();
-		}
-    }
 
 }

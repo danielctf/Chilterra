@@ -12,15 +12,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.BaseAdapter;
 import cl.a2r.alimentacion.R;
+import cl.a2r.sap.model.Medicion;
 import cl.ar2.sqlite.cobertura.StockM;
 
 public class StockAdapter extends BaseAdapter{
 
     private Context mContext;
-    private List<StockM> meds;
+    private List<Medicion> meds;
     private SimpleDateFormat df;
 
-      public StockAdapter(Context c, List<StockM> meds) {
+      public StockAdapter(Context c, List<Medicion> meds) {
           mContext = c;
           this.meds = meds;
           df = new SimpleDateFormat("dd-MM-yyyy");
@@ -60,26 +61,26 @@ public class StockAdapter extends BaseAdapter{
 	          //TextView tvMS = (TextView) grid.findViewById(R.id.tvMS);
 	          TextView tvTipoMuestra = (TextView) grid.findViewById(R.id.tvTipoMuestra);
 	          
-	          tvPotrero.setText("P" + Integer.toString(((StockM) meds.get(position)).getMed().getPotreroId()));
+	          tvPotrero.setText("P" + Integer.toString(((Medicion) meds.get(position)).getNumeroPotrero()));
 	          
-	          double clickFinal = ((StockM) meds.get(position)).getMed().getClickFinal();
-	          double clickInicial = ((StockM) meds.get(position)).getMed().getClickInicial();
-	          double muestras = ((StockM) meds.get(position)).getMed().getMuestras();
+	          double clickFinal = ((Medicion) meds.get(position)).getClickFinal();
+	          double clickInicial = ((Medicion) meds.get(position)).getClickInicial();
+	          double muestras = ((Medicion) meds.get(position)).getMuestras();
 	          double click = (clickFinal - clickInicial) / muestras;
 	          //tvClick.setText("Click: " + Double.toString(roundForDisplay(click)));
 	          tvClickNumber.setText(Double.toString(roundForDisplay(click)));
 	          
-	          tvFecha.setText(df.format(((StockM) meds.get(position)).getMed().getFecha()));
+	          tvFecha.setText(df.format(((Medicion) meds.get(position)).getFecha()));
 	          
 	          
 	          //tvMS.setText("MS: " + Integer.toString(((StockM) meds.get(position)).getMed().getMateriaSeca()));
-	          tvTipoMuestra.setText(((StockM) meds.get(position)).getMed().getTipoMuestraNombre());
+	          tvTipoMuestra.setText(((Medicion) meds.get(position)).getTipoMuestraNombre());
 	
 	          //container.setBackgroundResource(getColor(click));
 	          tvPotrero.setBackgroundResource(getColor(click));
           } else {
               TextView tvPotrero = (TextView) grid.findViewById(R.id.tvPotrero);
-              tvPotrero.setText("P" + Integer.toString(((StockM) meds.get(position)).getMed().getPotreroId()));
+              tvPotrero.setText("P" + Integer.toString(((Medicion) meds.get(position)).getNumeroPotrero()));
               tvPotrero.setBackgroundResource(getColor(0));
           }
           return grid;

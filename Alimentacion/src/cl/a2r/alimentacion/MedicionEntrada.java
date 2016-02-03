@@ -71,7 +71,6 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 		tvRacion = (TextView)findViewById(R.id.tvRacion);
 		
 		med = new Medicion();
-		Mediciones.tipoMuestraActual = 1;
 	}
 
 	public void onClick(View v) {
@@ -113,12 +112,13 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 	}
 	
 	private void insertaEntrada(){
+		/*
         try {
             MedicionServicio.insertaMedicion(med);
         } catch (Exception ex) {
         	ex.printStackTrace();
         }
-		
+		*/
 		Toast.makeText(this, "Registro guardado", Toast.LENGTH_LONG).show();
 	}
 	
@@ -131,15 +131,15 @@ public class MedicionEntrada extends Activity implements View.OnClickListener, V
 				return;
 			} else {
 				med.setPotreroId(Integer.parseInt(etPot));
-				for (StockM sm : Stock.list){
-					if (sm.getMed().getFundoId().intValue() == Aplicaciones.predioWS.getId() &&
-							sm.getMed().getPotreroId().intValue() == Integer.parseInt(etPot)){
-						
-						superficie = sm.getMed().getSuperficie();
-						tvSuperficie.setText(Double.toString(superficie) + " Hás");
-						break;
-					}
-				}
+				//for (StockM sm : Stock.list){
+				//	if (sm.getMed().getFundoId().intValue() == Aplicaciones.predioWS.getId() &&
+				//			sm.getMed().getPotreroId().intValue() == Integer.parseInt(etPot)){
+				//		
+				//		superficie = sm.getMed().getSuperficie();
+				//		tvSuperficie.setText(Double.toString(superficie) + " Hás");
+				//		break;
+				//	}
+				//}
 			}
 		} else {
 			med.setPotreroId(null);

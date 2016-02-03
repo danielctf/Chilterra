@@ -1,6 +1,8 @@
 
 import cl.a2r.common.AppException;
 import cl.a2r.sap.model.Medicion;
+import cl.a2r.sap.model.Potrero;
+import cl.a2r.sap.model.TipoMedicion;
 import cl.a2r.sap.wsservice.WSMedicionCliente;
 
 import java.awt.Button;
@@ -25,10 +27,10 @@ public class Test {
 
     	
     	try {
-			List<Medicion> list = WSMedicionCliente.traeStock();
+			List<TipoMedicion> list = WSMedicionCliente.traeTipoMedicion();
 			int i = 1;
-			for (Medicion m : list){
-				System.out.println(m.getMateriaSeca() + "  " + i + " " + m.getFundoId());
+			for (TipoMedicion m : list){
+				System.out.println(m.getId());
 				i++;
 			}
 		} catch (AppException e) {

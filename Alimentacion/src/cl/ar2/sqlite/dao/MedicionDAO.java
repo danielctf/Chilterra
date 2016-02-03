@@ -1,32 +1,43 @@
 package cl.ar2.sqlite.dao;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteStatement;
-import cl.a2r.alimentacion.Aplicaciones;
 import cl.a2r.common.wsutils.Util;
 import cl.a2r.sap.model.Calificacion;
 import cl.a2r.sap.model.Medicion;
-import cl.ar2.sqlite.cobertura.RegistroMedicion;
-import cl.ar2.sqlite.cobertura.StockM;
-
+import cl.a2r.sap.model.Potrero;
+import cl.a2r.sap.model.TipoMedicion;
 public class MedicionDAO {
+	
+	private static final String SQL_INSERT_TIPO_MEDICION = ""
+			+ "INSERT INTO tipo_medicion (a_tipo_medicion_id, codigo, nombre) "
+			+ " VALUES (?, ?, ?)";
+	
+	private static final String SQL_EXISTS_TIPO_MEDICION = ""
+			+ " SELECT a_tipo_medicion_id FROM tipo_medicion LIMIT 1";
+	
+	private static final String SQ_INSERT_POTRERO = ""
+			+ " INSERT INTO potrero (a_potrero_id, numero, superficie, g_fundo_id, "
+			+ " a_tipo_siembra_id, calificacion, sincronizado) "
+			+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
+	
+	private static final String SQL_EXISTS_POTREROS = ""
+			+ " SELECT a_potrero_id FROM potrero LIMIT 1";
+	
+	private static final String SQL_SELECT_SUPERFICIE = ""
+			+ " SELECT superficie FROM potrero WHERE a_potrero_id = ? ";
 	
     private static final String SQL_INSERT_MEDICION = ""
             + "INSERT INTO medicion "
-            + " (a_medicion_id, isactive, createdby, fecha_medicion, inicial, final, "
+            + " (a_medicion_id, isactive, fecha_medicion, inicial, final, "
             + " muestra, materia_seca, medidor, a_tipo_medicion_id, a_potrero_id, "
             + " animales, sincronizado) "
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     private static final String SQL_INSERT_ACTUALIZADO = ""
     		+ "INSERT INTO actualizado (fecha_actualizado) VALUES (?)";
@@ -37,22 +48,43 @@ public class MedicionDAO {
     private static final String SQL_SELECT_ACTUALIZADO = ""
     		+ "SELECT fecha_actualizado FROM actualizado";
 
+    /*
     private static final String SQL_SELECT_MEDICION = ""
-            + "SELECT * FROM registro_medicion";
+            + "SELECT (a_medicion_id, isactive, fecha_medicion, inicial, final, "
+            + " muestra, materia_seca, medidor, a_tipo_medicion_id, a_potrero_id, "
+            + " animales, sincronizado) FROM medicion";
+    */
     
     private static final String SQL_DELETE_MEDICION = ""
-    		+ "DELETE FROM registro_medicion WHERE registro_medicion_id = ?";
+    		+ "DELETE FROM medicion WHERE a_medicion_id = ?";
     
-    private static final String SQL_INSERT_STOCK = ""
-            + "INSERT INTO stock "
-            + "       (medicion, actualizado) "
-            + "VALUES ( ?, ? )";
+    private static final String SQL_DELETE_ALL_MEDICIONES = ""
+    		+ "DELETE FROM medicion";
     
-    private static final String SQL_DELETE_STOCK = ""
-            + "DELETE FROM stock ";
-    
-    private static final String SQL_SELECT_STOCK = ""
-            + "SELECT * FROM stock ";
+    private static final String SQL_SELECT_MEDICION_FUNDO = ""
+    		+ "SELECT m.a_medicion_id, m.fecha_medicion, m.inicial, m.final, "
+            + " m.muestra, m.materia_seca, m.medidor, m.a_tipo_medicion_id, c.a_potrero_id, " 
+            + " m.sincronizado, m.animales, c.numero, c.superficie, t.nombre "
+            + " FROM "
+            + " (SELECT max(a.a_medicion_id) med_id, b.a_potrero_id, max(b.numero) numero, "
+            + " max(b.superficie) superficie "
+            + " FROM potrero b "
+            + " LEFT JOIN medicion a ON a.a_potrero_id = b.a_potrero_id "
+            + " WHERE b.g_fundo_id = ? "
+            + " GROUP BY b.a_potrero_id) c "
+            + " LEFT JOIN medicion m ON m.a_medicion_id = c.med_id "
+            + " LEFT JOIN tipo_medicion t ON m.a_tipo_medicion_id = t.a_tipo_medicion_id " 
+            + " AND (m.isactive = 'Y' or m.isactive is null) " 
+            + " ORDER BY m.materia_seca DESC ";
+
+    private static final String SQL_SELECT_MEDICION_POTRERO = ""
+    		+ "SELECT m.a_medicion_id, m.fecha_medicion, m.inicial, m.final, "
+            + " m.muestra, m.materia_seca, m.medidor, m.a_tipo_medicion_id, m.a_potrero_id, "
+            + " m.animales, m.sincronizado, p.numero, t.nombre "
+            + " FROM medicion m, potrero p, tipo_medicion t "
+            + " WHERE m.a_potrero_id = p.a_potrero_id AND m.a_tipo_medicion_id = t.a_tipo_medicion_id "
+            + " AND m.isactive = 'Y' "
+            + " AND p.a_potrero_id = ?";
     
     private static final String SQL_INSERT_CALIFICACION = ""
     		+ "INSERT INTO calificacion "
@@ -64,25 +96,115 @@ public class MedicionDAO {
     
     private static final String SQL_DELETE_CALIFICACION = ""
     		+ "DELETE FROM calificacion";
+    
+    private static final String SQL_SELECT_CRECIMIENTO_MEDS = ""
+    		+ " SELECT a.a_medicion_id, a.inicial, a.final, a.muestra, a.fecha_medicion, "
+    		+ " a.a_potrero_id, b.superficie "
+    		+ " FROM medicion a, potrero b "
+    		+ " WHERE a.a_potrero_id = b.a_potrero_id "
+    		+ " AND a.a_tipo_medicion_id = 3 "
+    		+ " AND b.g_fundo_id = ? ";
+    
+    public static void insertTipoMedicion(SqLiteTrx trx, List<TipoMedicion> list) throws SQLException {
+        SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_TIPO_MEDICION);
+       
+        for (TipoMedicion t : list){
+	        statement.clearBindings();
+	        statement.bindLong(1, t.getId());
+	        statement.bindString(2, t.getCodigo());
+	        statement.bindString(3, t.getNombre());
+	        statement.executeInsert();
+        }
 
-    public static void insertaMedicion(SqLiteTrx trx, List<Medicion> medList, boolean comesFromCloud) throws SQLException {
+    }
+    
+    public static boolean existsTipoMedicion(SqLiteTrx trx) throws SQLException {
+    	boolean exists = false;
+        boolean hayReg;
+
+        Cursor c = trx.getDB().rawQuery(SQL_EXISTS_TIPO_MEDICION, null);
+        hayReg = c.moveToFirst();
+        if ( hayReg ) {
+        	
+        	exists = true;
+        	
+            hayReg = c.moveToNext();
+        }
+
+        return exists;
+    }
+    
+    public static void insertPotrero(SqLiteTrx trx, List<Potrero> list) throws SQLException {
+        SQLiteStatement statement = trx.getDB().compileStatement(SQ_INSERT_POTRERO);
+        
+        for (Potrero p : list){
+        	statement.clearBindings();
+        	statement.bindLong(1, p.getId());
+        	statement.bindLong(2, p.getNumero());
+        	statement.bindDouble(3, p.getSuperficie());
+        	statement.bindLong(4, p.getG_fundo_id());
+        	statement.bindLong(5, p.getA_tipo_siembra_id());
+        	statement.bindLong(6, p.getCalificacion());
+        	statement.bindString(7, p.getSincronizado());
+        	statement.executeInsert();
+        }
+
+    }
+    
+    public static boolean existsPotrero(SqLiteTrx trx) throws SQLException {
+    	boolean exists = false;
+        boolean hayReg;
+
+        Cursor c = trx.getDB().rawQuery(SQL_EXISTS_POTREROS, null);
+        hayReg = c.moveToFirst();
+        if ( hayReg ) {
+        	
+        	exists = true;
+        	
+            hayReg = c.moveToNext();
+        }
+
+        return exists;
+        
+
+    }
+    
+    public static double selectSuperficie(SqLiteTrx trx, Integer a_potrero_id) throws SQLException {
+    	double superficie = 0;
+        boolean hayReg;
+
+        String[] args = {Integer.toString(a_potrero_id)};
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_SUPERFICIE, args);
+        hayReg = c.moveToFirst();
+        if ( hayReg ) {
+        	
+        	superficie = c.getDouble(c.getColumnIndex("superficie"));
+        	
+            hayReg = c.moveToNext();
+        }
+
+        return superficie;
+        
+
+    }
+
+    public static void insertMedicion(SqLiteTrx trx, List<Medicion> medList, boolean comesFromCloud) throws SQLException {
         SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_MEDICION);
        
         for (Medicion med : medList){
 	        statement.clearBindings();
 	        statement.bindLong(1, med.getId());
 	        statement.bindString(2, med.getActiva());
-	        statement.bindLong(3, med.getUsuarioId());
-	        statement.bindString(4, Util.dateToString(med.getFecha(), "dd-MM-yyyy HH:mm"));
-	        statement.bindLong(5, med.getClickInicial());
-	        statement.bindLong(6, med.getClickFinal());
-	        statement.bindLong(7, med.getMuestras());
-	        statement.bindLong(8, med.getMateriaSeca());
-	        statement.bindNull(9);
-	        statement.bindLong(10, med.getTipoMuestraId());
-	        statement.bindLong(11, med.getPotreroId());
-	        statement.bindLong(12, med.getAnimales());
-	        statement.bindString(13, med.getSincronizado());
+	        statement.bindString(3, Util.dateToString(med.getFecha(), "dd-MM-yyyy HH:mm:ss"));
+	        statement.bindLong(4, med.getClickInicial());
+	        statement.bindLong(5, med.getClickFinal());
+	        statement.bindLong(6, med.getMuestras());
+	        statement.bindLong(7, med.getMateriaSeca());
+	        statement.bindNull(8);
+	        statement.bindLong(9, med.getTipoMuestraId());
+	        statement.bindLong(10, med.getPotreroId());
+	        statement.bindLong(11, med.getAnimales());
+	        statement.bindString(12, med.getSincronizado());
 	        statement.executeInsert();
         }
         
@@ -97,214 +219,150 @@ public class MedicionDAO {
         }
 
     }
+    
+    public static Date selectFechaActualizado(SqLiteTrx trx) throws SQLException {
+    	Date date = null;
+        boolean hayReg;
 
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_ACTUALIZADO, null);
+        hayReg = c.moveToFirst();
+        if ( hayReg ) {
+        	
+        	String fecha = c.getString(c.getColumnIndex("fecha_actualizado"));
+        	date = Util.stringToDate(fecha, "dd-MM-yyyy HH:mm");
+        	
+            hayReg = c.moveToNext();
+        }
+
+        return date;
+
+    }
+
+    /*
     public static List selectMediciones(SqLiteTrx trx) throws SQLException {
-        List<RegistroMedicion> list = new ArrayList<RegistroMedicion>();
+        List<Medicion> medList = new ArrayList<Medicion>();
         boolean hayReg;
 
         Cursor c = trx.getDB().rawQuery(SQL_SELECT_MEDICION, null);
         hayReg = c.moveToFirst();
         while ( hayReg ) {
-
-            RegistroMedicion regMed = new RegistroMedicion();
-
-            regMed.setId(c.getInt(c.getColumnIndex("registro_medicion_id")));
-            regMed.setFechaHora(new Date(c.getInt(c.getColumnIndex("fecha_hora"))));
-
-            byte[] bytes = c.getBlob(c.getColumnIndex("medicion"));
-            Medicion med = (Medicion) Util.desSerializa(bytes);
-            regMed.setMedicion(med);
-
-            regMed.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
-
-            list.add(regMed);
+        	
+            Medicion med = new Medicion();
+        	med.setId(c.getInt(c.getColumnIndex("a_medicion_id")));
+        	med.setActiva(c.getString(c.getColumnIndex("isactive")));
+        	String fecha = c.getString(c.getColumnIndex("fecha_medicion"));
+        	med.setFecha(Util.stringToDate(fecha, "dd-MM-yyyy HH:mm"));
+        	med.setClickInicial(c.getInt(c.getColumnIndex("inicial")));
+        	med.setClickFinal(c.getInt(c.getColumnIndex("final")));
+        	med.setMuestras(c.getInt(c.getColumnIndex("muestra")));
+        	med.setMateriaSeca(c.getInt(c.getColumnIndex("materia_seca")));
+        	med.setMedidorId(null);
+        	med.setTipoMuestraId(c.getInt(c.getColumnIndex("a_tipo_medicion_id")));
+        	med.setPotreroId(c.getInt(c.getColumnIndex("a_potrero_id")));
+        	med.setAnimales(c.getInt(c.getColumnIndex("animales")));
+        	med.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
+        	
+            medList.add(med);
 
             hayReg = c.moveToNext();
         }
 
-        return list;
+        return medList;
 
     }
+    */
     
-    public static void deleteMedicion(SqLiteTrx trx, Integer registro_medicion_id) throws SQLException {
+    public static void deleteMedicion(SqLiteTrx trx, Integer a_medicion_id) throws SQLException {
     	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_MEDICION);
     	statement.clearBindings();
-    	statement.bindLong(1, registro_medicion_id);
+    	statement.bindLong(1, a_medicion_id);
     	statement.executeUpdateDelete();
     }
     
-    public static void insertaStock(SqLiteTrx trx, List<Medicion> list) throws SQLException {
-
-        SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_STOCK);
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        
-        for (Medicion m : list){
-        	statement.clearBindings();
-        	byte[] bytes = Util.serializa(m);
-        	statement.bindBlob(1, bytes);
-        	statement.bindString(2, df.format(m.getActualizado()));
-        	statement.executeInsert();
-        }
-    }
-    
-    public static void deleteStock(SqLiteTrx trx) throws SQLException {
-    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_STOCK);
+    public static void deleteAllMediciones(SqLiteTrx trx) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_ALL_MEDICIONES);
     	statement.clearBindings();
     	statement.executeUpdateDelete();
     }
     
-    public static List selectStockTotal(SqLiteTrx trx) throws SQLException {
-        List<StockM> list = new ArrayList<StockM>();
+    
+    public static List selectMedicionFundo(SqLiteTrx trx, Integer g_fundo_id) throws SQLException {
+        List<Medicion> medList = new ArrayList<Medicion>();
         boolean hayReg;
 
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        Cursor c = trx.getDB().rawQuery(SQL_SELECT_STOCK, null);
+        String[] args = {Integer.toString(g_fundo_id)};
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_MEDICION_FUNDO, args);
         hayReg = c.moveToFirst();
         while ( hayReg ) {
 
-        	StockM s = new StockM();
-        	s.setId(c.getInt(c.getColumnIndex("stock_id")));
-        	byte[] bytes = c.getBlob(c.getColumnIndex("medicion"));
-        	Medicion med = (Medicion) Util.desSerializa(bytes);
-        	s.setMed(med);
-        	
-        	try {
-				s.setActualizado(df.parse(c.getString(c.getColumnIndex("actualizado"))));
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        	
-            list.add(s);
+        	if (!c.isNull(c.getColumnIndex("a_medicion_id"))){
+                Medicion med = new Medicion();
+            	med.setId(c.getInt(c.getColumnIndex("a_medicion_id")));
+            	String fecha = c.getString(c.getColumnIndex("fecha_medicion"));
+            	med.setFecha(Util.stringToDate(fecha, "dd-MM-yyyy HH:mm"));
+            	med.setClickInicial(c.getInt(c.getColumnIndex("inicial")));
+            	med.setClickFinal(c.getInt(c.getColumnIndex("final")));
+            	med.setMuestras(c.getInt(c.getColumnIndex("muestra")));
+				double click = ((double) med.getClickFinal().intValue()
+						- (double) med.getClickInicial().intValue()) 
+						/ (double) med.getMuestras().intValue();
+				med.setClick(click);
+            	med.setMateriaSeca(c.getInt(c.getColumnIndex("materia_seca")));
+            	med.setMedidorId(null);
+            	med.setTipoMuestraId(c.getInt(c.getColumnIndex("a_tipo_medicion_id")));
+            	med.setPotreroId(c.getInt(c.getColumnIndex("a_potrero_id")));
+            	med.setAnimales(c.getInt(c.getColumnIndex("animales")));
+            	med.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
+            	med.setNumeroPotrero(c.getInt(c.getColumnIndex("numero")));
+            	med.setSuperficie(c.getDouble(c.getColumnIndex("superficie")));
+            	med.setTipoMuestraNombre(c.getString(c.getColumnIndex("nombre")));
+            	
+                medList.add(med);	
+        	} else {
+        		Medicion med = new Medicion();
+        		med.setPotreroId(c.getInt(c.getColumnIndex("a_potrero_id")));
+        		med.setNumeroPotrero(c.getInt(c.getColumnIndex("numero")));
+        		medList.add(med);
+        	}
 
             hayReg = c.moveToNext();
         }
-		return list;
+
+        return medList;
+
     }
     
-    public static List selectStock(SqLiteTrx trx, List<StockM> list, Integer g_fundo_id) throws SQLException {
-        //Filtra por el predio que eligio
-        List<StockM> listFiltrada = new ArrayList<StockM>();
-        for (StockM sm : list){
-        	if (sm.getMed().getFundoId().intValue() == g_fundo_id.intValue()){
-        		listFiltrada.add(sm);
-        	}
-        }
-        
-        //Trae la medicion mas actualizada de cada potrero
-        //<numeroPotrero, StockM (del maximo getMed().getId()>
-        HashMap<Integer, StockM> mp = new HashMap<Integer, StockM>();
-        List<StockM> listUpdated = new ArrayList<StockM>();
-        for (StockM sf : listFiltrada){
-        	if (mp.containsKey(sf.getMed().getPotreroId())){
-        		if (mp.get(sf.getMed().getPotreroId()).getMed().getId().intValue() < 
-        				sf.getMed().getId().intValue()){
-        			mp.remove(sf.getMed().getPotreroId());
-        			mp.put(sf.getMed().getPotreroId(), sf);
-        		}
-        	} else {
-    			mp.put(sf.getMed().getPotreroId(), sf);
-    		}
-        }
-        
-        Iterator it = mp.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            listUpdated.add((StockM) pair.getValue());
-            it.remove(); // avoids a ConcurrentModificationException
-        }
+    public static List selectMedicionPotrero(SqLiteTrx trx, Integer a_potrero_id) throws SQLException {        
+        List<Medicion> medList = new ArrayList<Medicion>();
+        boolean hayReg;
 
-        //Agrega los potreros que no esten solo para q se desplieguen en la lista
-        for (int i = 0; i < Aplicaciones.predioWS.getPotreros().intValue(); i++){
-        	boolean isInList = false;
-        	for (StockM sm : listUpdated){
-        		if (sm.getMed().getPotreroId().intValue() == (i + 1)){
-        			isInList = true;
-        			break;
-        		}
-        	}
-        	if (!isInList){
-        		StockM s = new StockM();
-        		Medicion m = new Medicion();
-        		m.setPotreroId(i+1);
-        		s.setMed(m);
-        		listUpdated.add(s);
-        	}
+        String[] args = {Integer.toString(a_potrero_id)};
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_MEDICION_POTRERO, args);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+
+            Medicion med = new Medicion();
+        	med.setId(c.getInt(c.getColumnIndex("a_medicion_id")));
+        	String fecha = c.getString(c.getColumnIndex("fecha_medicion"));
+        	med.setFecha(Util.stringToDate(fecha, "dd-MM-yyyy HH:mm"));
+        	med.setClickInicial(c.getInt(c.getColumnIndex("inicial")));
+        	med.setClickFinal(c.getInt(c.getColumnIndex("final")));
+        	med.setMuestras(c.getInt(c.getColumnIndex("muestra")));
+        	med.setMateriaSeca(c.getInt(c.getColumnIndex("materia_seca")));
+        	med.setMedidorId(null);
+        	med.setTipoMuestraId(c.getInt(c.getColumnIndex("a_tipo_medicion_id")));
+        	med.setPotreroId(c.getInt(c.getColumnIndex("a_potrero_id")));
+        	med.setAnimales(c.getInt(c.getColumnIndex("animales")));
+        	med.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
+        	med.setNumeroPotrero(c.getInt(c.getColumnIndex("numero")));
+        	med.setTipoMuestraNombre(c.getString(c.getColumnIndex("nombre")));
         	
-        }
-        
-        //Ordena de mayor a menor por materia seca
-        for (int i = 0; i < listUpdated.size(); i++){
-        	for (int j = 0; j < listUpdated.size(); j++){
-        		if (listUpdated.get(i).getMed().getMateriaSeca() != null && 
-        				listUpdated.get(j).getMed().getMateriaSeca() != null &&
-        				listUpdated.get(j).getMed().getMateriaSeca().intValue() < listUpdated.get(i).getMed().getMateriaSeca().intValue()){
-        			StockM temp = listUpdated.get(i);
-        			listUpdated.set(i, listUpdated.get(j));
-        			listUpdated.set(j, temp);
-        		}
-        	}
+            medList.add(med);
+
+            hayReg = c.moveToNext();
         }
 
-        return listUpdated;
-
-    }
-    
-    public static List selectStockPotrero(SqLiteTrx trx, List<StockM> list, Integer g_fundo_id, Integer a_potrero_id) throws SQLException {        
-        //Filtra por el predio que eligio
-        List<StockM> listFiltrada = new ArrayList<StockM>();
-        for (StockM sm : list){
-        	if (sm.getMed().getFundoId().intValue() == g_fundo_id.intValue()){
-        		listFiltrada.add(sm);
-        	}
-        }
-        
-        //Filtra por el potrero que eligio
-        List<StockM> listUpdated = new ArrayList<StockM>();
-        for (StockM sm : listFiltrada){
-        	if (sm.getMed().getPotreroId().intValue() == a_potrero_id.intValue()){
-        		listUpdated.add(sm);
-        	}
-        }
-        
-        //Ordena de mayor a menor por Id (no por fecha por q a simple viste los usuarios tienen
-        //la embarrada en su celular y hasta la fecha la tienen desconfigurada)
-        for (int i = 0; i < listUpdated.size(); i++){
-        	for (int j = 0; j < listUpdated.size(); j++){
-        		if (listUpdated.get(j).getMed().getId().intValue() < listUpdated.get(i).getMed().getId().intValue()){
-        			StockM temp = listUpdated.get(i);
-        			listUpdated.set(i, listUpdated.get(j));
-        			listUpdated.set(j, temp);
-        		}
-        	}
-        }
-        
-        return listUpdated;
-    }
-    
-    public static List selectStockCrecimiento(SqLiteTrx trx, List<StockM> list, Integer g_fundo_id, Integer numero) throws SQLException {        
-    	//Devuelve el stock de un fundo o potrero para calcular el crecimiento promedio
-    	
-        //Filtra por el predio que eligio
-        List<StockM> listFiltrada = new ArrayList<StockM>();
-        for (StockM sm : list){
-        	if (sm.getMed().getFundoId().intValue() == g_fundo_id.intValue()){
-        		listFiltrada.add(sm);
-        	}
-        }
-        
-        if (numero.intValue() != 0){
-            //Filtra por el potrero que eligio
-            List<StockM> listUpdated = new ArrayList<StockM>();
-            for (StockM sm : listFiltrada){
-            	if (sm.getMed().getPotreroId().intValue() == numero.intValue()){
-            		listUpdated.add(sm);
-            	}
-            }
-            return listUpdated;
-        }
-        
-		return listFiltrada;
+        return medList;
     }
     
     public static void insertaCalificacion(SqLiteTrx trx, List<Calificacion> calList) throws SQLException {
@@ -346,6 +404,37 @@ public class MedicionDAO {
     	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_CALIFICACION);
     	statement.clearBindings();
     	statement.executeUpdateDelete();
+    }
+    
+    public static List selectCrecimientoMeds(SqLiteTrx trx, Integer g_fundo_id) throws SQLException {
+    	List<Medicion> list = new ArrayList<Medicion>();
+        boolean hayReg;
+
+        String[] args = {Integer.toString(g_fundo_id)};
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_CRECIMIENTO_MEDS, args);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	
+        	Medicion med = new Medicion();
+        	med.setId(c.getInt(c.getColumnIndex("a_medicion_id")));
+        	med.setClickInicial(c.getInt(c.getColumnIndex("inicial")));
+        	med.setClickFinal(c.getInt(c.getColumnIndex("final")));
+        	med.setMuestras(c.getInt(c.getColumnIndex("muestra")));
+			double click = ((double) med.getClickFinal().intValue()
+					- (double) med.getClickInicial().intValue()) 
+					/ (double) med.getMuestras().intValue();
+			med.setClick(click);
+        	String fecha = c.getString(c.getColumnIndex("fecha_medicion"));
+        	med.setFecha(Util.stringToDate(fecha, "dd-MM-yyyy HH:mm"));
+        	med.setPotreroId(c.getInt(c.getColumnIndex("a_potrero_id")));
+        	med.setSuperficie(c.getDouble(c.getColumnIndex("superficie")));
+        	list.add(med);
+        	
+            hayReg = c.moveToNext();
+        }
+
+        return list;
+
     }
     
 }

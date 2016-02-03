@@ -61,7 +61,7 @@
             android:layout_centerVertical="true"
             android:paddingRight="10dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_more_vert_white_36dp" />        
+            android:src="@drawable/ic_more_vert_white_36dp" />
         
     </RelativeLayout>
 
@@ -203,14 +203,14 @@
                 </ListView>
             </LinearLayout>
         </ScrollView>
-        
-		<ProgressBar
-		    android:id="@+id/loading"
-	         android:layout_width="wrap_content"
-	         android:layout_height="wrap_content"
-	         android:layout_centerHorizontal="true"
-	         android:layout_centerVertical="true"
-	         style="@android:style/Widget.ProgressBar.Large" />        
+
+        <ProgressBar
+            android:id="@+id/loading3"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
 
     </RelativeLayout>
 

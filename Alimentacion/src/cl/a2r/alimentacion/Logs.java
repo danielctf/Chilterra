@@ -74,7 +74,7 @@ public class Logs extends Activity implements View.OnClickListener{
 	
 	@SuppressWarnings("unchecked")
 	private void getLogsWS(){
-		list = AppLauncher.getLogs();
+		//list = AppLauncher.getLogs();
 		if (list == null){
 			return;
 		}
@@ -105,7 +105,7 @@ public class Logs extends Activity implements View.OnClickListener{
     Handler hand = new Handler();
     Runnable run = new Runnable() { 
         public void run() { 
-			AppLauncher.deleteLogs(deletedLogId);
+			//AppLauncher.deleteLogs(deletedLogId);
 			Toast.makeText(getApplicationContext(), "Registros eliminados exitosamente", Toast.LENGTH_LONG).show();
 			finish();
         }

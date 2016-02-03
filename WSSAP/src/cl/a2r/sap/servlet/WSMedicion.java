@@ -15,6 +15,8 @@ import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sap.common.AppLog;
 import cl.a2r.sap.model.Calificacion;
 import cl.a2r.sap.model.Medicion;
+import cl.a2r.sap.model.Potrero;
+import cl.a2r.sap.model.TipoMedicion;
 import cl.a2r.sap.service.AutorizacionService;
 import cl.a2r.sap.service.MedicionService;
 
@@ -61,6 +63,12 @@ public class WSMedicion extends HttpServlet{
             	retorno = i;
             } else if (servicio.equals("traeCalificacion")){
             	List<Calificacion> list = MedicionService.traeCalificacion();
+            	retorno = list;
+            } else if (servicio.equals("traePotreros")){
+            	List<Potrero> list = MedicionService.traePotreros();
+            	retorno = list;
+            } else if (servicio.equals("traeTipoMedicion")){
+            	List<TipoMedicion> list = MedicionService.traeTipoMedicion();
             	retorno = list;
             } else {
                 retorno = new AppException("Servicio no válido.", null);

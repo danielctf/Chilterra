@@ -43,10 +43,14 @@ public class SqLiteTrx {
     }
 
     public void close() {
-        if (getDB().inTransaction()) {
-            getDB().endTransaction();
-        }
-        getDB().close();
+    	try {
+	        if (getDB().inTransaction()) {
+	            getDB().endTransaction();
+	        }
+	        getDB().close();
+    	} catch (IllegalStateException e){
+    		
+    	}
     }
 
     public static SqLiteTrx getTrx(boolean isTrx) throws Exception {

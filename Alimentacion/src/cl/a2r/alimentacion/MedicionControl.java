@@ -65,7 +65,6 @@ public class MedicionControl extends Activity implements View.OnClickListener, V
 		tvFundo.setText(Aplicaciones.predioWS.getCodigo());
 		
 		med = new Medicion();
-		Mediciones.tipoMuestraActual = 4;
 	}
 
 	public void onClick(View v) {
@@ -105,12 +104,13 @@ public class MedicionControl extends Activity implements View.OnClickListener, V
 	}
 	
 	private void insertaEntrada(){
+		/*
         try {
             MedicionServicio.insertaMedicion(med);
         } catch (Exception ex) {
         	ex.printStackTrace();
         }
-		
+		*/
 		Toast.makeText(this, "Registro guardado", Toast.LENGTH_LONG).show();
 	}
 	
@@ -149,9 +149,9 @@ public class MedicionControl extends Activity implements View.OnClickListener, V
 		if (med.getClickFinal() != null &&
 				med.getClickInicial() != null &&
 				med.getMuestras() != null){
-			med.setClick(roundForDisplay(calculaClick(med)));
-			tvClick.setText(Double.toString(roundForDisplay(med.getClick())) + " Click");
-			med.setMateriaSeca(calculaMSVerano(calculaClick(med)));
+			//med.setClick(roundForDisplay(calculaClick(med)));
+			//tvClick.setText(Double.toString(roundForDisplay(med.getClick())) + " Click");
+			//med.setMateriaSeca(calculaMSVerano(calculaClick(med)));
 			tvMS.setText(Integer.toString(med.getMateriaSeca()) + " KgMs/Ha");
 		} else {
 			tvClick.setText("");
@@ -171,26 +171,6 @@ public class MedicionControl extends Activity implements View.OnClickListener, V
 		} else {
 			confirmarEntrada.setEnabled(false);
 		}
-	}
-	
-	private double roundForDisplay(double click){
-		double res = 0;
-		res = click * 10;
-		res = Math.round(res);
-		res = res / 10;
-		return res;
-	}
-	
-	private double calculaClick(Medicion med){
-		double res = 0;
-		res = ((double)med.getClickFinal() - (double)med.getClickInicial()) / (double)med.getMuestras();
-		return res;
-	}
-	
-	private int calculaMSVerano(double click){
-		int res = 0;
-		res = (int) Math.round(click * (double)165 + (double)1250);
-		return res;
 	}
 	
 	protected  void onStart(){

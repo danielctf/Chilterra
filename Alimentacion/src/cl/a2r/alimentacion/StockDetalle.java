@@ -127,6 +127,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 	}
 	
 	private void getStockPotrero(Integer g_fundo_id, Integer numero){
+		/*
 		try {
 			list = MedicionServicio.traeStockPotrero(Stock.list, g_fundo_id, numero);
 			for (StockM sm : list){
@@ -142,7 +143,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 			
 			tvCobertura.setText(Integer.toString(cobertura) + " KgMs/Ha");
 			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-			tvUpdate.setText(/*"Últ. Actualización\n" + */df.format(list.get(0).getActualizado()));
+			tvUpdate.setText(df.format(list.get(0).getActualizado()));
 			tvClick.setText(Double.toString(calcularClickPromedio(cobertura)) + " Click");
 			
 			calcularCrecimiento(g_fundo_id, numero);
@@ -150,6 +151,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
+		*/
 	}
 
 	public void onClick(View v) {
@@ -214,6 +216,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 					cal.setCalificacion(np1.getValue());
 					cal.setSincronizado("N");
 					calList.add(cal);
+					/*
 					try {
 						dialog.dismiss();
 						resetMenu();
@@ -222,6 +225,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 					} catch (AppException e) {
 						ShowAlert.showAlert("Error", e.getMessage(), StockDetalle.this);
 					}
+					*/
 				}
 			});
 			AlertDialog alertDialog = dialogBuilder.create();
@@ -232,6 +236,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 	}
 	
 	private void updateCalificacion(){
+		/*
 		try {
 			List<Calificacion> list = MedicionServicio.traeCalificacion();
 			for (Calificacion c : list){
@@ -244,6 +249,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
+		*/
 	}
 	
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -320,6 +326,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 	}
 	
 	private void calcularCrecimiento(Integer g_fundo_id, Integer numero){
+		/*
 		try {
 			List<StockM> listFiltrada = MedicionServicio.traeStockCrecimiento(Stock.list, g_fundo_id, numero);
 			List<Crecimiento> cre = new ArrayList<Crecimiento>();
@@ -367,6 +374,7 @@ public class StockDetalle extends Activity implements View.OnClickListener, List
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
+		*/
 	}
 	
 	private void despliegaCrecimiento(List<Crecimiento> cre){

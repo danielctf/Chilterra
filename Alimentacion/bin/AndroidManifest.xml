@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cl.a2r.alimentacion"
+    android:installLocation="preferExternal"
+    android:versionCode="103"
+    android:versionName="1.03" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="21" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher4"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.AppCompat.Light" >
+        <activity
+            android:name=".Login"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="API_KEY" />
+
+        <activity
+            android:name=".Aplicaciones"
+            android:label="Aplicaciones" >
+        </activity>
+        <activity
+            android:name=".BajaGanado"
+            android:label="@string/title_activity_baja_ganado" >
+        </activity>
+        <activity
+            android:name="cl.a2r.custom.Calculadora"
+            android:label="@string/title_activity_calculadora" >
+        </activity>
+        <activity
+            android:name=".Logs"
+            android:label="@string/title_activity_logs" >
+        </activity>
+        <activity
+            android:name=".BajaGanadoEdicion"
+            android:label="@string/title_activity_baja_ganado_edicion" >
+        </activity>
+        <activity
+            android:name=".Partos"
+            android:label="@string/title_activity_partos" >
+        </activity>
+        <activity
+            android:name=".Baston"
+            android:label="@string/title_activity_baston" >
+        </activity>
+        <activity
+            android:name=".Candidatos"
+            android:label="@string/title_activity_candidatos" >
+        </activity>
+        <activity
+            android:name=".Areteos"
+            android:label="@string/title_activity_areteo" >
+        </activity>
+        <activity
+            android:name=".Traslados"
+            android:label="@string/title_activity_traslados" >
+        </activity>
+        <activity
+            android:name=".TrasladosSalida"
+            android:label="@string/title_activity_traslados_salida" >
+        </activity>
+        <activity
+            android:name=".TrasladosSalidaDiios"
+            android:label="@string/title_activity_traslados_salida_diios" >
+        </activity>
+        <activity
+            android:name=".TrasladosLogs"
+            android:label="@string/title_activity_traslados_logs" >
+        </activity>
+        <activity
+            android:name=".TrasladosConfirmacion"
+            android:label="@string/title_activity_traslados_confirmacion" >
+        </activity>
+        <activity
+            android:name=".TrasladosConfirmacionDiios"
+            android:label="@string/title_activity_traslados_confirmacion_diios" >
+        </activity>
+        <activity
+            android:name="cl.a2r.custom.CalculadoraGD"
+            android:label="@string/title_activity_calculadora_gd" >
+        </activity>
+        <activity
+            android:name=".Salvatajes"
+            android:label="@string/title_activity_salvataje" >
+        </activity>
+        <activity
+            android:name=".SalvatajeDiios"
+            android:label="@string/title_activity_salvataje_diios" >
+        </activity>
+        <activity
+            android:name=".Mediciones"
+            android:label="@string/title_activity_medicion" >
+        </activity>
+        <activity
+            android:name=".MedicionEntrada"
+            android:label="@string/title_activity_medicion_entrada"
+            android:windowSoftInputMode="stateHidden" >
+        </activity>
+        <activity
+            android:name=".MedicionResiduo"
+            android:label="@string/title_activity_medicion_residuo" >
+        </activity>
+        <activity
+            android:name=".MedicionSemanal"
+            android:label="@string/title_activity_medicion_semanal" >
+        </activity>
+        <activity
+            android:name=".MedicionControl"
+            android:label="@string/title_activity_medicion_control" >
+        </activity>
+        <activity
+            android:name=".Stock"
+            android:label="@string/title_activity_stock" >
+        </activity>
+        <activity
+            android:name=".StockDetalle"
+            android:label="@string/title_activity_stock_detalle" >
+        </activity>
+        <activity
+            android:name=".Racion"
+            android:label="@string/title_activity_racion" >
+        </activity>
+        <activity
+            android:name=".Calificacion"
+            android:label="@string/title_activity_calificacion" >
+        </activity>
+    </application>
+
+</manifest>

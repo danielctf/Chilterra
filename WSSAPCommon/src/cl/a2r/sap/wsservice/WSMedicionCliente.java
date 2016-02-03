@@ -73,5 +73,37 @@ public class WSMedicionCliente {
 	       }
 
 	   }
+	   
+	   public static List traePotreros() throws AppException {
+
+	       ParamServlet params = new ParamServlet();
+	       params.add("servicio", "traePotreros" );
+
+	       Object obj = ServiceWS.invocaWS("WSMedicion", params );
+	       if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	           throw (AppException) obj;
+	       } else if (obj == null){
+	    	   throw new AppException("Error de conexión a Internet", null);
+	       } else {
+	    	   return (List) obj;
+	       }
+
+	   }
+	   
+	   public static List traeTipoMedicion() throws AppException {
+
+	       ParamServlet params = new ParamServlet();
+	       params.add("servicio", "traeTipoMedicion" );
+
+	       Object obj = ServiceWS.invocaWS("WSMedicion", params );
+	       if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	           throw (AppException) obj;
+	       } else if (obj == null){
+	    	   throw new AppException("Error de conexión a Internet", null);
+	       } else {
+	    	   return (List) obj;
+	       }
+
+	   }
 	
 }

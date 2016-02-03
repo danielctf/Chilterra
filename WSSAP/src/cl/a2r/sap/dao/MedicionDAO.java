@@ -10,6 +10,8 @@ import java.util.List;
 import cl.a2r.sap.common.Util;
 import cl.a2r.sap.model.Calificacion;
 import cl.a2r.sap.model.Medicion;
+import cl.a2r.sap.model.Potrero;
+import cl.a2r.sap.model.TipoMedicion;
 
 public class MedicionDAO {
 	
@@ -24,6 +26,12 @@ public class MedicionDAO {
 	
 	private static final String SQL_SELECT_CALIFICACION = ""
 			+ "select * from sap.ws_select_calificacion()";
+	
+	private static final String SQL_SELECT_POTREROS = ""
+			+ "select * from sap.ws_select_potreros()";
+	
+	private static final String SQL_SELECT_TIPO_MEDICION = ""
+			+ "select * from sap.ws_select_tipo_medicion()";
     
     public static void insertaMedicion(Transaccion trx, Medicion med) throws SQLException {
 
@@ -61,9 +69,9 @@ public class MedicionDAO {
         pst = conn.prepareStatement( SQL_SELECT_STOCK );
         res = pst.executeQuery();
         while (res.next()){
+        	
         	Medicion med = new Medicion();
         	med.setId(res.getInt("a_medicion_id"));
-        	med.setUsuarioId(res.getInt("createdby"));
         	med.setActiva(res.getString("isactive"));
         	med.setFecha(res.getTimestamp("fecha_medicion"));
         	med.setClickInicial(res.getInt("inicial"));
@@ -71,15 +79,11 @@ public class MedicionDAO {
         	med.setMuestras(res.getInt("muestra"));
         	med.setMateriaSeca(res.getInt("materia_seca"));
         	med.setMedidorId(res.getInt("medidor"));
-        	med.setPotreroId(res.getInt("a_potrero_id"));
-        	med.setNumeroPotrero(res.getInt("numero"));
         	med.setTipoMuestraId(res.getInt("a_tipo_medicion_id"));
-        	med.setTipoMuestraNombre(res.getString("value"));
-        	med.setActualizado(res.getTimestamp(("actualizado")));
-        	med.setSuperficie(res.getDouble("superficie"));
-        	med.setFundoId(res.getInt("g_fundo_id"));
+        	med.setPotreroId(res.getInt("a_potrero_id"));
         	med.setAnimales(res.getInt("animales"));
         	med.setSincronizado("Y");
+        	med.setActualizado(res.getTimestamp(("actualizado")));
         	list.add(med);
         }
         pst.close();
@@ -130,6 +134,61 @@ public class MedicionDAO {
         pst.close();
         res.close();
 		return calList;
+    }
+    
+    public static List selectPotreros(Transaccion trx) throws SQLException {
+    	List<Potrero> potList = new ArrayList<Potrero>();
+    	
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_POTREROS );
+        res = pst.executeQuery();
+        while (res.next()){
+        	Potrero p = new Potrero();
+        	p.setId(res.getInt("a_potrero_id"));
+        	p.setNumero(res.getInt("numero"));
+        	p.setSuperficie(res.getDouble("superficie"));
+        	p.setG_fundo_id(res.getInt("g_fundo_id"));
+        	p.setA_tipo_siembra_id(res.getInt("a_tipo_siembra_id"));
+        	p.setCalificacion(res.getInt("calificacion"));
+        	p.setSincronizado("Y");
+        	
+        	potList.add(p);
+        }
+        
+        pst.close();
+        res.close();
+        
+		return potList;
+    }
+    
+    public static List selectTipoMedicion(Transaccion trx) throws SQLException {
+    	List<TipoMedicion> list = new ArrayList<TipoMedicion>();
+    	
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_TIPO_MEDICION );
+        res = pst.executeQuery();
+        while (res.next()){
+        	
+        	TipoMedicion t = new TipoMedicion();
+        	t.setId(res.getInt("a_tipo_medicion_id"));
+        	t.setCodigo(res.getString("value"));
+        	t.setNombre(res.getString("name"));
+        	
+        	list.add(t);
+        }
+        
+        pst.close();
+        res.close();
+        
+		return list;
     }
     
 }

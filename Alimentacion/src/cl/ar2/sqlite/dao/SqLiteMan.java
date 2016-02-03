@@ -16,19 +16,23 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="alimentacion";
-    private static final int version = 2;
+    private static final int version = 3;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
-      
     }
 
-    @Override
     public void onCreate(SQLiteDatabase db) {
     	
     	db.execSQL(""
             + "CREATE TABLE actualizado ( "
 			+ " fecha_actualizado TEXT) ");
+    	
+    	db.execSQL(""
+            + "CREATE TABLE tipo_medicion ( "
+			+ " a_tipo_medicion_id INTEGER PRIMARY KEY, "
+			+ " codigo TEXT, "
+			+ " nombre TEXT ) ");
     	
     	db.execSQL(""
             + "CREATE TABLE potrero ( "
@@ -44,7 +48,6 @@ public class SqLiteMan extends SQLiteOpenHelper {
             + "CREATE TABLE medicion ( "
             + " a_medicion_id INTEGER PRIMARY KEY, "
             + " isactive TEXT, "
-            + " createdby INTEGER, "
             + " fecha_medicion TEXT, "
             + " inicial INTEGER, "
             + " final INTEGER, "
@@ -56,13 +59,6 @@ public class SqLiteMan extends SQLiteOpenHelper {
             + " animales INTEGER, "
             + " sincronizado TEXT, "
             + " FOREIGN KEY (a_potrero_id) REFERENCES potrero (a_potrero_id) ) ");
-    	
-        db.execSQL( ""
-            + "CREATE TABLE registro_medicion ( "
-            + " registro_medicion_id INTEGER PRIMARY KEY, "
-            + " fecha_hora INTEGER, "
-            + " medicion BLOB, "
-            + " sincronizado TEXT )" );
         
         db.execSQL(""
         	+ "CREATE TABLE google_info ( "
@@ -70,20 +66,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " nombre TEXT,"
         	+ " correo TEXT,"
         	+ " photo BLOB)");
-        
-        db.execSQL(""
-            	+ "CREATE TABLE stock ( "
-            	+ " stock_id INTEGER PRIMARY KEY,"
-            	+ " medicion BLOB, "
-            	+ " actualizado TEXT )");
-        
-        db.execSQL(""
-        		+ "CREATE TABLE calificacion ("
-        		+ " cal_id INTEGER PRIMARY KEY,"
-        		+ " fundo_id INTEGER, "
-        		+ " numero INTEGER, "
-        		+ " calificacion INTEGER, "
-        		+ " sincronizado TEXT)");
+
         
     }
 
@@ -93,23 +76,46 @@ public class SqLiteMan extends SQLiteOpenHelper {
         // Las actualizaciones debieran borrar la tabla anterior y crear las nuevas
         // Siempre debieran estar todos los pasos de cambios desde la version 1 
     	
-    	//----------------- VERSION 2 -----------------
-        db.execSQL(""
-            	+ "CREATE TABLE stock ( "
-            	+ " stock_id INTEGER PRIMARY KEY,"
-            	+ " medicion BLOB, "
-            	+ " actualizado TEXT )");
-        
-        db.execSQL(""
-        		+ "CREATE TABLE calificacion ("
-        		+ " cal_id INTEGER PRIMARY KEY,"
-        		+ " fundo_id INTEGER, "
+    	db.execSQL("DROP TABLE IF EXISTS registro_medicion");
+    	db.execSQL("DROP TABLE IF EXISTS stock");
+    	db.execSQL("DROP TABLE IF EXISTS calificacion");
+    	
+    	db.execSQL(""
+                + "CREATE TABLE actualizado ( "
+    			+ " fecha_actualizado TEXT) ");
+        	
+        	db.execSQL(""
+                + "CREATE TABLE tipo_medicion ( "
+    			+ " a_tipo_medicion_id INTEGER PRIMARY KEY, "
+    			+ " codigo TEXT, "
+    			+ " nombre TEXT ) ");
+        	
+        	db.execSQL(""
+                + "CREATE TABLE potrero ( "
+        		+ " a_potrero_id INTEGER PRIMARY KEY, "
         		+ " numero INTEGER, "
+        		+ " superficie REAL, "
+        		+ " g_fundo_id INTEGER, "
+        		+ " a_tipo_siembra_id INTEGER, "
         		+ " calificacion INTEGER, "
-        		+ " sincronizado TEXT)");
-        //---------------------------------------------
+        		+ " sincronizado TEXT ) ");
+        	
+        	db.execSQL(""
+                + "CREATE TABLE medicion ( "
+                + " a_medicion_id INTEGER PRIMARY KEY, "
+                + " isactive TEXT, "
+                + " fecha_medicion TEXT, "
+                + " inicial INTEGER, "
+                + " final INTEGER, "
+                + " muestra INTEGER, "
+                + " materia_seca INTEGER, "
+                + " medidor INTEGER, "
+                + " a_tipo_medicion_id INTEGER, "
+                + " a_potrero_id INTEGER, "
+                + " animales INTEGER, "
+                + " sincronizado TEXT, "
+                + " FOREIGN KEY (a_potrero_id) REFERENCES potrero (a_potrero_id) ) ");
 
     }
-
 
 }
