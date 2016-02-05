@@ -12,6 +12,7 @@ public class Ganado implements Serializable{
 	private Integer predio;
 	private String sexo;
 	private Integer mangada;
+	private String brucelosis;
 	private Integer tipoGanadoId;
 	
 	public Integer getId() {
@@ -72,6 +73,14 @@ public class Ganado implements Serializable{
 
 	public void setTipoGanadoId(Integer tipoGanadoId) {
 		this.tipoGanadoId = tipoGanadoId;
+	}
+
+	public String getBrucelosis() {
+		return brucelosis;
+	}
+
+	public void setBrucelosis(String brucelosis) {
+		this.brucelosis = brucelosis;
 	}
 
 	public String getEid() {

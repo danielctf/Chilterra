@@ -12,6 +12,7 @@ import cl.a2r.sip.dao.Transaccion;
 import cl.a2r.sip.model.Areteo;
 import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.InyeccionTB;
+import cl.a2r.sip.model.ResultadoBrucelosis;
 
 public class PredioLibreService {
 
@@ -216,6 +217,29 @@ public class PredioLibreService {
             } catch (SQLException ex) {
                 trx.rollback();
             	AppLog.logSevere("PredioLibreService.cerrarInstancia()", ex);
+                if (ex.getSQLState().equals("SIP02")){
+                	throw new AppException(ex.getMessage(), null);
+                } else {
+                	throw new AppException("No se pudo recuperar los registros.", null);
+                }
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+    }
+    
+    public static void insertaResultadoBrucelosis(ResultadoBrucelosis rb) throws AppException {
+
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                PredioLibreDAO.insertResultadoBrucelosis(trx, rb);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("PredioLibreService.insertaResultadoBrucelosis()", ex);
                 if (ex.getSQLState().equals("SIP02")){
                 	throw new AppException(ex.getMessage(), null);
                 } else {

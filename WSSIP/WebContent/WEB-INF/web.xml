@@ -32,6 +32,10 @@
   <servlet-name>WSPredioLibre</servlet-name> 
   <servlet-class>cl.a2r.sip.servlet.WSPredioLibre</servlet-class> 
   </servlet>
+  <servlet>
+  <servlet-name>WSEcografias</servlet-name> 
+  <servlet-class>cl.a2r.sip.servlet.WSEcografias</servlet-class> 
+  </servlet>  
  <servlet-mapping>
   <servlet-name>WSAutorizacion</servlet-name> 
   <url-pattern>/WSAutorizacion</url-pattern> 
@@ -64,6 +68,10 @@
   <servlet-name>WSPredioLibre</servlet-name> 
   <url-pattern>/WSPredioLibre</url-pattern> 
   </servlet-mapping>
+  <servlet-mapping>
+  <servlet-name>WSEcografias</servlet-name> 
+  <url-pattern>/WSEcografias</url-pattern> 
+  </servlet-mapping>  
  <session-config>
   <session-timeout>30</session-timeout> 
   </session-config>

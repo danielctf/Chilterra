@@ -9,6 +9,7 @@ import cl.a2r.sip.model.CausaBaja;
 import cl.a2r.sip.model.Chofer;
 import cl.a2r.sip.model.CollarParto;
 import cl.a2r.sip.model.DctoAdem;
+import cl.a2r.sip.model.Ecografista;
 import cl.a2r.sip.model.FMA;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.GanadoLogs;
@@ -27,6 +28,7 @@ import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.wsservice.WSAreteosCliente;
 import cl.a2r.sip.wsservice.WSAutorizacionCliente;
 import cl.a2r.sip.wsservice.WSBajasCliente;
+import cl.a2r.sip.wsservice.WSEcografiasCliente;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
@@ -53,20 +55,10 @@ public class Test {
 
     public static void main(String[] arg) {
     	
-    	List<Ganado> list = new ArrayList<Ganado>();
-    	Ganado g = new Ganado();
-    	g.setDiio(6401919);
-    	list.add(g);
-    	g = new Ganado();
-    	g.setDiio(2330673);
-    	list.add(g);
-    	g = new Ganado();
-    	g.setDiio(2331101);
-    	list.add(g);
     	
     	try {
-    		WSAutorizacionCliente.insertaX1Z1(list, "danielctf@gmail.com");
-
+    		List<Ecografista> list = WSEcografiasCliente.traeEcografistas();
+    		
 		} catch (AppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

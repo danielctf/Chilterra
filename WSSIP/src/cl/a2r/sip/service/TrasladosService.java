@@ -247,5 +247,25 @@ public class TrasladosService {
         }
         return g_movimiento_id;
     }
+    
+    public static void reubicaGanado(Traslado traslado) throws AppException {
+    	
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                TrasladosDAO.reubicaGanado(trx, traslado);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("TrasladosService.reubicaGanado()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        
+    }
 	
 }

@@ -16,14 +16,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="animales";
-    private static final int version = 3;
+    private static final int version = 4;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
       
     }
 
-    @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL( ""
             + "CREATE TABLE diio ( "
@@ -54,7 +53,22 @@ public class SqLiteMan extends SQLiteOpenHelper {
             + " ganadoDiio INTEGER,"
             + " mangada INTEGER,"
             + " codBarra TEXT,"
-            + " sincronizado TEXT)");        
+            + " sincronizado TEXT)");
+        
+        db.execSQL( ""
+        	+ "CREATE TABLE ecografia ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " ganadoId INTEGER, "
+        	+ " ganadoDiio INTEGER, "
+        	+ " fundoId INTEGER, "
+        	+ " fecha TEXT, "
+        	+ " dias_prenez INTEGER, "
+        	+ " estado_id INTEGER, "
+        	+ " ecografista_id INTEGER, "
+        	+ " inseminacion_id INTEGER, "
+        	+ " perdida_prenez_id INTEGER, "
+        	+ " sincronizado TEXT )");
+        
     }
 
     @Override
@@ -62,37 +76,17 @@ public class SqLiteMan extends SQLiteOpenHelper {
         // Aqui dependiendo de los numeros de version se deben crear o modificar las nuevas tablas
         // Las actualizaciones debieran borrar la tabla anterior y crear las nuevas
         // Siempre debieran estar todos los pasos de cambios desde la version 1 
-    	
+        
         db.execSQL( ""
-            + "DROP TABLE IF EXISTS predio_libre");
-
-        db.execSQL( ""
-            + "DROP TABLE IF EXISTS predio_libre_brucelosis");
-    	
-        db.execSQL( ""
-            + "CREATE TABLE predio_libre ( "
-            + " id INTEGER PRIMARY KEY,"
-        	+ " ganadoId INTEGER,"
-        	+ " fundoId INTEGER,"
-        	+ " instancia INTEGER,"
-            + " ganadoDiio INTEGER,"
-            + " mangada INTEGER,"
-            + " tuboPPDId INTEGER,"
-            + " tuboPPDSerie INTEGER,"
-            + " lecturaTB TEXT,"
-            + " sincronizado TEXT)");
-    	
-        db.execSQL( ""
-            + "CREATE TABLE predio_libre_brucelosis ( "
-            + " id INTEGER PRIMARY KEY,"
-        	+ " ganadoId INTEGER,"
-        	+ " fundoId INTEGER,"
-        	+ " instancia INTEGER,"
-            + " ganadoDiio INTEGER,"
-            + " mangada INTEGER,"
-            + " codBarra TEXT,"
-            + " sincronizado TEXT)");     
-
+        	+ "CREATE TABLE ecografia ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " fecha TEXT, "
+        	+ " dias_prenez INTEGER, "
+        	+ " estado_id INTEGER, "
+        	+ " ecografista_id INTEGER, "
+        	+ " inseminacion_id INTEGER, "
+        	+ " perdida_prenez_id INTEGER )");
+        
     }
 
 

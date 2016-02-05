@@ -15,6 +15,7 @@ import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.PPD;
 import cl.a2r.sip.model.Predio;
 import cl.a2r.sip.model.PredioLibre;
+import cl.a2r.sip.model.ResultadoBrucelosis;
 
 public class PredioLibreDAO {
 
@@ -47,6 +48,9 @@ public class PredioLibreDAO {
     
     private static final String SQL_CERRAR_INSTANCIA = ""
     		+ "select * from sip.ws_cerrar_instancia(?, ?)";
+    
+    private static final String SQL_INSERT_RESULTADO_BRUCELOSIS = ""
+    		+ "select * from sip.ws_insert_resultado_brucelosis(?, ?, ?, ?, ?, ?, ?)";
     
     public static List selectPredioLibre(Transaccion trx, Integer g_fundo_id) throws SQLException {
         List list = new ArrayList();
@@ -260,6 +264,27 @@ public class PredioLibreDAO {
 	    pst.setObject(2, instancia);
 	    pst.executeQuery();
 	    
+	    pst.close();
+    }
+    
+    public static void insertResultadoBrucelosis(Transaccion trx, ResultadoBrucelosis rb) throws SQLException {
+	    Connection conn = null;
+	    PreparedStatement pst = null;
+	    ResultSet res = null;
+	
+	    conn = trx.getConn();
+	    pst = conn.prepareStatement( SQL_INSERT_RESULTADO_BRUCELOSIS );
+	    for (Ganado g : rb.getGanado()){
+	    	pst.setObject(1, rb.getUsuarioId());
+	    	pst.setObject(2, Util.dateToSqlDate(rb.getFecha_envio()));
+	    	pst.setObject(3, Util.dateToSqlDate(rb.getFecha_resultado()));
+	    	pst.setObject(4, g.getBrucelosis());
+	    	pst.setObject(5, rb.getProtocolo_sag());
+	    	pst.setObject(6, rb.getInstancia());
+	    	pst.setObject(7, g.getId());
+	    	pst.executeQuery();
+	    }
+
 	    pst.close();
     }
 	
