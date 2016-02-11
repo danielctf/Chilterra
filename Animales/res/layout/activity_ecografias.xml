@@ -33,22 +33,24 @@
             android:textColor="@color/white" />        
         
         <TextView
-            android:id="@+id/tvSync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/white" />
-        
-        <TextView
             android:id="@+id/tvLogs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/logs"
+            android:layout_toLeftOf="@+id/sync"
+            android:layout_marginRight="10dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />        
+        
+        <ImageButton
+            android:id="@+id/sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/logs"
+            android:layout_marginRight="20dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_cloud_white_36dp" />           
         
         <ImageButton
             android:id="@+id/logs"
@@ -123,29 +125,44 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
+                    android:descendantFocusability="beforeDescendants"
+ 					android:focusableInTouchMode="true"
                     android:orientation="horizontal" >
-
-                    <RadioButton
-                        android:id="@+id/radio0"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.33"
-                        android:textSize="20sp"
-                        android:checked="true"
-                        android:text="&lt; 30" />
 
                     <RadioButton
                         android:id="@+id/radio1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.33"
-                        android:textSize="20sp" />
+                        android:layout_weight="0.27"
+                        android:textSize="20sp"
+                        android:checked="true"
+                        android:text="&lt; 30" />
 
                     <RadioButton
                         android:id="@+id/radio2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="0.1"
+                        android:textSize="20sp" />
+                    
+                    <EditText
+                        android:id="@+id/etDias"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.2"
+                        android:background="@drawable/apptheme_edit_text_holo_light"
+                        android:ems="3"
+                        android:imeOptions="actionDone"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:textSize="20sp" />
+
+                    <RadioButton
+                        android:id="@+id/radio3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="0.33"
+                        android:layout_marginLeft="15dp"
                         android:textSize="20sp"
                         android:text="> 120" />
                 </RadioGroup>
@@ -156,7 +173,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:layout_marginTop="10dp"
-                    android:text="Inseminación: 00-00-0000"
                     android:textSize="20sp" />
 
                 <TextView
@@ -214,22 +230,95 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
-                    android:background="@drawable/spinner_style" />                
+                    android:background="@drawable/spinner_style" />
+                
+			    <RelativeLayout
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="20dp"
+			        android:layout_marginBottom="20dp" >
+			
+			        <ImageButton
+			            android:id="@+id/confirmarAnimal"
+			            android:layout_width="60dp"
+			            android:layout_height="60dp"
+			            android:layout_alignParentLeft="true"
+			            android:layout_marginLeft="20dp"
+			            android:background="@drawable/circlebutton_state"
+			            android:src="@drawable/ic_action_done" />
+			        
+			        <ImageButton
+			            android:id="@+id/cerrarMangada"
+			            android:layout_width="60dp"
+			            android:layout_height="60dp"
+			            android:layout_alignParentRight="true"
+			            android:layout_marginRight="20dp"
+			            android:background="@drawable/circlebutton_lock"
+			            android:src="@drawable/ic_lock_outline_white_36dp" />   
+			            
+			        <TextView
+				        android:id="@+id/tvTotalAnimales"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_centerVertical="true"
+						android:layout_toLeftOf="@+id/dot1"
+				        android:text="0"
+				        android:textAppearance="?android:attr/textAppearanceLarge"
+				        android:textSize="30sp" />
+			        
+			        <TextView
+				        android:id="@+id/dot1"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_centerVertical="true"
+						android:layout_toLeftOf="@+id/tvMangada"
+				        android:text="•"
+				        android:textAppearance="?android:attr/textAppearanceLarge" 
+				        android:textSize="30sp" />
+			        
+			        <TextView
+				        android:id="@+id/tvMangada"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+						android:layout_centerHorizontal="true"
+						android:layout_centerVertical="true"
+				        android:text="0"
+				        android:textAppearance="?android:attr/textAppearanceLarge"
+				        android:textSize="30sp" />
+			        
+			        <TextView
+				        android:id="@+id/dot2"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_centerVertical="true"
+						android:layout_toRightOf="@+id/tvMangada"
+				        android:text="•"
+				        android:textAppearance="?android:attr/textAppearanceLarge" 
+				        android:textSize="30sp" />
+			                
+			        <TextView
+				        android:id="@+id/tvAnimalesMangada"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_toRightOf="@+id/dot2"
+				        android:text="0"
+				        android:textAppearance="?android:attr/textAppearanceLarge" 
+				        android:textSize="30sp" />
+			
+			    </RelativeLayout>                
                 
             </LinearLayout>
 
         </ScrollView>
 
-        <ImageButton
-            android:id="@+id/confirmarAnimal"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/circlebutton_state"
-            android:src="@drawable/ic_action_done" />
+        <ProgressBar
+            android:id="@+id/loading"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
 
     </RelativeLayout>
 

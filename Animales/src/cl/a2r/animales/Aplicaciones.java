@@ -15,6 +15,7 @@ import cl.a2r.sip.model.Aplicacion;
 import cl.a2r.sip.model.Predio;
 import cl.a2r.sip.model.Sesion;
 import cl.a2r.sip.wsservice.WSAutorizacionCliente;
+import cl.ar2.sqlite.dao.SqLiteTrx;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -95,7 +96,8 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 		getPrediosWS();
 		getAppsWS();
 		checkIfAppIsRunning();
-
+		
+		SqLiteTrx.Inicializa(this);
 	}
 	
 	private void cargarInterfaz(){

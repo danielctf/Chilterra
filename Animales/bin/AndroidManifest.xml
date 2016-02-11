@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cl.a2r.animales"
     android:installLocation="preferExternal"
-    android:versionCode="137"
-    android:versionName="1.37" >
+    android:versionCode="138"
+    android:versionName="1.38" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -132,6 +132,10 @@
             android:name="cl.a2r.ecografias.Ecografias"
             android:label="@string/title_activity_ecografias" >
         </activity>
+        <activity
+            android:name="cl.a2r.ecografias.Logs"
+            android:label="Logs" >
+        </activity>        
     </application>
 
 </manifest>

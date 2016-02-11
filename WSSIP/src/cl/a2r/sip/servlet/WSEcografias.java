@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sip.common.AppLog;
+import cl.a2r.sip.model.Ecografia;
 import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.service.EcografiasService;
 import cl.a2r.sip.service.GanadoService;
@@ -56,6 +57,18 @@ public class WSEcografias extends HttpServlet{
             } else if (servicio.equals("traeEcografiaNota")){
             	List list = EcografiasService.traeEcografiaNota();
             	retorno = list;
+            } else if (servicio.equals("traeInseminaciones")){
+            	List list = EcografiasService.traeInseminaciones();
+            	retorno = list;
+            } else if (servicio.equals("traeEcografias")){
+            	List list = EcografiasService.traeEcografias();
+            	retorno = list;
+            } else if (servicio.equals("insertaEcografia")){
+            	List<Ecografia> ecoList = (List<Ecografia>) params.getParam("ecoList");
+            	Integer usuarioId = (Integer) params.getParam("usuarioId");
+            	EcografiasService.insertaEcografia(ecoList, usuarioId);
+            	Integer i = 1;
+            	retorno = i;
             } else {
         		retorno = new AppException("Servicio no válido.", null);
             }

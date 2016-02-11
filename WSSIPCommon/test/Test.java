@@ -9,10 +9,12 @@ import cl.a2r.sip.model.CausaBaja;
 import cl.a2r.sip.model.Chofer;
 import cl.a2r.sip.model.CollarParto;
 import cl.a2r.sip.model.DctoAdem;
+import cl.a2r.sip.model.Ecografia;
 import cl.a2r.sip.model.Ecografista;
 import cl.a2r.sip.model.FMA;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.GanadoLogs;
+import cl.a2r.sip.model.Inseminacion;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.MotivoBaja;
 import cl.a2r.sip.model.Movimiento;
@@ -57,7 +59,10 @@ public class Test {
     	
     	
     	try {
-    		List<Ecografista> list = WSEcografiasCliente.traeEcografistas();
+    		List<Ecografia> list = WSEcografiasCliente.traeEcografias();
+    		for (Ecografia i : list){
+    			System.out.println(i.getId());
+    		}
     		
 		} catch (AppException e) {
 			// TODO Auto-generated catch block

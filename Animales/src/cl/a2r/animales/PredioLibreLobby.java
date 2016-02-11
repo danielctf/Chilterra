@@ -50,7 +50,6 @@ public class PredioLibreLobby extends Activity implements View.OnClickListener, 
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(R.layout.activity_predio_libre_lobby);
 		
-		SqLiteTrx.Inicializa(this);
 		cargarInterfaz();
 		getPrediosLibreWS();
 	}

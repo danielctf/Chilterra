@@ -184,7 +184,7 @@
 			android:layout_toRightOf="@+id/dot2"
 	        android:text="0"
 	        android:textAppearance="?android:attr/textAppearanceLarge" 
-	        android:textSize="30sp" />        
+	        android:textSize="30sp" />
 
     </RelativeLayout>
 
