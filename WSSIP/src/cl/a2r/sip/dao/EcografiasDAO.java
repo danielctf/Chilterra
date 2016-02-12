@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cl.a2r.sip.common.Util;
@@ -197,14 +199,14 @@ public class EcografiasDAO {
         	pst.setObject(1, usuarioId);
         	pst.setObject(2, e.getGan().getId());
         	pst.setObject(3, e.getGan().getPredio());
-        	pst.setObject(4, Util.dateToSqlDate(e.getFecha()));
+        	pst.setObject(4, new Timestamp(e.getFecha().getTime()));
         	pst.setObject(5, e.getDias_prenez());
         	pst.setObject(6, e.getEcografistaId());
         	pst.setObject(7, e.getInseminacionId());
         	pst.setObject(8, e.getEstadoId());
         	pst.setObject(9, e.getProblemaId());
         	pst.setObject(10, e.getNotaId());
-        	pst.executeQuery();	
+        	pst.executeQuery();
         }
 
         pst.close();
