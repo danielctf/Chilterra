@@ -97,7 +97,7 @@
             android:label="@string/title_activity_traslados_confirmacion_diios" >
         </activity>
         <activity
-            android:name=".Salvatajes"
+            android:name="cl.a2r.salvatajes.SalvatajesV2"
             android:label="@string/title_activity_salvataje" >
         </activity>
         <activity
@@ -135,7 +135,15 @@
         <activity
             android:name="cl.a2r.ecografias.Logs"
             android:label="Logs" >
-        </activity>        
+        </activity>
+        <activity
+         	android:name="cl.a2r.salvatajes.SalvatajesDiio"
+            android:label="@string/title_activity_salvatajes_diio" >
+        </activity>
+        <activity
+         	android:name="cl.a2r.salvatajes.Logs"
+            android:label="@string/title_activity_salvatajes_diio" >
+        </activity>
     </application>
 
 </manifest>

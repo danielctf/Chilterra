@@ -30,5 +30,6 @@
     <string name="title_activity_object_logs">ObjectLogs</string>
     <string name="title_activity_predio_libre_logs_br">PredioLibreLogsBR</string>
     <string name="title_activity_ecografias">Ecografias</string>
+    <string name="title_activity_salvatajes_diio">SalvatajesDiio</string>
 
 </resources>

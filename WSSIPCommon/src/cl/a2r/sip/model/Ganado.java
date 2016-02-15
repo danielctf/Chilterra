@@ -12,6 +12,7 @@ public class Ganado implements Serializable{
 	private Integer predio;
 	private String sexo;
 	private Integer mangada;
+	private String observacion;
 	private String brucelosis;
 	private Integer tipoGanadoId;
 	
@@ -48,7 +49,11 @@ public class Ganado implements Serializable{
 	}
 	
 	public String toString(){
-		return Integer.toString(this.diio);
+		if (this.diio != null){
+			return Integer.toString(this.diio);
+		} else {
+			return this.eid;
+		}
 	}
 
 	public String getSexo() {
@@ -73,6 +78,14 @@ public class Ganado implements Serializable{
 
 	public void setTipoGanadoId(Integer tipoGanadoId) {
 		this.tipoGanadoId = tipoGanadoId;
+	}
+
+	public String getObservacion() {
+		return observacion;
+	}
+
+	public void setObservacion(String observacion) {
+		this.observacion = observacion;
 	}
 
 	public String getBrucelosis() {

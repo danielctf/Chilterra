@@ -13,6 +13,7 @@ import cl.a2r.animales.Salvatajes;
 import cl.a2r.animales.Traslados;
 import cl.a2r.common.AppException;
 import cl.a2r.ecografias.Ecografias;
+import cl.a2r.salvatajes.SalvatajesV2;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.GanadoLogs;
 import cl.a2r.sip.model.Salvataje;
@@ -52,7 +53,7 @@ public class AppLauncher {
 			hasLogAccess = true;
 			break;
 		case 12:
-			launchApp = Salvatajes.class;
+			launchApp = SalvatajesV2.class;
 			hasLogAccess = true;
 			break;
 		case 13:

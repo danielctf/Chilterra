@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 
 @SuppressWarnings("deprecation")
@@ -89,5 +90,15 @@ public class ShowAlert {
 	    });
 	
 		alertDialog.show();
+	}
+	
+	public static void multipleChoice(String title, String msg, String[] items, boolean[] checked, Context ctx, OnMultiChoiceClickListener listener, OnClickListener okListener){
+		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+		builder.setTitle(title);
+		builder.setMessage(msg);
+		builder.setMultiChoiceItems(items, checked, listener);
+		final AlertDialog alert = builder.create();
+		alert.setButton("OK", okListener);
+		alert.show();
 	}
 }

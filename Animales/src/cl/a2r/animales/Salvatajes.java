@@ -64,6 +64,7 @@ public class Salvatajes extends Activity implements View.OnClickListener, ListVi
 	}
 	
 	private void cargarInterfaz(){
+		/*
 		goBack = (ImageButton)findViewById(R.id.goBack);
 		goBack.setOnClickListener(this);
 		undo = (ImageButton)findViewById(R.id.undo);
@@ -96,7 +97,7 @@ public class Salvatajes extends Activity implements View.OnClickListener, ListVi
 		diio = 0;
 		mAdapter = new ArrayAdapter<Salvataje>(this, android.R.layout.simple_list_item_1, salvataje);
 		lvGrupos.setAdapter(mAdapter);
-		
+		*/
 	}
 	
 	private void updateStatus(){
@@ -176,9 +177,6 @@ public class Salvatajes extends Activity implements View.OnClickListener, ListVi
 		case R.id.goBack:
 			finish();
 			break;
-		case R.id.addGrupo:
-			agregarGrupo();
-			break;
 		case R.id.textViewDiio:
 		case R.id.despliegaDiio:
 		case R.id.layoutCalculadora:
@@ -187,9 +185,6 @@ public class Salvatajes extends Activity implements View.OnClickListener, ListVi
 			break;
 		case R.id.confirmarAnimal:
 			agregarAnimal();
-			break;
-		case R.id.deleteGrupo:
-			eliminarGrupo();
 			break;
 		case R.id.logs:
 			i = new Intent(this, Logs.class);

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,7 +168,7 @@ public class PredioLibreDAO {
 	    	pst.setObject(2, tb.getInstancia());
 	    	pst.setObject(3, tb.getGanadoID());
 	    	pst.setObject(4, tb.getTuboPPDId());
-	    	pst.setObject(5, Util.dateToSqlDate(tb.getFecha_dosis()));
+	    	pst.setObject(5, new Timestamp(tb.getFecha_dosis().getTime()));
 	    	pst.executeQuery();
 	    }
 

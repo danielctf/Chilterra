@@ -161,7 +161,8 @@ public class Calculadora extends Activity implements View.OnClickListener {
 	@SuppressWarnings({ "unchecked", "static-access" })
 	private boolean getGanadoWS(int diio){
 		if (isSalvataje){
-			this.diio = diio;
+			gan = new Ganado();
+			gan.setEid(Integer.toString(diio));
 			return true;
 		}
 		

@@ -1,12 +1,14 @@
 package cl.a2r.sip.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Salvataje {
 
 	private Integer grupoId;
 	private String nombreGrupo;
+	private Date fecha;
 	private List<Ganado> ganado;
 	
 	public Salvataje(){
@@ -35,6 +37,14 @@ public class Salvataje {
 
 	public void setGrupoId(Integer grupoId) {
 		this.grupoId = grupoId;
+	}
+
+	public Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
 	}
 	
 }

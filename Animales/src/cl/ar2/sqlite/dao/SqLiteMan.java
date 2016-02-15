@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="animales";
-    private static final int version = 5;
+    private static final int version = 6;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
@@ -79,6 +79,20 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " fundoId INTEGER, "
         	+ " fecha TEXT, "
         	+ " sincronizado )");
+        
+        db.execSQL( ""
+        	+ "CREATE TABLE salvataje ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " nombre TEXT, "
+        	+ " fecha TEXT )");
+        
+        db.execSQL( ""
+        	+ "CREATE TABLE salvataje_diio ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " diioeid TEXT, "
+        	+ " observacion TEXT, "
+        	+ " s_id INTEGER, "
+        	+ " FOREIGN KEY (s_id) REFERENCES salvataje (id) )");
         
     }
 
@@ -149,6 +163,20 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " fundoId INTEGER, "
         	+ " fecha TEXT, "
         	+ " sincronizado )");
+        
+        db.execSQL( ""
+        	+ "CREATE TABLE salvataje ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " nombre TEXT, "
+        	+ " fecha TEXT )");
+            
+        db.execSQL( ""
+        	+ "CREATE TABLE salvataje_diio ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " diioeid TEXT, "
+        	+ " observacion TEXT, "
+        	+ " s_id INTEGER, "
+        	+ " FOREIGN KEY (s_id) REFERENCES salvataje (id) )");
         
     }
 
