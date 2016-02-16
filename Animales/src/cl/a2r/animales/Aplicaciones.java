@@ -316,19 +316,22 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 	}
 	
 	public static void createSession(){
-		Sesion s = new Sesion();
+		final Sesion s = new Sesion();
 		s.setUsuarioId(Login.user);
 		s.setFundoId(predioWS.getId());
 		s.setAppId(AppLauncher.getAppId());
 		s.setImei(null);
 		
-		try {
-			Login.sesionId = WSAutorizacionCliente.insertaSesion(s);
-		} catch (AppException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		new AsyncTask<Void, Void, Void>(){
+			protected Void doInBackground(Void... params) {
+				try {
+					WSAutorizacionCliente.insertaSesion(s);
+				} catch (AppException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+		}.execute();
 	}
 	
 	private void launchApplication(){

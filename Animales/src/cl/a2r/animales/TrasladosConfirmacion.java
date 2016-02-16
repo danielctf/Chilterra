@@ -1,5 +1,6 @@
 package cl.a2r.animales;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cl.a2r.animales.R;

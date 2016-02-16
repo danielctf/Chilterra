@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="animales";
-    private static final int version = 6;
+    private static final int version = 7;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
@@ -92,6 +92,12 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " observacion TEXT, "
         	+ " s_id INTEGER, "
         	+ " FOREIGN KEY (s_id) REFERENCES salvataje (id) )");
+        
+        db.execSQL( ""
+        	+ "CREATE TABLE reubicacion ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " ganadoId INTEGER, "
+        	+ " fundoId INTEGER )");
         
     }
 
@@ -176,6 +182,12 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " observacion TEXT, "
         	+ " s_id INTEGER, "
         	+ " FOREIGN KEY (s_id) REFERENCES salvataje (id) )");
+        
+        db.execSQL( ""
+        	+ "CREATE TABLE reubicacion ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " ganadoId INTEGER, "
+        	+ " fundoId INTEGER )");
         
     }
 

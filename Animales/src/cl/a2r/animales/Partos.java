@@ -1,6 +1,7 @@
 package cl.a2r.animales;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cl.a2r.animales.R;
@@ -158,12 +159,15 @@ public class Partos extends Activity implements View.OnClickListener, DialogInte
 			t.setUsuarioId(Login.user);
 			t.setFundoOrigenId(tempPredio);
 			t.setFundoDestinoId(Aplicaciones.predioWS.getId());
+			t.setDescripcion("REUBICACION POR BASTONEO");
 			Ganado g = new Ganado();
 			g.setId(tempGanadoId);
 			t.getGanado().add(g);
 			
 			try {
-				WSGanadoCliente.reajustaGanado(t);
+				List<Traslado> list = new ArrayList<Traslado>();
+				list.add(t);
+				WSGanadoCliente.reajustaGanado(list);
 			} catch (AppException e) {
 				ShowAlert.showAlert("Error", e.getMessage(), this);
 			}

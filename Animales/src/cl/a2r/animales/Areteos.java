@@ -360,12 +360,15 @@ public class Areteos extends Activity implements View.OnClickListener, DialogInt
 			t.setUsuarioId(Login.user);
 			t.setFundoOrigenId(tempPredio);
 			t.setFundoDestinoId(Aplicaciones.predioWS.getId());
+			t.setDescripcion("REUBICACION POR BASTONEO");
 			Ganado g = new Ganado();
 			g.setId(ganadoId);
 			t.getGanado().add(g);
 			
 			try {
-				WSGanadoCliente.reajustaGanado(t);
+				List<Traslado> list = new ArrayList<Traslado>();
+				list.add(t);
+				WSGanadoCliente.reajustaGanado(list);
 			} catch (AppException e) {
 				ShowAlert.showAlert("Error", e.getMessage(), this);
 			}

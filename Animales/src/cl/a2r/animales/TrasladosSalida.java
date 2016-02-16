@@ -549,6 +549,7 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
     		try {
     			trasladoSalida.setUsuarioId(Login.user);
     			trasladoSalida.setFundoOrigenId(Aplicaciones.predioWS.getId());
+    			trasladoSalida.setDescripcion("TRASLADO");
     			DctoAdem d = WSTrasladosCliente.insertaMovimiento(trasladoSalida);
     			generarFMA(Integer.parseInt(d.getNrodocto()));
     			finished = true;

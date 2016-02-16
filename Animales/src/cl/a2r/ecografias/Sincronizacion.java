@@ -12,8 +12,11 @@ import cl.a2r.common.AppException;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sip.model.Ecografia;
 import cl.a2r.sip.model.Inseminacion;
+import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.wsservice.WSEcografiasCliente;
+import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.ar2.sqlite.servicio.EcografiasServicio;
+import cl.ar2.sqlite.servicio.TrasladosServicio;
 
 public class Sincronizacion extends AsyncTask<Void, Void, Void>{
 
@@ -52,6 +55,10 @@ public class Sincronizacion extends AsyncTask<Void, Void, Void>{
 			List<Ecografia> ecoNewList = WSEcografiasCliente.traeEcografias();
 			EcografiasServicio.deleteEcografiasSincronizadas();
 			EcografiasServicio.insertaEcografia(ecoNewList);
+			
+			List<Traslado> trasList = TrasladosServicio.traeReubicaciones();
+			WSGanadoCliente.reajustaGanado(trasList);
+			TrasladosServicio.deleteReubicaciones();
 			
 			title = "Sincronización";
 			msg = "Sincronización Completa";

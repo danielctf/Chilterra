@@ -20,8 +20,11 @@ import cl.a2r.sip.model.EcografiaProblema;
 import cl.a2r.sip.model.Ecografista;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Inseminacion;
+import cl.a2r.sip.model.Traslado;
+import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.ar2.sqlite.servicio.EcografiasServicio;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
+import cl.ar2.sqlite.servicio.TrasladosServicio;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
@@ -440,13 +443,45 @@ public class Ecografias extends Activity implements View.OnClickListener{
 		Calculadora.gan = null;
 	}
 	
+	private void verReubicacion(final Ganado gan){
+		if (gan.getPredio().intValue() != Aplicaciones.predioWS.getId().intValue()){
+			ShowAlert.askYesNo("Predio", "El Animal figura en otro predio\n¿Esta seguro que el DIIO es correcto?", this, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface arg0, int arg1) {
+					if (arg1 == -2){
+						try {
+							Traslado t = new Traslado();
+							t.setUsuarioId(Login.user);
+							t.setFundoOrigenId(gan.getPredio());
+							t.setFundoDestinoId(Aplicaciones.predioWS.getId());
+							t.setDescripcion("REUBICACION POR BASTONEO");
+							t.getGanado().add(gan);
+							TrasladosServicio.insertaReubicacion(t);
+							showDiio(gan);
+						} catch (AppException e) {
+							ShowAlert.showAlert("Error", e.getMessage(), Ecografias.this);
+						}
+					} else {
+						clearScreen();
+					}
+				}
+			});
+		} else {
+			showDiio(gan);
+		}
+	}
+	
+	private void showDiio(Ganado gan){
+		clearScreen();
+		eco.setGanado(gan);
+		tvDiio.setText(Integer.toString(gan.getDiio()));
+		tvDiio.setGravity(Gravity.CENTER_HORIZONTAL);
+		verUltimaEcografia();
+		updateStatus();
+	}
+	
 	private void checkDiioStatus(Ganado gan){
 		if (gan != null){
-			clearScreen();
-			eco.setGanado(gan);
-			tvDiio.setText(Integer.toString(gan.getDiio()));
-			tvDiio.setGravity(Gravity.CENTER_HORIZONTAL);
-			verUltimaEcografia();
+			verReubicacion(gan);
 		}
 		updateStatus();
 	}
