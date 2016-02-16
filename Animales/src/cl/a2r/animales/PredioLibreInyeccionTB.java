@@ -230,9 +230,18 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 	
 	private void checkDiioStatus(Ganado gan){
 		if (gan != null){
-			ganTB.setGanadoID(gan.getId());
-			ganTB.setGanadoDiio(gan.getDiio());
-			ganTB.setFundoId(gan.getPredio());
+			try {
+				boolean exists = PredioLibreServicio.existsGanadoPL(gan.getId());
+				if (exists){
+					Toast.makeText(act, "Animal ya existe", Toast.LENGTH_LONG).show();
+				} else {
+					ganTB.setGanadoID(gan.getId());
+					ganTB.setGanadoDiio(gan.getDiio());
+					ganTB.setFundoId(gan.getPredio());
+				}
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), act);
+			}
 		}
 		updateStatus();
 	}

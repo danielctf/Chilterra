@@ -90,6 +90,11 @@ public class WSTraslados extends HttpServlet {
             	TrasladosService.insertaMovtoConfirm(traslado);
             	Integer i = 1;
             	retorno = i;
+            } else if (servicio.equals("reubicaGanado")){
+            	Traslado traslado = (Traslado) params.getParam("traslado");
+            	TrasladosService.reubicaGanado(traslado);
+            	Integer i = 1;
+            	retorno = i;
             } else {
                 retorno = new AppException("Servicio no válido.", null);
             }

@@ -289,21 +289,26 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 	
 	private void checkDiioStatus(Ganado gan){
 		if (gan != null){
+			try{
+			boolean existsGan = PredioLibreServicio.existsGanadoPLBrucelosis(gan.getId());
+			if (existsGan){
+				Toast.makeText(act, "Animal ya existe", Toast.LENGTH_LONG).show();
+				return;
+			}
 			bru.getGanado().setId(gan.getId());
 			bru.getGanado().setDiio(gan.getDiio());
 			bru.getGanado().setPredio(gan.getPredio());
 			tvDiio.setText(Integer.toString(bru.getGanado().getDiio()));
 			tvDiio.setGravity(Gravity.CENTER_HORIZONTAL);
 			
-			try {
-				boolean exists = PredioLibreServicio.existsGanadoPL(bru.getGanado().getId());
-				ArrayAdapter<LecturaTBObject> mAdapter;
-				if (exists){
-					mAdapter = new ArrayAdapter<LecturaTBObject>(act, android.R.layout.simple_list_item_1, aplicaTB);
-				} else {
-					mAdapter = new ArrayAdapter<LecturaTBObject>(act, android.R.layout.simple_list_item_1, noAplicaTB);
-				}
-				spinnerTB.setAdapter(mAdapter);
+			boolean exists = PredioLibreServicio.existsGanadoPL(bru.getGanado().getId());
+			ArrayAdapter<LecturaTBObject> mAdapter;
+			if (exists){
+				mAdapter = new ArrayAdapter<LecturaTBObject>(act, android.R.layout.simple_list_item_1, aplicaTB);
+			} else {
+				mAdapter = new ArrayAdapter<LecturaTBObject>(act, android.R.layout.simple_list_item_1, noAplicaTB);
+			}
+			spinnerTB.setAdapter(mAdapter);
 			} catch (AppException e) {
 				ShowAlert.showAlert("Error", e.getMessage(), act);
 			}

@@ -144,8 +144,16 @@ public class SalvatajesDiio extends Activity implements View.OnClickListener{
 	
 	private void checkDiioStatus(Ganado g){
 		if (g != null){
-			clearScreen();
-			gan.setEid(g.getEid());
+			try {
+				boolean exists = SalvatajesServicio.existsGanado(g.getEid(), grupoId);
+				if (!exists){
+					gan.setEid(g.getEid());
+				} else {
+					ShowAlert.showAlert("Error", "Animal ya existe", this);	
+				}
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
 		}
 		updateStatus();
 	}
@@ -153,6 +161,7 @@ public class SalvatajesDiio extends Activity implements View.OnClickListener{
 	private void clearScreen(){
 		gan = new Ganado();
 		obs.setText("");
+		resetCalculadora();
 	}
 	
 	private void resetCalculadora(){
@@ -197,7 +206,7 @@ public class SalvatajesDiio extends Activity implements View.OnClickListener{
     		case ConnectedThread.MESSAGE_READ:
     			String EID = (String) msg.obj;
     			Ganado g = new Ganado();
-    			g.setEid(EID);
+    			g.setEid(EID.trim());
     			checkDiioStatus(g);
     			break;
     		case ConnectedThread.CONNECTION_INTERRUPTED:

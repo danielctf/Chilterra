@@ -42,7 +42,7 @@ public class Iconos {
 			icon = R.drawable.iconoinducciones;
 			break;
 		case 12:
-			icon = R.drawable.iconosalvataje;
+			icon = R.drawable.ic_maps_local_hospital;
 			break;
 		case 13:
 			icon = R.drawable.iconoprediolibre;

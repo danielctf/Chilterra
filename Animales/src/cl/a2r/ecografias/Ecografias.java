@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cl.a2r.animales.Aplicaciones;
 import cl.a2r.animales.Login;
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
@@ -54,7 +55,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 public class Ecografias extends Activity implements View.OnClickListener{
 
 	private ImageButton goBack, logs, confirmarAnimal, sync, cerrarMangada;
-	private TextView tvUltAct, tvLogs, tvDiio, tvProblema, tvTotalAnimales, tvMangada, tvAnimalesMangada;
+	private TextView tvUltAct, tvUltEco, tvLogs, tvDiio, tvProblema, tvTotalAnimales, tvMangada, tvAnimalesMangada;
 	private Spinner spEcografista, spEstado, spProblema, spNota;
 	private RadioGroup rg;
 	private RadioButton radio1, radio2, radio3;
@@ -91,6 +92,7 @@ public class Ecografias extends Activity implements View.OnClickListener{
 		tvDiio.setOnClickListener(this);
 		tvProblema = (TextView)findViewById(R.id.tvProblema);
 		tvUltAct = (TextView)findViewById(R.id.tvUltAct);
+		tvUltEco = (TextView)findViewById(R.id.tvUltEco);
 		tvLogs = (TextView)findViewById(R.id.tvLogs);
     	tvTotalAnimales = (TextView)findViewById(R.id.tvTotalAnimales);
     	tvMangada = (TextView)findViewById(R.id.tvMangada);
@@ -130,7 +132,7 @@ public class Ecografias extends Activity implements View.OnClickListener{
 		            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(etDias.getWindowToken(), 0);
 	            }
 	            
-	    		ArrayAdapter<EcografiaEstado> mAdapter = new ArrayAdapter<EcografiaEstado>(Ecografias.this, android.R.layout.simple_list_item_1); 
+	    		ArrayAdapter<EcografiaEstado> mAdapter = new ArrayAdapter<EcografiaEstado>(Ecografias.this, android.R.layout.simple_list_item_1);
 	    		if (radio1.isChecked()){
 	    			mAdapter.addAll(menor30);
 	    		} else {
@@ -261,7 +263,7 @@ public class Ecografias extends Activity implements View.OnClickListener{
 				if (dias_prenez > 120){
 					radio3.setChecked(true);
 				}
-				SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+				SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 				tvUltAct.setText("Inseminación: " + df.format(maxIns.getFecha()));
 				eco.setInseminacionId(maxIns.getId());
 			}
@@ -277,11 +279,14 @@ public class Ecografias extends Activity implements View.OnClickListener{
 			if (ecoList.size() > 0){
 				Ecografia maxEco = new Ecografia();
 				maxEco.setFecha(new Date(0));
+				int numEcos = 0;
 				for (Ecografia e : ecoList){
 					if (e.getFecha().getTime() > maxEco.getFecha().getTime()){
 						maxEco = e;
 					}
+					numEcos++;
 				}
+				tvUltEco.setText("Ecografías: " + Integer.toString(numEcos));
 				//Verificar si tiene una ecografia hoy, de ser asi, tira un warning
 				long diffDays = new Date().getTime() - maxEco.getFecha().getTime();
 				int days = (int) (diffDays / (24 * 60 * 60 * 1000));
@@ -294,7 +299,7 @@ public class Ecografias extends Activity implements View.OnClickListener{
 					return;
 				}
 				
-				SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+				SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 				Date prenezDate = new Date(new Date().getTime() - maxEco.getDias_prenez().longValue() * 24L * 60L * 60L * 1000L);
 				long diff = new Date().getTime() - prenezDate.getTime();
 				int dias_prenez = (int) (diff / (24 * 60 * 60 * 1000));
@@ -350,6 +355,7 @@ public class Ecografias extends Activity implements View.OnClickListener{
 		eco.setNotaId(((EcografiaNota) spNota.getSelectedItem()).getId());
 		eco.setMangada(mangadaActual);
 		eco.setSincronizado("N");
+		//eco.setFundoId(Aplicaciones.predioWS.getId());
 		List<Ecografia> list = new ArrayList<Ecografia>();
 		list.add(eco);
 		try {
@@ -357,6 +363,8 @@ public class Ecografias extends Activity implements View.OnClickListener{
 			clearScreen();
 			Toast.makeText(this, "Animal Insertado", Toast.LENGTH_LONG).show();
 			mostrarCandidatos();
+			radio1.setChecked(true);
+			spNota.setSelection(0);
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
@@ -421,6 +429,7 @@ public class Ecografias extends Activity implements View.OnClickListener{
 		eco = new Ecografia();
 		diasPrenezActuales = null;
 		tvUltAct.setText("");
+		tvUltEco.setText("");
 		etDias.setText("");
 		radio1.setChecked(true);
 		resetCalculadora();

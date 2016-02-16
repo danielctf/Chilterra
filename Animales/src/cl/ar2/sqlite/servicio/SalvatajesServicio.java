@@ -170,4 +170,28 @@ public class SalvatajesServicio {
         }
     }
 	
+    public static boolean existsGanado(String diioeid, Integer grupoId) throws AppException {
+        boolean exists = false;
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                exists = SalvatajesDAO.existsGanado(trx, diioeid, grupoId);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return exists;
+    }
+    
 }

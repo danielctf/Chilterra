@@ -8,11 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import cl.a2r.animales.Login;
 import cl.a2r.animales.R;
-import cl.a2r.animales.R.id;
-import cl.a2r.animales.R.layout;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
@@ -47,7 +44,7 @@ public class SalvatajesV2 extends Activity implements View.OnClickListener, List
 	private ListView lvGrupos;
 	private ImageButton btnAddGrupo, goBack, share;
 	private TextView tvApp;
-	private boolean[] alertChecked;;
+	private boolean[] checked;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -106,28 +103,28 @@ public class SalvatajesV2 extends Activity implements View.OnClickListener, List
 		try {
 			sList = SalvatajesServicio.traeGrupos();
 		} catch (AppException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			ShowAlert.showAlert("Error", e1.getMessage(), this);
 		}
 		String[] items = new String[sList.size()];
-		boolean[] checked = new boolean[sList.size()];
+		checked = new boolean[sList.size()];
 		int i = 0;
 		for (Salvataje s : sList){
 			items[i] = s.getNombreGrupo();
-			checked[i] = false;
+			checked[i] = true;
 			i++;
 		}
-		alertChecked = checked;
-		ShowAlert.multipleChoice("Grupos", "Seleccione los grupos a enviar",
+		ShowAlert.multipleChoice("Enviar Grupos", "Seleccione los grupos a enviar",
 				items, checked, this, new DialogInterface.OnMultiChoiceClickListener() {
 					
 					public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-						alertChecked[which] = isChecked;
+						checked[which] = isChecked;
 					}
 				}, new DialogInterface.OnClickListener() {
 					
 					public void onClick(DialogInterface arg0, int arg1) {
-						send();
+						if (arg1 == -2){
+							send();
+						}
 					}
 				});
 	}
@@ -141,14 +138,14 @@ public class SalvatajesV2 extends Activity implements View.OnClickListener, List
 			e1.printStackTrace();
 		}
 		ArrayList<Uri> uris = new ArrayList<Uri>();
-		for (int j = 0; j < alertChecked.length; j++){
-			if (alertChecked[j]){
+		for (int j = 0; j < checked.length; j++){
+			if (checked[j]){
 				File file   = null;
 				File root   = Environment.getExternalStorageDirectory();
 				if (root.canWrite()){
 					File dir = new File (root.getAbsolutePath() + "/Bastoneo");
 				    dir.mkdirs();
-				    file   =   new File(dir, "Bastoneo Grupo " + sList.get(j).getNombreGrupo() + ".csv");
+				    file   =   new File(dir, "Grupo " + sList.get(j).getNombreGrupo() + ".csv");
 				    FileOutputStream out   =   null;
 				    try {
 				        out = new FileOutputStream(file);
@@ -158,7 +155,8 @@ public class SalvatajesV2 extends Activity implements View.OnClickListener, List
 				        try {
 				        	byte[] endl = "\n".getBytes();
 				        	byte[] coma = ";".getBytes();
-				        	for (Ganado g : sList.get(j).getGanado()){
+				        	List<Ganado> ganList = SalvatajesServicio.traeDiios(sList.get(j).getGrupoId());
+				        	for (Ganado g : ganList){
 				        		if (g.getEid() != null){
 				        			out.write(g.getEid().getBytes());
 				        			out.write(coma);
@@ -169,9 +167,10 @@ public class SalvatajesV2 extends Activity implements View.OnClickListener, List
 				        	out.close();
 				        } catch (IOException e) {
 				            ShowAlert.showAlert("Error", "VOLCADO A FICHERO\n" + e.getMessage(), this);
+				        } catch (AppException e) {
+				        	ShowAlert.showAlert("Error", e.getMessage(), this);
 				        }
 				}
-				
 				Uri u = Uri.fromFile(file);
 				uris.add(u);
 			}
@@ -182,7 +181,7 @@ public class SalvatajesV2 extends Activity implements View.OnClickListener, List
 		ei.setType("plain/text");
 		ei.putExtra(Intent.EXTRA_SUBJECT, "Salvataje " + df.format(new Date()));
 		ei.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-		startActivityForResult(Intent.createChooser(ei, "Enviando correo..."), 12345);
+		startActivityForResult(Intent.createChooser(ei, "Compartir"), 12345);
 	}
 	
 	private void getGrupos(){

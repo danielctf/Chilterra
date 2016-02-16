@@ -95,10 +95,11 @@ public class ShowAlert {
 	public static void multipleChoice(String title, String msg, String[] items, boolean[] checked, Context ctx, OnMultiChoiceClickListener listener, OnClickListener okListener){
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 		builder.setTitle(title);
-		builder.setMessage(msg);
+		//builder.setMessage(msg);
 		builder.setMultiChoiceItems(items, checked, listener);
 		final AlertDialog alert = builder.create();
-		alert.setButton("OK", okListener);
+		alert.setButton2("OK", okListener);
+		alert.setButton("Cancelar", okListener);
 		alert.show();
 	}
 }

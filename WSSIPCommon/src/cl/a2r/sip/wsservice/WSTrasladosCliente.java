@@ -177,5 +177,19 @@ public class WSTrasladosCliente {
 	        	throw new AppException("Error de conexión a Internet", null);
 	        }
 	   }
+	   
+	   public static void reubicaGanado(Traslado traslado) throws AppException {
+		   
+	        ParamServlet params = new ParamServlet();
+	        params.add("servicio", "reubicaGanado");
+	        params.add("traslado", traslado);
+	
+	        Object obj = ServiceWS.invocaWS("WSTraslados", params );
+	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	            throw (AppException) obj;
+	        } else if (obj == null){
+	        	throw new AppException("Error de conexión a Internet", null);
+	        }
+	   }
 	
 }

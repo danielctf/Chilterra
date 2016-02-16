@@ -43,6 +43,12 @@ public class SalvatajesDAO {
 			+ "DELETE FROM salvataje_diio "
 			+ " WHERE s_id = ? ";
 	
+	private static final String SQL_EXISTS_GANADO = ""
+			+ "SELECT id, diioeid, observacion"
+			+ " FROM salvataje_diio "
+			+ " WHERE diioeid = ? "
+			+ " AND s_id = ? ";
+	
     public static void insertGrupo(SqLiteTrx trx, Salvataje s) throws SQLException {
 
         SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_GRUPO);
@@ -132,6 +138,22 @@ public class SalvatajesDAO {
     	statement.clearBindings();
     	statement.bindLong(1, grupoId);
     	statement.executeUpdateDelete();
+    }
+    
+    public static boolean existsGanado(SqLiteTrx trx, String diioeid, Integer grupoId) throws SQLException {
+        boolean exists = false;
+        boolean hayReg;
+
+        String[] args = {diioeid, Integer.toString(grupoId)};
+        Cursor c = trx.getDB().rawQuery(SQL_EXISTS_GANADO, args);
+        hayReg = c.moveToFirst();
+        
+        while ( hayReg ) {
+        	exists = true;
+        	hayReg = c.moveToNext();
+        }
+
+        return exists;
     }
 
 }

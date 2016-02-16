@@ -20,7 +20,6 @@ public class SqLiteMan extends SQLiteOpenHelper {
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
-      
     }
 
     public void onCreate(SQLiteDatabase db) {

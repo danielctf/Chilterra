@@ -8,6 +8,7 @@ public class Ecografia implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Integer usuarioId;
+	private Integer fundoId;
 	private Date fecha;
 	private Ganado gan;
 	private Integer dias_prenez;
@@ -37,6 +38,14 @@ public class Ecografia implements Serializable{
 
 	public void setUsuarioId(Integer usuarioId) {
 		this.usuarioId = usuarioId;
+	}
+
+	public Integer getFundoId() {
+		return fundoId;
+	}
+
+	public void setFundoId(Integer fundoId) {
+		this.fundoId = fundoId;
 	}
 
 	public Date getFecha() {

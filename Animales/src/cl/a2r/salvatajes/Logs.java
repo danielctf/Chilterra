@@ -63,7 +63,8 @@ public class Logs extends Activity implements View.OnClickListener, ListView.OnI
 	private void getLogs(){
 		try {
 			List<Ganado> list = SalvatajesServicio.traeDiios(grupoId);
-			ArrayAdapter<Ganado> mAdapter = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, list);
+			//ArrayAdapter<Ganado> mAdapter = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, list);
+			SalvatajeAdapter mAdapter = new SalvatajeAdapter(this, android.R.layout.simple_list_item_1, list);
 			lvDiios.setAdapter(mAdapter);
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
