@@ -10,6 +10,7 @@ public class Traslado implements Serializable{
 	private Integer usuarioId;
 	private Integer fundoOrigenId;
 	private Integer fundoDestinoId;
+	private String descripcion;
 	private Integer tipoTransporteId;
 	private Integer transportistaId;
 	private Integer choferId;
@@ -53,6 +54,14 @@ public class Traslado implements Serializable{
 		this.fundoDestinoId = fundoDestinoId;
 	}
 	
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
 	public Integer getTipoTransporteId() {
 		return tipoTransporteId;
 	}

@@ -9,6 +9,7 @@ import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Movimiento;
 import cl.a2r.sip.model.TipoGanado;
 import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.wsservice.WSAreteosCliente;
@@ -21,13 +22,16 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +43,7 @@ public class TrasladosConfirmacion extends Activity implements View.OnClickListe
 	private static TextView despliegaGD, tvApp, deshacer;
 	private static int contVacas, contVaquillas, contTerneras, contToros, contToretes, contTerneros, contBueyes;
 	private static ImageButton goBack, undo, guias, confirmarMovimiento;
+	private static ProgressBar loading;
 	private LinearLayout layoutAnimales;
 	private static List<TipoGanado> listaTipoGanado;
 	private static boolean finished = false;
@@ -101,36 +106,77 @@ public class TrasladosConfirmacion extends Activity implements View.OnClickListe
 		deshacer.setOnClickListener(this);
 		confirmarMovimiento = (ImageButton)findViewById(R.id.confirmarMovimiento);
 		confirmarMovimiento.setOnClickListener(this);
+		loading = (ProgressBar)findViewById(R.id.loading);
+		loading.setVisibility(View.INVISIBLE);
 		
 		resetContadores();
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void getTipoGanadoWS(){
-		try {
-			listaTipoGanado = WSAreteosCliente.traeTipoGanado();
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
-		}
+		new AsyncTask<Void, Void, Void>(){
+			String title, msg;
+			
+			protected void onPreExecute(){
+				loading.setVisibility(View.VISIBLE);
+				title = "";
+				msg = "";
+			}
+			
+			protected Void doInBackground(Void... params) {
+				try {
+					listaTipoGanado = WSAreteosCliente.traeTipoGanado();
+				} catch (AppException e) {
+					title = "Error";
+					msg = e.getMessage();
+				}
+				return null;
+			}
+			
+			protected void onPostExecute(Void result){
+				loading.setVisibility(View.INVISIBLE);
+				if (title.equals("Error")){
+					ShowAlert.showAlert(title, msg, TrasladosConfirmacion.this);	
+				}
+			}
+		}.execute();
 	}
 	
-	public static void getTraslado(Integer nro_documento){
-		try {
-			salida = WSTrasladosCliente.traeMovimiento(nro_documento);
+	public static void getTraslado(final Integer nro_documento){
+		new AsyncTask<Void, Void, Void>(){
+			String title, msg;
 			
-			confirmacion.setG_movimiento_id(salida.getG_movimiento_id());
-			confirmacion.setM_movement_id(salida.getM_movement_id());
-			confirmacion.setNro_documento(salida.getNro_documento());
-			
-			confirmacion.setFundoDestinoId(salida.getFundoDestinoId());
-			
-			for (Ganado g : salida.getGanado()){
-				TrasladosConfirmacionDiios.faltantes.getGanado().add(g);
+			protected void onPreExecute(){
+				loading.setVisibility(View.VISIBLE);
+				title = "";
+				msg = "";
 			}
-			updateStatus();
-		} catch (AppException e) {
-			e.printStackTrace();
-		}
+			
+			protected Void doInBackground(Void... params) {
+				try {
+					salida = WSTrasladosCliente.traeMovimiento(nro_documento);
+					confirmacion.setG_movimiento_id(salida.getG_movimiento_id());
+					confirmacion.setM_movement_id(salida.getM_movement_id());
+					confirmacion.setNro_documento(salida.getNro_documento());
+					
+					confirmacion.setFundoDestinoId(salida.getFundoDestinoId());
+					
+					for (Ganado g : salida.getGanado()){
+						TrasladosConfirmacionDiios.faltantes.getGanado().add(g);
+					}
+				} catch (AppException e) {
+					title = "Error";
+					msg = e.getMessage();
+				}
+				return null;
+			}
+			
+			protected void onPostExecute(Void result){
+				loading.setVisibility(View.INVISIBLE);
+				updateStatus();
+			}
+			
+		}.execute();
 	}
 	
 	private static void updateStatus(){
@@ -300,26 +346,43 @@ public class TrasladosConfirmacion extends Activity implements View.OnClickListe
 		
 	}
 	
-    Handler hand = new Handler(); 
-    Runnable run = new Runnable() { 
-        public void run() {
-    		try {
-    			confirmacion.setUsuarioId(Login.user);
-    			WSTrasladosCliente.insertaMovtoConfirm(confirmacion);
-    			verReubicacion();
-    			Toast.makeText(TrasladosConfirmacion.this, "Traslado confirmado", Toast.LENGTH_LONG).show();
-    			deshacer.setText("Limpiar");
-    			finished = true;
-    		} catch (AppException e) {
-    			ShowAlert.showAlert("Error", e.getMessage(), TrasladosConfirmacion.this);
-    			confirmarMovimiento.setVisibility(View.VISIBLE);
-    		}
-        }
-    }; 
-	
 	private void confirmacion(){
-		confirmarMovimiento.setVisibility(View.INVISIBLE);
-		hand.postDelayed(run, 100);
+		new AsyncTask<Void, Void, Void>(){
+			String title, msg;
+			
+			protected void onPreExecute(){
+				loading.setVisibility(View.VISIBLE);
+				confirmarMovimiento.setVisibility(View.INVISIBLE);
+				title = "";
+				msg = "";
+			}
+
+			protected Void doInBackground(Void... params) {
+	    		try {
+	    			confirmacion.setUsuarioId(Login.user);
+	    			WSTrasladosCliente.insertaMovtoConfirm(confirmacion);
+	    			verReubicacion();
+	    			finished = true;
+	    		} catch (AppException e) {
+	    			title = "Error";
+	    			msg = e.getMessage();
+	    		}
+				return null;
+			}
+			
+			protected void onPostExecute(Void result){
+				loading.setVisibility(View.INVISIBLE);
+				confirmarMovimiento.setVisibility(View.VISIBLE);
+				if (title.equals("Error")){
+					ShowAlert.showAlert(title, msg, TrasladosConfirmacion.this);	
+				} else {
+					deshacer.setText("Limpiar");
+					Toast.makeText(TrasladosConfirmacion.this, "Traslado confirmado", Toast.LENGTH_LONG).show();
+				}
+				updateStatus();
+			}
+			
+		}.execute();
 	}
 	
 	private void verReubicacion(){

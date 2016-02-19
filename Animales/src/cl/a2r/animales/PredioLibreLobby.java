@@ -109,7 +109,7 @@ public class PredioLibreLobby extends Activity implements View.OnClickListener, 
 			finish();
 			break;
 		case R.id.sync:
-			new AsyncPredioLibre(this, syncPendientes, syncLecturaTB, syncBrucelosis).execute();
+			new AsyncPredioLibre(this, syncPendientes, syncLecturaTB, syncBrucelosis, Login.user).execute();
 			break;
 		case R.id.addPredioLibre:
 			addPredioLibre.setVisibility(View.INVISIBLE);

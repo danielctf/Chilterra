@@ -74,11 +74,11 @@ public class WSGanadoCliente {
 	       }
 	   }
 	   
-	   public static void reajustaGanado(Traslado traslado) throws AppException {
+	   public static void reajustaGanado(List<Traslado> trasList) throws AppException {
 
 	       ParamServlet params = new ParamServlet();
 	       params.add("servicio", "reajustaGanado" );
-	       params.add("traslado", traslado );
+	       params.add("trasList", trasList );
 
 	       Object obj = ServiceWS.invocaWS("WSGanado", params );
 	       if ( obj != null && obj.getClass().getName().contains("AppException")) {

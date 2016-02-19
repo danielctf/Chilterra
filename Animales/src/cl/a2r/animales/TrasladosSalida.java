@@ -17,9 +17,8 @@ import cl.a2r.sip.model.Predio;
 import cl.a2r.sip.model.TipoGanado;
 import cl.a2r.sip.model.Transportista;
 import cl.a2r.sip.model.Traslado;
-import cl.a2r.sip.wsservice.WSAreteosCliente;
-import cl.a2r.sip.wsservice.WSAutorizacionCliente;
 import cl.a2r.sip.wsservice.WSTrasladosCliente;
+import cl.a2r.traslados.AsyncGetData;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -28,6 +27,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -37,8 +37,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -50,7 +52,10 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
 	private TextView tvChofer, tvCamion, tvAcoplado, tvTransportista;
 	private LinearLayout layoutAnimales;
 	private ImageButton goBack, undo, confirmarMovimiento;
-	private List<TipoGanado> listaTipoGanado;
+	private ProgressBar loading;
+	public List<TipoGanado> listaTipoGanado;
+	public List<Transportista> transportistas;
+	public List<Persona> arrieros;
 	private static int contVacas, contVaquillas, contTerneras, contToros, contToretes, contTerneros, contBueyes;
 	private boolean hayTransportista;
 	private static String strGD;
@@ -64,12 +69,15 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(R.layout.activity_traslados_salida);
 		
+		listaTipoGanado = new ArrayList<TipoGanado>();
+		transportistas = new ArrayList<Transportista>();
+		arrieros = new ArrayList<Persona>();
+		
 		cargarInterfaz();
 		cargarListeners();
+		new AsyncGetData(this).execute();
 		getFundoOrigen();
-		getFundosDestinoWS();
 		getTipoTransporte();
-		getTipoGanadoWS();
 
 	}
 	
@@ -113,6 +121,7 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
 		deshacer.setOnClickListener(this);
 		confirmarMovimiento = (ImageButton)findViewById(R.id.confirmarMovimiento);
 		confirmarMovimiento.setOnClickListener(this);
+		loading = (ProgressBar)findViewById(R.id.loading);
 		
 		resetContadores();
 
@@ -157,7 +166,9 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
 					spinnerAcoplado.setVisibility(View.VISIBLE);
 					tvTransportista.setText("Transportista");
 					
-					getTransportistaWS();
+					ArrayAdapter<Transportista> mAdapter = new ArrayAdapter<Transportista>(TrasladosSalida.this, android.R.layout.simple_list_item_1, transportistas);
+					spinnerTransportista.setAdapter(mAdapter);
+					
 					trasladoSalida.setArrieroId(null);
 					hayTransportista = true;
 					break;
@@ -171,7 +182,9 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
 					spinnerAcoplado.setVisibility(View.INVISIBLE);
 					tvTransportista.setText("Arriero");
 					
-					getArrierosWS();
+					ArrayAdapter<Persona> mAdapter2 = new ArrayAdapter<Persona>(TrasladosSalida.this, android.R.layout.simple_list_item_1, arrieros);
+					spinnerTransportista.setAdapter(mAdapter2);
+					
 					trasladoSalida.setTransportistaId(null);
 					trasladoSalida.setChoferId(null);
 					trasladoSalida.setCamionId(null);
@@ -193,9 +206,7 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
 				if (hayTransportista){
 					Integer id = ((Transportista) arg0.getItemAtPosition(arg2)).getId();
 					trasladoSalida.setTransportistaId(id);
-					getChoferWS(id);
-					getCamionWS(id);
-					getAcopladoWS(id);
+					getInfoTransportista(id);
 				} else {
 					Integer id = ((Persona) arg0.getItemAtPosition(arg2)).getId();
 					trasladoSalida.setArrieroId(id);
@@ -253,125 +264,70 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
 		spinnerOrigen.setEnabled(false);
 	}
 	
-	private void getFundosDestinoWS(){
-		List<Predio> predios = null;
-        try {
-        	predios = WSAutorizacionCliente.traePredios();
-            Predio p = new Predio();
-            p.setId(null);
-            p.setNombre(null);
-            predios.add(0, p);
-            ArrayAdapter<Predio> mAdapter = new ArrayAdapter<Predio>(this, android.R.layout.simple_list_item_1, predios);
-    	    spinnerDestino.setAdapter(mAdapter);
-        } catch (AppException ex) {
-            ShowAlert.showAlert("Error", ex.getMessage(), this);
-        }
-	}
-	
 	private void getTipoTransporte(){
 		String[] tipoTrans = {"Con Camión", "Sin Camión"};
 		ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, tipoTrans);
 		spinnerTipoTransporte.setAdapter(mAdapter);
 	}
 	
-	private void getTransportistaWS(){
-		List list = null;
-		try {
-			list = WSTrasladosCliente.traeTransportistas();
-			Transportista t = new Transportista();
-			t.setId(null);
-			t.setNombre(null);
-			list.add(0, t);
-			ArrayAdapter<Transportista> mAdapter = new ArrayAdapter<Transportista>(this, android.R.layout.simple_list_item_1, list);
-			spinnerTransportista.setAdapter(mAdapter);
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
-		}
-	}
-	
-	private void getChoferWS(Integer transportistaId){
-		List list = null;
-		try {
-			list = WSTrasladosCliente.traeChofer(transportistaId);
-			Chofer c = new Chofer();
-			c.setId(null);
-			c.setNombre(null);
-			list.add(0, c);
-			ArrayAdapter<Chofer> mAdapter = new ArrayAdapter<Chofer>(this, android.R.layout.simple_list_item_1, list);
-			spinnerChofer.setAdapter(mAdapter);
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
-		}
-	}
-	
-	private void getCamionWS(Integer transportistaId){
-		List list = null;
-		try {
-			list = WSTrasladosCliente.traeCamion(transportistaId);
-			Camion c = new Camion();
-			c.setId(null);
-			c.setNombre(null);
-			list.add(0, c);
-			ArrayAdapter<Camion> mAdapter = new ArrayAdapter<Camion>(this, android.R.layout.simple_list_item_1, list);
-			spinnerCamion.setAdapter(mAdapter);
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
-		}
-	}
-	
-	private void getAcopladoWS(Integer transportistaId){
-		List list = null;
-		try {
-			list = WSTrasladosCliente.traeAcoplado(transportistaId);
-			Camion c = new Camion();
-			c.setId(null);
-			c.setNombre(null);
-			list.add(0, c);
+	private void getInfoTransportista(final Integer transportistaId){
+		new AsyncTask<Void, Void, Void>(){
 			
-			ArrayAdapter<Camion> mAdapter = new ArrayAdapter<Camion>(this, android.R.layout.simple_list_item_1, list);
-			spinnerAcoplado.setAdapter(mAdapter);
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
-		}
-
-	}
-	
-	private void getArrierosWS(){
-		List list = null;
-		try {
-			list = WSTrasladosCliente.traeArrieros();
-			Persona p = new Persona();
-			p.setId(null);
-			p.setValue(null);
-			list.add(0, p);
+			List<Chofer> chofer;
+			List<Camion> camion;
+			List<Camion> acoplado;
+			String title, msg;
 			
-			ArrayAdapter<Persona> mAdapter = new ArrayAdapter<Persona>(this, android.R.layout.simple_list_item_1, list);
-			spinnerTransportista.setAdapter(mAdapter);
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
-		}
-	}
-	
-	private void getTipoGanadoWS(){
-		try {
-			listaTipoGanado = WSAreteosCliente.traeTipoGanado();
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
-		}
+			protected void onPreExecute(){
+				loading.setVisibility(View.VISIBLE);
+				title = "";
+				msg = "";
+			}
+			
+			protected Void doInBackground(Void... arg0) {
+				try {
+					chofer = WSTrasladosCliente.traeChofer(transportistaId);
+					camion = WSTrasladosCliente.traeCamion(transportistaId);
+					acoplado = WSTrasladosCliente.traeAcoplado(transportistaId);
+				} catch (AppException e) {
+					title = "Error";
+					msg = e.getMessage();
+				}
+				return null;
+			}
+			
+			protected void onPostExecute(Void result){
+				loading.setVisibility(View.INVISIBLE);
+				if (title.equals("Error")){
+					ShowAlert.showAlert(title, msg, TrasladosSalida.this);
+				} else {
+					ArrayAdapter<Chofer> mAdapter = new ArrayAdapter<Chofer>(TrasladosSalida.this, android.R.layout.simple_list_item_1, chofer);
+					spinnerChofer.setAdapter(mAdapter);
+					
+					ArrayAdapter<Camion> mAdapter2 = new ArrayAdapter<Camion>(TrasladosSalida.this, android.R.layout.simple_list_item_1, camion);
+					spinnerCamion.setAdapter(mAdapter2);
+					
+					Camion c = new Camion();
+					acoplado.add(0, c);
+					ArrayAdapter<Camion> mAdapter3 = new ArrayAdapter<Camion>(TrasladosSalida.this, android.R.layout.simple_list_item_1, acoplado);
+					spinnerAcoplado.setAdapter(mAdapter3);
+				}
+			}
+		}.execute();
 	}
 	
 	private void clearScreen(){
-		spinnerDestino.setSelection(0);
-		spinnerTipoTransporte.setSelection(0);
-		spinnerTransportista.setSelection(0);
-		spinnerChofer.setSelection(0);
-		spinnerCamion.setSelection(0);
-		spinnerAcoplado.setSelection(0);
+		trasladoSalida = new Traslado();
+		//spinnerDestino.setSelection(0);
+		//spinnerTipoTransporte.setSelection(0);
+		//spinnerTransportista.setSelection(0);
+		//spinnerChofer.setSelection(0);
+		//spinnerCamion.setSelection(0);
+		//spinnerAcoplado.setSelection(0);
 		resetContadores();
 		trasladoSalida.getGanado().clear();
 		TrasladosSalidaDiios.mangadaActual = 0;
 		TrasladosSalidaDiios.isMangadaLocked = true;
-		trasladoSalida = new Traslado();
 		finished = false;
 		strGD = "";
 		updateStatus();
@@ -474,11 +430,7 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
 		}
 		
 		//Actualizar interfaz
-		if ((trasladoSalida.getFundoDestinoId() != null) &&
-				(trasladoSalida.getTransportistaId() != null || hayTransportista == false) &&
-				(trasladoSalida.getChoferId() != null || hayTransportista == false) &&
-				(trasladoSalida.getCamionId() != null || hayTransportista == false) &&
-				(trasladoSalida.getArrieroId() != null || hayTransportista) &&
+		if ((trasladoSalida.getArrieroId() != null || hayTransportista) &&
 				isMangadaCerrada() &&
 				finished == false){
 			
@@ -487,11 +439,7 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
 			undo.setVisibility(View.VISIBLE);
 			deshacer.setVisibility(View.VISIBLE);
 			confirmarMovimiento.setVisibility(View.VISIBLE);
-		} else if (trasladoSalida.getFundoDestinoId() == null &&
-				(trasladoSalida.getTransportistaId() == null || hayTransportista == false) &&
-				(trasladoSalida.getChoferId() == null || hayTransportista == false) &&
-				(trasladoSalida.getCamionId() == null || hayTransportista == false) &&
-				(trasladoSalida.getArrieroId() == null || hayTransportista) &&
+		} else if ((trasladoSalida.getArrieroId() == null || hayTransportista) &&
 				trasladoSalida.getGanado().size() == 0 &&
 				finished == false){
 			
@@ -543,29 +491,60 @@ public class TrasladosSalida extends Activity implements View.OnClickListener{
 		}
 	}
 	
-    Handler hand = new Handler();
-    Runnable run = new Runnable() { 
-        public void run() {
-    		try {
-    			trasladoSalida.setUsuarioId(Login.user);
-    			trasladoSalida.setFundoOrigenId(Aplicaciones.predioWS.getId());
-    			trasladoSalida.setDescripcion("TRASLADO");
-    			DctoAdem d = WSTrasladosCliente.insertaMovimiento(trasladoSalida);
-    			generarFMA(Integer.parseInt(d.getNrodocto()));
-    			finished = true;
-    			strGD = "GD: " + d.getNrodocto();
-    			despliegaGD.setText("GD: " + d.getNrodocto());
-    			deshacer.setText("Limpiar");
-    		} catch (AppException e) {
-    			ShowAlert.showAlert("Error", e.getMessage(), TrasladosSalida.this);
-    			confirmarMovimiento.setVisibility(View.VISIBLE);
-    		}
-        }
-    }; 
-	
 	private void confirmarMovimiento(){
-		confirmarMovimiento.setVisibility(View.INVISIBLE);
-		hand.postDelayed(run, 100);
+		if (hayTransportista){
+			trasladoSalida.setTransportistaId(((Transportista) spinnerTransportista.getSelectedItem()).getId());
+			trasladoSalida.setFundoDestinoId(((Predio) spinnerDestino.getSelectedItem()).getId());
+			trasladoSalida.setChoferId(((Chofer) spinnerChofer.getSelectedItem()).getId());
+			trasladoSalida.setCamionId(((Camion) spinnerCamion.getSelectedItem()).getId());
+			trasladoSalida.setAcopladoId(((Camion) spinnerAcoplado.getSelectedItem()).getId());
+			trasladoSalida.setArrieroId(null);
+		} else {
+			trasladoSalida.setTransportistaId(null);
+			trasladoSalida.setFundoDestinoId(((Predio) spinnerDestino.getSelectedItem()).getId());
+			trasladoSalida.setChoferId(null);
+			trasladoSalida.setCamionId(null);
+			trasladoSalida.setAcopladoId(null);
+			trasladoSalida.setArrieroId(((Persona) spinnerTransportista.getSelectedItem()).getId());
+		}
+    	new AsyncTask<Void, Void, Void>(){
+    		String title, msg;
+    		protected void onPreExecute(){
+    			loading.setVisibility(View.VISIBLE);
+    			confirmarMovimiento.setVisibility(View.INVISIBLE);
+    			title = "";
+    			msg = "";
+    		}
+    		
+			protected Void doInBackground(Void... params) {
+	    		try {
+	    			trasladoSalida.setUsuarioId(Login.user);
+	    			trasladoSalida.setFundoOrigenId(Aplicaciones.predioWS.getId());
+	    			trasladoSalida.setDescripcion("TRASLADO");
+	    			DctoAdem d = WSTrasladosCliente.insertaMovimiento(trasladoSalida);
+	    			generarFMA(Integer.parseInt(d.getNrodocto()));
+	    			finished = true;
+	    			strGD = "GD: " + d.getNrodocto();
+	    		} catch (AppException e) {
+	    			title = "Error";
+	    			msg = e.getMessage();
+	    		}
+				return null;
+			}
+			
+			protected void onPostExecute(Void result){
+				loading.setVisibility(View.INVISIBLE);
+				confirmarMovimiento.setVisibility(View.VISIBLE);
+				if (!title.equals("Error")){
+	    			despliegaGD.setText(strGD);
+	    			Toast.makeText(TrasladosSalida.this, "Salida Generada", Toast.LENGTH_LONG).show();
+				} else {
+					ShowAlert.showAlert(title, msg, TrasladosSalida.this);
+				}
+				updateStatus();
+			}
+    	}.execute();
+    	
 	}
 	
 	private void generarFMA(Integer nro_documento){

@@ -67,6 +67,11 @@ public class EcografiasDAO {
 			+ "SELECT max(mangada) mangada "
 			+ " FROM ecografia ";
 	
+	private static final String SQL_UPDATE_ECO_FUNDO = ""
+			+ "UPDATE ecografia "
+			+ " SET fundoId = ? "
+			+ " WHERE ganadoId = ? ";
+	
     public static void insertInseminacion(SqLiteTrx trx, List<Inseminacion> list) throws SQLException {
 
         SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_INSEMINACION);
@@ -135,8 +140,8 @@ public class EcografiasDAO {
         		statement.bindNull(2);
         	}
         	
-        	if (e.getGan().getPredio() != null){
-        		statement.bindLong(3, e.getGan().getPredio());
+        	if (e.getFundoId() != null){
+        		statement.bindLong(3, e.getFundoId());
         	} else {
         		statement.bindNull(3);
         	}
@@ -332,6 +337,14 @@ public class EcografiasDAO {
         }
 
         return mangadaActual;
+    }
+    
+    public static void updateEcoFundo(SqLiteTrx trx, Integer nuevoFundoId, Integer ganadoId) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_UPDATE_ECO_FUNDO);
+    	statement.clearBindings();
+    	statement.bindLong(1, nuevoFundoId);
+    	statement.bindLong(2, ganadoId);
+    	statement.executeUpdateDelete();
     }
     
 }

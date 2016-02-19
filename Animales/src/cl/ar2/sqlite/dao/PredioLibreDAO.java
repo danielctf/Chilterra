@@ -94,6 +94,16 @@ public class PredioLibreDAO {
 			+ " SET lecturaTB = null"
 			+ " WHERE ganadoId = ?";
 	
+	private static final String SQL_UPDATE_GAN_FUNDO_PL = ""
+			+ " UPDATE predio_libre "
+			+ " SET fundoId = ? "
+			+ " WHERE ganadoId = ?";
+	
+	private static final String SQL_UPDATE_GAN_FUNDO_PL_BRUCELOSIS = ""
+			+ " UPDATE predio_libre_brucelosis "
+			+ " SET fundoId = ? "
+			+ " WHERE ganadoId = ?";
+	
     public static void deleteDiio(SqLiteTrx trx) throws SQLException {
     	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_DIIO);
     	statement.clearBindings();
@@ -405,6 +415,20 @@ public class PredioLibreDAO {
     	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_PL_BRUCELOSIS_LOG_LECTURA_TB);
     	statement.clearBindings();
     	statement.bindLong(1, ganadoId);
+    	statement.executeUpdateDelete();
+    }
+    
+    public static void updateGanFundo(SqLiteTrx trx, Integer nuevoFundoId, Integer ganadoId) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_UPDATE_GAN_FUNDO_PL);
+    	statement.clearBindings();
+    	statement.bindLong(1, nuevoFundoId);
+    	statement.bindLong(2, ganadoId);
+    	statement.executeUpdateDelete();
+    	
+    	statement = trx.getDB().compileStatement(SQL_UPDATE_GAN_FUNDO_PL_BRUCELOSIS);
+    	statement.clearBindings();
+    	statement.bindLong(1, nuevoFundoId);
+    	statement.bindLong(2, ganadoId);
     	statement.executeUpdateDelete();
     }
 

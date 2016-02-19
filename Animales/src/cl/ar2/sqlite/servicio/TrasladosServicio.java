@@ -78,5 +78,27 @@ public class TrasladosServicio {
             }
         }
     }
+    
+    public static void updateGanadoFundo(Integer nuevoFundoId, Integer ganadoId) throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                TrasladosDAO.updateGanadoFundo(trx, nuevoFundoId, ganadoId);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
 	
 }

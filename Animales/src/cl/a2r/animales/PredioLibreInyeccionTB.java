@@ -9,20 +9,28 @@ import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
+import cl.a2r.ecografias.Ecografias;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.PPD;
+import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
+import cl.ar2.sqlite.servicio.TrasladosServicio;
 import android.app.Activity;
 import android.app.Fragment;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +41,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class PredioLibreInyeccionTB extends Fragment implements View.OnClickListener{
+public class PredioLibreInyeccionTB extends Fragment implements View.OnClickListener, View.OnKeyListener{
 
 	private Activity act;
 	private ImageButton confirmarAnimal, cerrarMangada;
@@ -44,6 +52,8 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 	private InyeccionTB ganTB;
 	private Integer instancia;
 	private boolean isMangadaCerrada;
+	private MediaPlayer mp;
+	private AudioManager audio;
 	private int totalAnimales, animalesMangada, mangadaActual;
 	public static List<InyeccionTB> listEncontrados;
 	public static List<Ganado> listFaltantes;
@@ -70,6 +80,8 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
     	tvTotalAnimales = (TextView)v.findViewById(R.id.tvTotalAnimales);
     	tvMangada = (TextView)v.findViewById(R.id.tvMangada);
     	tvAnimalesMangada = (TextView)v.findViewById(R.id.tvAnimalesMangada);
+    	
+    	audio = (AudioManager) act.getSystemService(Context.AUDIO_SERVICE);
     	ganTB = new InyeccionTB();
     	
     	isMangadaCerrada = false;
@@ -216,9 +228,7 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			} else {
 				Toast.makeText(act, "Animal ya existe", Toast.LENGTH_LONG).show();
 			}
-			ganTB = new InyeccionTB();
-			resetCalculadora();
-			updateStatus();
+			clearScreen();
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), act);
 		}
@@ -228,16 +238,55 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 		Calculadora.gan = null;
 	}
 	
+	private void clearScreen(){
+		ganTB = new InyeccionTB();
+		resetCalculadora();
+		updateStatus();
+	}
+	
+	private void verReubicacion(final Ganado gan){
+		if (gan.getPredio().intValue() != Aplicaciones.predioWS.getId().intValue()){
+			ShowAlert.askYesNo("Predio", "El Animal figura en otro predio\n¿Esta seguro que el DIIO es correcto?", act, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface arg0, int arg1) {
+					if (arg1 == -2){
+						try {
+							Traslado t = new Traslado();							
+							t.setFundoOrigenId(gan.getPredio());
+							t.setFundoDestinoId(Aplicaciones.predioWS.getId());
+							t.getGanado().add(gan);
+							TrasladosServicio.insertaReubicacion(t);
+							TrasladosServicio.updateGanadoFundo(Aplicaciones.predioWS.getId(), gan.getId());
+							gan.setPredio(Aplicaciones.predioWS.getId());
+							//PredioLibreServicio.updateGanFundo(Aplicaciones.predioWS.getId(), gan.getId());
+							mostrarCandidatos();
+							showDiio(gan);
+						} catch (AppException e) {
+							ShowAlert.showAlert("Error", e.getMessage(), act);
+						}
+					}
+				}
+			});
+		} else {
+			showDiio(gan);
+		}
+	}
+	
+	private void showDiio(Ganado gan){
+		ganTB.setGanadoID(gan.getId());
+		ganTB.setGanadoDiio(gan.getDiio());
+		ganTB.setFundoId(gan.getPredio());
+		updateStatus();
+	}
+	
 	private void checkDiioStatus(Ganado gan){
 		if (gan != null){
 			try {
+				clearScreen();
 				boolean exists = PredioLibreServicio.existsGanadoPL(gan.getId());
 				if (exists){
 					Toast.makeText(act, "Animal ya existe", Toast.LENGTH_LONG).show();
 				} else {
-					ganTB.setGanadoID(gan.getId());
-					ganTB.setGanadoDiio(gan.getDiio());
-					ganTB.setFundoId(gan.getPredio());
+					verReubicacion(gan);
 				}
 			} catch (AppException e) {
 				ShowAlert.showAlert("Error", e.getMessage(), act);
@@ -276,6 +325,17 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 		checkDiioStatus(Calculadora.gan);
 	}
 	
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP){
+			audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+					AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
+			audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+	                AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
+		}
+		return false;
+	}
+	
 	//---------------------------------------------------------------------------
 	//------------------------DATOS ENVIADOS DESDE BASTÓN------------------------
 	//---------------------------------------------------------------------------
@@ -291,6 +351,9 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
     	        connectedThread.start();
     			break;
     		case ConnectedThread.MESSAGE_READ:
+    			mp = MediaPlayer.create(act, R.raw.beep2);
+    			mp.setVolume(10, 10);
+    			mp.start();
     			String EID = (String) msg.obj;
     			EID = EID.trim();
     			long temp = Long.parseLong(EID);

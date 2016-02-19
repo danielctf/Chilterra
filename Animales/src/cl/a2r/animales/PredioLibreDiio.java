@@ -14,6 +14,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,7 +71,13 @@ public class PredioLibreDiio extends Activity implements View.OnClickListener{
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		switch (id){
 		case R.id.goBack:
-			finish();
+			ShowAlert.askYesNo("Advertencia", "¿Seguro que desea salir de la aplicación?", this, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					if (which == -2){
+						finish();
+					}
+				}
+			});
 			break;
 		case R.id.btnInyeccion:
 			transaction.replace(R.id.container, frInyeccionTB);

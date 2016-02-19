@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="animales";
-    private static final int version = 7;
+    private static final int version = 8;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
@@ -97,7 +97,8 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ "CREATE TABLE reubicacion ( "
         	+ " id INTEGER PRIMARY KEY, "
         	+ " ganadoId INTEGER, "
-        	+ " fundoId INTEGER )");
+        	+ " fundoOrigenId INTEGER, "
+        	+ " fundoDestinoId INTEGER )");
         
     }
 
@@ -112,6 +113,9 @@ public class SqLiteMan extends SQLiteOpenHelper {
     	db.execSQL("DROP TABLE IF EXISTS predio_libre_brucelosis");
     	db.execSQL("DROP TABLE IF EXISTS ecografia");
     	db.execSQL("DROP TABLE IF EXISTS inseminacion");
+    	db.execSQL("DROP TABLE IF EXISTS salvataje");
+    	db.execSQL("DROP TABLE IF EXISTS salvataje_diio");
+    	db.execSQL("DROP TABLE IF EXISTS reubicacion");
     	
         db.execSQL( ""
             + "CREATE TABLE diio ( "
@@ -187,7 +191,8 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ "CREATE TABLE reubicacion ( "
         	+ " id INTEGER PRIMARY KEY, "
         	+ " ganadoId INTEGER, "
-        	+ " fundoId INTEGER )");
+        	+ " fundoOrigenId INTEGER, "
+        	+ " fundoDestinoId INTEGER )");
         
     }
 

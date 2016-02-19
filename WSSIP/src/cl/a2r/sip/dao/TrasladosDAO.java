@@ -36,7 +36,7 @@ public class TrasladosDAO {
 			+ "select * from sip.ws_select_arrieros()";
 	
 	private static final String SQL_INSERTA_MOVIMIENTO = ""
-			+ "select * from sip.ws_insert_movimiento(?, ?, ?, ?, ?, ?, ?)";
+			+ "select * from sip.ws_insert_movimiento(?, ?, ?, ?, ?, ?, ?, ?)";
 	
 	private static final String SQL_INSERTA_MOVIMIENTO_GANADO = ""
 			+ "select * from sip.ws_insert_movimiento_ganado(?, ?, ?)";
@@ -209,6 +209,7 @@ public class TrasladosDAO {
         pst.setObject(5, traslado.getChoferId());
         pst.setObject(6, traslado.getCamionId());
         pst.setObject(7, traslado.getAcopladoId());
+        pst.setObject(8, traslado.getDescripcion());
         res = pst.executeQuery();
         if (res.next() ){
         	g_movimiento_id = res.getInt(1);

@@ -12,15 +12,20 @@ import cl.a2r.sip.model.Traslado;
 public class TrasladosDAO {
 
 	private static final String SQL_REUBICA_GANADO = ""
-			+ "INSERT INTO reubicacion (ganadoId, fundoId) "
-			+ " VALUES (?, ?) ";
+			+ "INSERT INTO reubicacion (ganadoId, fundoOrigenId, fundoDestinoId) "
+			+ " VALUES (?, ?, ?) ";
 	
 	private static final String SQL_SELECT_REUBICACIONES = ""
-			+ "SELECT id, ganadoId, fundoId "
+			+ "SELECT id, ganadoId, fundoOrigenId, fundoDestinoId "
 			+ " FROM reubicacion ";
 	
 	private static final String SQL_DELETE_REUBICACIONES = ""
 			+ "DELETE FROM reubicacion";
+	
+	private static final String SQL_UPDATE_GANADO_FUNDO = ""
+			+ "UPDATE diio "
+			+ " SET fundoId = ? "
+			+ " WHERE id = ? ";
 	
     public static void insertReubicacion(SqLiteTrx trx, Traslado t) throws SQLException {
 
@@ -29,7 +34,8 @@ public class TrasladosDAO {
         for (Ganado g : t.getGanado()){
 	    	statement.clearBindings();
 	    	statement.bindLong(1, g.getId());
-	    	statement.bindLong(2, t.getFundoDestinoId());
+	    	statement.bindLong(2, t.getFundoOrigenId());
+	    	statement.bindLong(3, t.getFundoDestinoId());
 	    	statement.executeInsert();
         }
     }
@@ -44,7 +50,8 @@ public class TrasladosDAO {
         	Traslado t = new Traslado();
         	Ganado g = new Ganado();
         	g.setId(c.getInt(c.getColumnIndex("ganadoId")));
-        	t.setFundoDestinoId(c.getInt(c.getColumnIndex("fundoId")));
+        	t.setFundoOrigenId(c.getInt(c.getColumnIndex("fundoOrigenId")));
+        	t.setFundoDestinoId(c.getInt(c.getColumnIndex("fundoDestinoId")));
         	t.getGanado().add(g);
         	list.add(t);
             hayReg = c.moveToNext();
@@ -55,6 +62,14 @@ public class TrasladosDAO {
     public static void deleteReubicaciones(SqLiteTrx trx) throws SQLException {
     	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_REUBICACIONES);
     	statement.clearBindings();
+    	statement.executeUpdateDelete();
+    }
+    
+    public static void updateGanadoFundo(SqLiteTrx trx, Integer nuevoFundoId, Integer ganadoId) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_UPDATE_GANADO_FUNDO);
+    	statement.clearBindings();
+    	statement.bindLong(1, nuevoFundoId);
+    	statement.bindLong(2, ganadoId);
     	statement.executeUpdateDelete();
     }
 	

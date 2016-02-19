@@ -62,10 +62,12 @@ public class WSGanado extends HttpServlet{
                 Integer diio = GanadoService.traeDiioBaston(eid);
                 retorno = diio;
             } else if (servicio.equals("reajustaGanado")){
-            	Traslado traslado = (Traslado) params.getParam("traslado");
-            	Integer g_movimiento_id = TrasladosService.insertaMovimiento(traslado);
-            	traslado.setG_movimiento_id(g_movimiento_id);
-            	TrasladosService.insertaMovtoConfirm(traslado);
+            	List<Traslado> trasList = (List<Traslado>) params.getParam("trasList");
+            	for (Traslado traslado : trasList){
+	            	Integer g_movimiento_id = TrasladosService.insertaMovimiento(traslado);
+	            	traslado.setG_movimiento_id(g_movimiento_id);
+	            	TrasladosService.insertaMovtoConfirm(traslado);
+            	}
             	Integer i = 1;
             	retorno = i;
             } else {

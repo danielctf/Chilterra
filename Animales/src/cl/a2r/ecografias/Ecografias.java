@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import cl.a2r.animales.Aplicaciones;
 import cl.a2r.animales.Login;
 import cl.a2r.animales.R;
@@ -21,7 +20,6 @@ import cl.a2r.sip.model.Ecografista;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Inseminacion;
 import cl.a2r.sip.model.Traslado;
-import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.ar2.sqlite.servicio.EcografiasServicio;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
 import cl.ar2.sqlite.servicio.TrasladosServicio;
@@ -33,11 +31,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.InputType;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.Window;
@@ -55,18 +56,22 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
-public class Ecografias extends Activity implements View.OnClickListener{
+public class Ecografias extends Activity implements View.OnClickListener, View.OnKeyListener{
 
 	private ImageButton goBack, logs, confirmarAnimal, sync, cerrarMangada;
-	private TextView tvUltAct, tvUltEco, tvLogs, tvDiio, tvProblema, tvTotalAnimales, tvMangada, tvAnimalesMangada;
+	private TextView tvUltAct, tvUltAct2, tvUltEco, tvLogs, tvDiio, tvProblema, tvTotalAnimales, tvMangada, tvAnimalesMangada;
 	private Spinner spEcografista, spEstado, spProblema, spNota;
 	private RadioGroup rg;
 	private RadioButton radio1, radio2, radio3;
 	private ProgressBar loading;
 	private EditText etDias;
 	private Ecografia eco;
-	private Integer diasPrenezActuales, mangadaActual;
+	private Integer mangadaActual;
 	private boolean isMangadaCerrada;
+	private MediaPlayer mp;
+	private AudioManager audio;
+	private Inseminacion maxIns;
+	private Inseminacion maxIns2da;
 	public static List<EcografiaEstado> menor30 = new ArrayList<EcografiaEstado>();
 	public static List<EcografiaEstado> prenada = new ArrayList<EcografiaEstado>();
 	
@@ -95,7 +100,11 @@ public class Ecografias extends Activity implements View.OnClickListener{
 		tvDiio.setOnClickListener(this);
 		tvProblema = (TextView)findViewById(R.id.tvProblema);
 		tvUltAct = (TextView)findViewById(R.id.tvUltAct);
+		tvUltAct.setVisibility(View.GONE);
+		tvUltAct2 = (TextView)findViewById(R.id.tvUltAct2);
+		tvUltAct2.setVisibility(View.GONE);
 		tvUltEco = (TextView)findViewById(R.id.tvUltEco);
+		tvUltEco.setVisibility(View.GONE);
 		tvLogs = (TextView)findViewById(R.id.tvLogs);
     	tvTotalAnimales = (TextView)findViewById(R.id.tvTotalAnimales);
     	tvMangada = (TextView)findViewById(R.id.tvMangada);
@@ -119,6 +128,8 @@ public class Ecografias extends Activity implements View.OnClickListener{
 				}
 			}
 		});
+		audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		
 		eco = new Ecografia();
 		isMangadaCerrada = false;
 	}
@@ -182,7 +193,13 @@ public class Ecografias extends Activity implements View.OnClickListener{
 		int id = v.getId();
 		switch (id){
 		case R.id.goBack:
-			finish();
+			ShowAlert.askYesNo("Advertencia", "¿Seguro que desea salir de la aplicación?", this, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					if (which == -2){
+						finish();
+					}
+				}
+			});
 			break;
 		case R.id.tvDiio:
 			startActivity(new Intent(this, Calculadora.class));
@@ -238,46 +255,17 @@ public class Ecografias extends Activity implements View.OnClickListener{
 		
 	}
 	
-	private void verUltimaInseminacion(){
+	private void verActividad(){
+		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+		boolean diasPrenezSegunEco = false;
+		Integer dias_prenez = null;
+		//Resetea las INS aqui porque podria interferir con otro bastoneo 
+		maxIns = new Inseminacion();
+		maxIns2da = new Inseminacion();
+		maxIns.setFecha(new Date(0));
+		maxIns2da.setFecha(new Date(0));
 		try {
-			List<Inseminacion> insList = EcografiasServicio.traeInseminacionGanado(eco.getGan().getId());
-			if (insList.size() > 0){
-				Inseminacion maxIns = new Inseminacion();
-				maxIns.setFecha(new Date(0));
-				for (Inseminacion i : insList){
-					if (i.getFecha().getTime() > maxIns.getFecha().getTime()){
-						maxIns = i;
-					}
-				}
-				long diffMillisecDiasPrenez = (new Date()).getTime() - maxIns.getFecha().getTime();
-				int dias_prenez = (int) ((diffMillisecDiasPrenez)
-						/ (1000 * 60 * 60 * 24));
-				
-				if (dias_prenez >= 30 && dias_prenez <= 120){
-					etDias.setText(Integer.toString(dias_prenez));
-					radio2.setChecked(true);
-					diasPrenezActuales = dias_prenez;
-				} else {
-					diasPrenezActuales = null;
-				}
-				if (dias_prenez < 30){
-					radio1.setChecked(true);
-				}
-				if (dias_prenez > 120){
-					radio3.setChecked(true);
-				}
-				SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-				tvUltAct.setText("Inseminación: " + df.format(maxIns.getFecha()));
-				eco.setInseminacionId(maxIns.getId());
-			}
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
-		}
-		
-	}
-	
-	private void verUltimaEcografia(){
-		try {
+			//--------------------------REVISION ECOGRAFIAS--------------------------
 			List<Ecografia> ecoList = EcografiasServicio.traeEcografiaGanado(eco.getGan().getId());
 			if (ecoList.size() > 0){
 				Ecografia maxEco = new Ecografia();
@@ -289,7 +277,9 @@ public class Ecografias extends Activity implements View.OnClickListener{
 					}
 					numEcos++;
 				}
-				tvUltEco.setText("Ecografías: " + Integer.toString(numEcos));
+				tvUltEco.setVisibility(View.VISIBLE);
+				int maxEcoDays = (int) ((new Date().getTime() - maxEco.getFecha().getTime()) / (24 * 60 * 60 * 1000));
+				tvUltEco.setText("Ecografías: " + Integer.toString(numEcos)+ "  (Última " + Integer.toString(maxEcoDays) + " Días)");
 				//Verificar si tiene una ecografia hoy, de ser asi, tira un warning
 				long diffDays = new Date().getTime() - maxEco.getFecha().getTime();
 				int days = (int) (diffDays / (24 * 60 * 60 * 1000));
@@ -297,36 +287,59 @@ public class Ecografias extends Activity implements View.OnClickListener{
 					ShowAlert.showAlert("Advertencia", "Éste Animal ya tiene una ecografia el dia de hoy", this);
 				}
 				
-				if (maxEco.getDias_prenez() == null){
-					verUltimaInseminacion();
-					return;
+				if (maxEco.getDias_prenez() != null && maxEco.getDias_prenez().intValue() != 0){
+					System.out.println("DIAS PREÑEZ DESDE ECO");
+					diasPrenezSegunEco = true;
+					long diff = new Date().getTime() - maxEco.getFecha().getTime();
+					dias_prenez = ((int) (diff / (24 * 60 * 60 * 1000))) + maxEco.getDias_prenez().intValue();
 				}
 				
-				SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-				Date prenezDate = new Date(new Date().getTime() - maxEco.getDias_prenez().longValue() * 24L * 60L * 60L * 1000L);
-				long diff = new Date().getTime() - prenezDate.getTime();
-				int dias_prenez = (int) (diff / (24 * 60 * 60 * 1000));
-				
-				if (maxEco.getInseminacionId() != null && maxEco.getInseminacionId().intValue() != 0){
-					Inseminacion i = EcografiasServicio.traeInseminacionId(maxEco.getInseminacionId());
-					tvUltAct.setText("Inseminación: " + df.format(i.getFecha()));
-					eco.setInseminacionId(maxEco.getInseminacionId());
+			} else {
+				tvUltEco.setVisibility(View.GONE);
+			}
+			
+			//--------------------------REVISION INSEMINACIONES--------------------------
+			List<Inseminacion> insList = EcografiasServicio.traeInseminacionGanado(eco.getGan().getId());
+			if (insList.size() > 0){
+				for (Inseminacion i : insList){
+					if (i.getFecha().getTime() > maxIns.getFecha().getTime()){
+						maxIns2da = maxIns;
+						maxIns = i;
+					} else if (i.getFecha().getTime() > maxIns2da.getFecha().getTime()){
+						maxIns2da = i;
+					}
+				}
+				tvUltAct.setVisibility(View.VISIBLE);
+				int maxInsDays = (int) ((new Date().getTime() - maxIns.getFecha().getTime()) / (24 * 60 * 60 * 1000));
+				tvUltAct.setText("Inseminación: " + df.format(maxIns.getFecha()) + "  (" + Integer.toString(maxInsDays) + " Días)");
+				if (maxIns2da.getFecha().getTime() > 0){
+					tvUltAct2.setVisibility(View.VISIBLE);
+					int maxIns2daDays = (int) ((new Date().getTime() - maxIns2da.getFecha().getTime()) / (24 * 60 * 60 * 1000));
+					tvUltAct2.setText("Inseminación: " + df.format(maxIns2da.getFecha()) + "  (" + Integer.toString(maxIns2daDays) + " Días)");
 				} else {
-					tvUltAct.setText("Toro Repaso: " + df.format(prenezDate));
+					tvUltAct2.setVisibility(View.GONE);	
 				}
-				if (dias_prenez >= 30 && dias_prenez <= 120){
-					etDias.setText(Integer.toString(dias_prenez));
-					radio2.setChecked(true);
-					diasPrenezActuales = dias_prenez;
-				}
-				if (dias_prenez < 30){
-					radio1.setChecked(true);
-				}
-				if (dias_prenez > 120){
-					radio3.setChecked(true);
+
+				if (!diasPrenezSegunEco){
+					System.out.println("DIAS PREÑEZ DESDE INSEM");
+					long diff = new Date().getTime() - maxIns.getFecha().getTime();
+					dias_prenez = (int) (diff / (24 * 60 * 60 * 1000));
 				}
 			} else {
-				verUltimaInseminacion();
+				tvUltAct.setVisibility(View.GONE);
+				tvUltAct2.setVisibility(View.GONE);
+			}
+			
+			//-----------------------AJUSTAR RADIOBUTTONS SEGUN DIAS PREÑEZ-----------------
+			if (dias_prenez == null){
+				return;
+			} else if (dias_prenez.intValue() >= 30 && dias_prenez.intValue() <= 120){
+				etDias.setText(Integer.toString(dias_prenez));
+				radio2.setChecked(true);
+			} else if (dias_prenez.intValue() < 30){
+				radio1.setChecked(true);
+			} else if (dias_prenez.intValue() > 120){
+				radio3.setChecked(true);
 			}
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
@@ -338,12 +351,55 @@ public class Ecografias extends Activity implements View.OnClickListener{
 			isMangadaCerrada = false;
 			mangadaActual++;
 		}
-		if (diasPrenezActuales == null || 
-				!radio2.isChecked() || 
-				diasPrenezActuales.intValue() != Integer.parseInt(etDias.getText().toString())){
-			
-			eco.setInseminacionId(null);
+		
+		if (radio2.isChecked() && etDias.getText().toString().equals("")){
+			ShowAlert.showAlert("Error", "Debe ingresar un número", this);
+			return;
 		}
+		
+		//------------------------ASOCIAR ECOGRAFIA A INSEMINACION-----------------------
+		int diasParametro = 15;
+		if (radio2.isChecked() && !etDias.getText().toString().equals("")){
+			
+			int diasIngresados = Integer.parseInt(etDias.getText().toString());
+			int diasMaxIns = (int) ((new Date().getTime() - maxIns.getFecha().getTime()) / (24 * 60 * 60 * 1000));
+			int diasMaxIns2da = (int) ((new Date().getTime() - maxIns2da.getFecha().getTime()) / (24 * 60 * 60 * 1000));
+			if (maxIns.getFecha().getTime() > 0 && maxIns2da.getFecha().getTime() > 0){
+				
+				if (diasMaxIns + diasParametro > diasIngresados && diasMaxIns - diasParametro < diasIngresados){
+					if (diasMaxIns2da + diasParametro > diasIngresados && diasMaxIns2da - diasParametro < diasIngresados){
+						int diffMaxIns = diasIngresados - diasMaxIns;
+						int diffMaxIns2da = diasIngresados - diasMaxIns2da;
+						if (Math.abs(diffMaxIns) <= Math.abs(diffMaxIns2da)){
+							System.out.println("2 INS, 2 EN RANGO, maxIns");
+							eco.setInseminacionId(maxIns.getId());
+						} else {
+							System.out.println("2 INS, 2 EN RANGO, maxIns2da");
+							eco.setInseminacionId(maxIns2da.getId());
+						}
+					} else {
+						System.out.println("2 INS, 1 EN RANGO, maxIns");
+						eco.setInseminacionId(maxIns.getId());
+					}
+				} else {
+					System.out.println("2 INS, 0 EN RANGO, null");
+					eco.setInseminacionId(null);
+				}
+				
+			} else if (maxIns.getFecha().getTime() > 0){
+				if (diasMaxIns + diasParametro > diasIngresados && diasMaxIns - diasParametro < diasIngresados){
+					System.out.println("1 INS, 1 EN RANGO, maxIns");
+					eco.setInseminacionId(maxIns.getId());
+				} else {
+					System.out.println("1 INS, 0 EN RANGO, null");
+					eco.setInseminacionId(null);
+				}
+			} else {
+				System.out.println("0 INS, 0 EN RANGO, null");
+				eco.setInseminacionId(null);
+			}
+		}
+		//------------------------------------------------------------------------------
 		eco.setFecha(new Date());
 		if (!etDias.getText().toString().equals("")){
 			eco.setDias_prenez(Integer.parseInt(etDias.getText().toString()));	
@@ -358,7 +414,7 @@ public class Ecografias extends Activity implements View.OnClickListener{
 		eco.setNotaId(((EcografiaNota) spNota.getSelectedItem()).getId());
 		eco.setMangada(mangadaActual);
 		eco.setSincronizado("N");
-		//eco.setFundoId(Aplicaciones.predioWS.getId());
+		eco.setFundoId(Aplicaciones.predioWS.getId());
 		List<Ecografia> list = new ArrayList<Ecografia>();
 		list.add(eco);
 		try {
@@ -430,9 +486,12 @@ public class Ecografias extends Activity implements View.OnClickListener{
 	
 	private void clearScreen(){
 		eco = new Ecografia();
-		diasPrenezActuales = null;
 		tvUltAct.setText("");
+		tvUltAct.setVisibility(View.GONE);
+		tvUltAct2.setText("");
+		tvUltAct2.setVisibility(View.GONE);
 		tvUltEco.setText("");
+		tvUltEco.setVisibility(View.GONE);
 		etDias.setText("");
 		radio1.setChecked(true);
 		resetCalculadora();
@@ -450,18 +509,17 @@ public class Ecografias extends Activity implements View.OnClickListener{
 					if (arg1 == -2){
 						try {
 							Traslado t = new Traslado();
-							t.setUsuarioId(Login.user);
 							t.setFundoOrigenId(gan.getPredio());
 							t.setFundoDestinoId(Aplicaciones.predioWS.getId());
-							t.setDescripcion("REUBICACION POR BASTONEO");
 							t.getGanado().add(gan);
 							TrasladosServicio.insertaReubicacion(t);
+							TrasladosServicio.updateGanadoFundo(Aplicaciones.predioWS.getId(), gan.getId());
+							gan.setPredio(Aplicaciones.predioWS.getId());
+							//EcografiasServicio.updateEcoFundo(Aplicaciones.predioWS.getId(), gan.getId());
 							showDiio(gan);
 						} catch (AppException e) {
 							ShowAlert.showAlert("Error", e.getMessage(), Ecografias.this);
 						}
-					} else {
-						clearScreen();
 					}
 				}
 			});
@@ -471,16 +529,16 @@ public class Ecografias extends Activity implements View.OnClickListener{
 	}
 	
 	private void showDiio(Ganado gan){
-		clearScreen();
 		eco.setGanado(gan);
 		tvDiio.setText(Integer.toString(gan.getDiio()));
 		tvDiio.setGravity(Gravity.CENTER_HORIZONTAL);
-		verUltimaEcografia();
+		verActividad();
 		updateStatus();
 	}
 	
 	private void checkDiioStatus(Ganado gan){
 		if (gan != null){
+			clearScreen();
 			verReubicacion(gan);
 		}
 		updateStatus();
@@ -513,6 +571,17 @@ public class Ecografias extends Activity implements View.OnClickListener{
 		checkDiioStatus(Calculadora.gan);
 	}
 	
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP){
+			audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+					AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
+			audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+	                AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
+		}
+		return false;
+	}
+	
 	//---------------------------------------------------------------------------
 	//------------------------DATOS ENVIADOS DESDE BASTÓN------------------------
 	//---------------------------------------------------------------------------
@@ -528,6 +597,9 @@ public class Ecografias extends Activity implements View.OnClickListener{
     	        connectedThread.start();
     			break;
     		case ConnectedThread.MESSAGE_READ:
+    			mp = MediaPlayer.create(Ecografias.this, R.raw.beep2);
+    			mp.setVolume(10, 10);
+    			mp.start();
     			String EID = (String) msg.obj;
     			EID = EID.trim();
     			long temp = Long.parseLong(EID);
@@ -553,5 +625,5 @@ public class Ecografias extends Activity implements View.OnClickListener{
     		}
     	}
     };
-
+    
 }

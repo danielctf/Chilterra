@@ -98,6 +98,17 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 		checkIfAppIsRunning();
 		
 		SqLiteTrx.Inicializa(this);
+		
+		try {
+			PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			int ver = SqLiteTrx.getTrx(true).getDB().getVersion();
+			tvVersion.setText("App v" + pInfo.versionName + "\n" + "SQLite v" + Integer.toString(ver));
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+
 	}
 	
 	private void cargarInterfaz(){
@@ -121,14 +132,6 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 		nombrePerfil = (TextView)findViewById(R.id.profile_name);
 		circleView = (ImageView)findViewById(R.id.circleView);
 		tvVersion = (TextView)findViewById(R.id.tvVersion);
-		
-		try {
-			PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-			tvVersion.setText("v"+pInfo.versionName);
-		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();

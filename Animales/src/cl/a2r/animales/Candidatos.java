@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class Candidatos extends Activity implements View.OnClickListener, ListView.OnItemClickListener{
@@ -40,6 +42,7 @@ public class Candidatos extends Activity implements View.OnClickListener, ListVi
 	private TextView tvApp;
 	private ImageButton goBack;
 	private String clickStance;
+	private ProgressBar loading;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -63,6 +66,8 @@ public class Candidatos extends Activity implements View.OnClickListener, ListVi
 		tvApp = (TextView)findViewById(R.id.app);
 		goBack = (ImageButton)findViewById(R.id.goBack);
 		goBack.setOnClickListener(this);
+		loading = (ProgressBar)findViewById(R.id.loading);
+		loading.setVisibility(View.INVISIBLE);
 		clickStance = "";
 	}
 	
@@ -112,13 +117,39 @@ public class Candidatos extends Activity implements View.OnClickListener, ListVi
 		case "trasladosGuiasDespacho":
 			clickStance = "trasladosGuiasDespacho";
 			tvApp.setText("Guias Despacho Pendientes");
-			try {
-				List<Movimiento> list = WSTrasladosCliente.traeMovimientosEP();
-				ArrayAdapter<Movimiento> mAdapter = new ArrayAdapter<Movimiento>(this, android.R.layout.simple_list_item_1, list);
-				lvCandidatos.setAdapter(mAdapter);
-			} catch (AppException e) {
-				ShowAlert.showAlert("Error", e.getMessage(), this);
-			}
+			
+			new AsyncTask<Void, Void, Void>(){
+				
+				String title, msg;
+				List<Movimiento> list;
+				
+				protected void onPreExecute(){
+					loading.setVisibility(View.VISIBLE);
+					title = "";
+					msg = "";
+				}
+				
+				protected Void doInBackground(Void... arg0) {
+					try {
+						list = WSTrasladosCliente.traeMovimientosEP();
+					} catch (AppException e) {
+						title = "Error";
+						msg = e.getMessage();
+					}
+					return null;
+				}
+				
+				protected void onPostExecute(Void result){
+					loading.setVisibility(View.INVISIBLE);
+					if (title.equals("Error")){
+						ShowAlert.showAlert(title, msg, Candidatos.this);	
+					} else {
+						ArrayAdapter<Movimiento> mAdapter = new ArrayAdapter<Movimiento>(Candidatos.this, android.R.layout.simple_list_item_1, list);
+						lvCandidatos.setAdapter(mAdapter);
+					}
+				}
+				
+			}.execute();
 			break;
 		case "movimientosFaltantes":
 			tvApp.setText("Candidatos Faltantes");

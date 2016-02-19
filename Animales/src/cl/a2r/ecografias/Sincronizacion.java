@@ -57,6 +57,10 @@ public class Sincronizacion extends AsyncTask<Void, Void, Void>{
 			EcografiasServicio.insertaEcografia(ecoNewList);
 			
 			List<Traslado> trasList = TrasladosServicio.traeReubicaciones();
+			for (Traslado t : trasList){
+				t.setUsuarioId(usuarioId);
+				t.setDescripcion("REUBICACION POR BASTONEO");
+			}
 			WSGanadoCliente.reajustaGanado(trasList);
 			TrasladosServicio.deleteReubicaciones();
 			
@@ -73,7 +77,7 @@ public class Sincronizacion extends AsyncTask<Void, Void, Void>{
 		loading.setVisibility(View.INVISIBLE);
 		sync.setVisibility(View.VISIBLE);
 		ShowAlert.showAlert(title, msg, act);
-		((Ecografias) act).mostrarCandidatos();
+		((Ecografias) act).onStart();
 	}
 	
 }
