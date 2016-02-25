@@ -198,6 +198,7 @@ public class PredioLibreDAO {
     	statement.bindLong(7, tb.getTuboPPDSerie());
     	statement.bindString(8, tb.getSincronizado());
     	statement.executeInsert();
+
     }
     
     public static List selectGanadoPL(SqLiteTrx trx) throws SQLException {
@@ -235,6 +236,7 @@ public class PredioLibreDAO {
         	exists = true;
             hayReg = c.moveToNext();
         }
+        c.close();
 
         return exists;
     }
@@ -313,7 +315,8 @@ public class PredioLibreDAO {
         	exists = true;
             hayReg = c.moveToNext();
         }
-
+        c.close();
+        
         return exists;
     }
     

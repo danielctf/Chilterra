@@ -36,6 +36,10 @@
   <servlet-name>WSEcografias</servlet-name> 
   <servlet-class>cl.a2r.sip.servlet.WSEcografias</servlet-class> 
   </servlet>  
+  <servlet>
+  <servlet-name>WSSecados</servlet-name> 
+  <servlet-class>cl.a2r.sip.servlet.WSSecados</servlet-class> 
+  </servlet>    
  <servlet-mapping>
   <servlet-name>WSAutorizacion</servlet-name> 
   <url-pattern>/WSAutorizacion</url-pattern> 
@@ -71,7 +75,11 @@
   <servlet-mapping>
   <servlet-name>WSEcografias</servlet-name> 
   <url-pattern>/WSEcografias</url-pattern> 
-  </servlet-mapping>  
+  </servlet-mapping> 
+  <servlet-mapping>
+  <servlet-name>WSSecados</servlet-name> 
+  <url-pattern>/WSSecados</url-pattern> 
+  </servlet-mapping> 
  <session-config>
   <session-timeout>30</session-timeout> 
   </session-config>

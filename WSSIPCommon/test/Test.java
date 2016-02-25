@@ -11,11 +11,13 @@ import cl.a2r.sip.model.CollarParto;
 import cl.a2r.sip.model.DctoAdem;
 import cl.a2r.sip.model.Ecografia;
 import cl.a2r.sip.model.Ecografista;
+import cl.a2r.sip.model.EstadoLeche;
 import cl.a2r.sip.model.FMA;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.GanadoLogs;
 import cl.a2r.sip.model.Inseminacion;
 import cl.a2r.sip.model.InyeccionTB;
+import cl.a2r.sip.model.Medicamento;
 import cl.a2r.sip.model.MotivoBaja;
 import cl.a2r.sip.model.Movimiento;
 import cl.a2r.sip.model.PPD;
@@ -34,6 +36,7 @@ import cl.a2r.sip.wsservice.WSEcografiasCliente;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
+import cl.a2r.sip.wsservice.WSSecadosCliente;
 import cl.a2r.sip.wsservice.WSTrasladosCliente;
 
 import java.awt.Button;
@@ -59,8 +62,9 @@ public class Test {
     	
     	
     	try {
-    		List<Ecografia> list = WSEcografiasCliente.traeEcografias();
-    		for (Ecografia i : list){
+
+    		List<EstadoLeche> list = WSSecadosCliente.traeEstadosLeche();
+    		for (EstadoLeche i : list){
     			System.out.println(i.getId());
     		}
     		

@@ -1,0 +1,223 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:background="@color/green" >
+
+        <ImageButton
+            android:id="@+id/goBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:background="@null"
+            android:paddingRight="50dp"
+            android:src="@drawable/ic_hardware_keyboard_arrow_left" />
+
+        <TextView
+            android:id="@+id/app"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/goBack"
+            android:text="Secado"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tvLogs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/sync"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white" />
+
+        <ImageButton
+            android:id="@+id/sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/logs"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_cloud_white_36dp" />
+
+        <ImageButton
+            android:id="@+id/logs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:paddingRight="7dp"
+            android:src="@drawable/ic_search_white_36dp" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.9"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tvDiio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@color/green"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:text="DIIO:"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white"
+            android:textSize="50sp" />
+
+        <TextView
+            android:id="@+id/tvMed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/spEstado"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:text="Medicamento"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ababab"
+            android:textSize="15sp" />
+
+        <Spinner
+            android:id="@+id/spMedicamento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tvMed"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/spinner_style" />
+
+        <TextView
+            android:id="@+id/tvEstado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/tvDiio"
+            android:text="Estado Actual"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ababab"
+            android:textSize="15sp" />
+
+        <Spinner
+            android:id="@+id/spEstado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tvEstado"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/spinner_style" />
+
+        <ProgressBar
+            android:id="@+id/loading"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+        
+	    <RelativeLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentBottom="true"
+	        android:layout_marginTop="20dp"
+	        android:layout_marginBottom="20dp" >
+	
+	        <ImageButton
+	            android:id="@+id/confirmarAnimal"
+	            android:layout_width="60dp"
+	            android:layout_height="60dp"
+	            android:layout_alignParentLeft="true"
+	            android:layout_marginLeft="20dp"
+	            android:background="@drawable/circlebutton_state"
+	            android:src="@drawable/ic_action_done" />
+	        
+	        <ImageButton
+	            android:id="@+id/cerrarMangada"
+	            android:layout_width="60dp"
+	            android:layout_height="60dp"
+	            android:layout_alignParentRight="true"
+	            android:layout_marginRight="20dp"
+	            android:background="@drawable/circlebutton_lock"
+	            android:src="@drawable/ic_lock_outline_white_36dp" />   
+	            
+	        <TextView
+		        android:id="@+id/tvTotalAnimales"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_centerVertical="true"
+				android:layout_toLeftOf="@+id/dot1"
+		        android:text="0"
+		        android:textAppearance="?android:attr/textAppearanceLarge"
+		        android:textSize="30sp" />
+	        
+	        <TextView
+		        android:id="@+id/dot1"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_centerVertical="true"
+				android:layout_toLeftOf="@+id/tvMangada"
+		        android:text="•"
+		        android:textAppearance="?android:attr/textAppearanceLarge" 
+		        android:textSize="30sp" />
+	        
+	        <TextView
+		        android:id="@+id/tvMangada"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+				android:layout_centerHorizontal="true"
+				android:layout_centerVertical="true"
+		        android:text="0"
+		        android:textAppearance="?android:attr/textAppearanceLarge"
+		        android:textSize="30sp" />
+	        
+	        <TextView
+		        android:id="@+id/dot2"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_centerVertical="true"
+				android:layout_toRightOf="@+id/tvMangada"
+		        android:text="•"
+		        android:textAppearance="?android:attr/textAppearanceLarge" 
+		        android:textSize="30sp" />
+	                
+	        <TextView
+		        android:id="@+id/tvAnimalesMangada"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:layout_toRightOf="@+id/dot2"
+		        android:text="0"
+		        android:textAppearance="?android:attr/textAppearanceLarge" 
+		        android:textSize="30sp" />
+	
+	    </RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -15,6 +15,8 @@ public class Ganado implements Serializable{
 	private String observacion;
 	private String brucelosis;
 	private Integer tipoGanadoId;
+	private Integer estadoLecheId;
+	private String sincronizado;
 	
 	public Integer getId() {
 		return id;
@@ -96,6 +98,14 @@ public class Ganado implements Serializable{
 		this.brucelosis = brucelosis;
 	}
 
+	public Integer getEstadoLecheId() {
+		return estadoLecheId;
+	}
+
+	public void setEstadoLecheId(Integer estadoLecheId) {
+		this.estadoLecheId = estadoLecheId;
+	}
+
 	public String getEid() {
 		return eid;
 	}
@@ -103,4 +113,13 @@ public class Ganado implements Serializable{
 	public void setEid(String eid) {
 		this.eid = eid;
 	}
+
+	public String getSincronizado() {
+		return sincronizado;
+	}
+
+	public void setSincronizado(String sincronizado) {
+		this.sincronizado = sincronizado;
+	}
+	
 }

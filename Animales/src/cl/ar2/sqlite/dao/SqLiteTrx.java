@@ -15,7 +15,7 @@ import android.database.sqlite.SQLiteDatabase;
 public class SqLiteTrx {
     private static SqLiteMan sqLiteMan = null;
     private SQLiteDatabase db = null;
-
+    
     public static void Inicializa(Context context) {
         sqLiteMan = new SqLiteMan(context);
     }
@@ -28,7 +28,6 @@ public class SqLiteTrx {
             db = sqLiteMan.getReadableDatabase();
         }
     }
-
 
     public SQLiteDatabase getDB() {
         return db;

@@ -31,5 +31,6 @@
     <string name="title_activity_predio_libre_logs_br">PredioLibreLogsBR</string>
     <string name="title_activity_ecografias">Ecografias</string>
     <string name="title_activity_salvatajes_diio">SalvatajesDiio</string>
+    <string name="title_activity_secados">Secados</string>
 
 </resources>

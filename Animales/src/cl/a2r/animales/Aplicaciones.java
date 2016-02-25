@@ -81,6 +81,7 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 	private List<Aplicacion> apps;
 	
 	public static Predio predioWS = new Predio();
+	public static Integer appId;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -323,6 +324,7 @@ public class Aplicaciones extends Activity implements GoogleApiClient.Connection
 		s.setUsuarioId(Login.user);
 		s.setFundoId(predioWS.getId());
 		s.setAppId(AppLauncher.getAppId());
+		appId = s.getAppId();
 		s.setImei(null);
 		
 		new AsyncTask<Void, Void, Void>(){

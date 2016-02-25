@@ -137,12 +137,16 @@
             android:label="Logs" >
         </activity>
         <activity
-         	android:name="cl.a2r.salvatajes.SalvatajesDiio"
+            android:name="cl.a2r.salvatajes.SalvatajesDiio"
             android:label="@string/title_activity_salvatajes_diio" >
         </activity>
         <activity
-         	android:name="cl.a2r.salvatajes.Logs"
+            android:name="cl.a2r.salvatajes.Logs"
             android:label="@string/title_activity_salvatajes_diio" >
+        </activity>
+        <activity
+            android:name="cl.a2r.secados.Secados"
+            android:label="@string/title_activity_secados" >
         </activity>
     </application>
 
