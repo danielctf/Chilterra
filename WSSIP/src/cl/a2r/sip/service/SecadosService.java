@@ -12,6 +12,7 @@ import cl.a2r.sip.dao.SecadosDAO;
 import cl.a2r.sip.dao.Transaccion;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.InyeccionTB;
+import cl.a2r.sip.model.Secado;
 
 public class SecadosService {
 	
@@ -53,12 +54,12 @@ public class SecadosService {
         return list;
     }
     
-    public static void insertaEstadoLeche(List<Ganado> ganList, Integer usuarioId) throws AppException {
+    public static void insertaEstadoLeche(List<Secado> secList, Integer usuarioId) throws AppException {
 
         Transaccion trx = Transaccion.getTransaccion(true);
         if (trx != null){
             try {
-                SecadosDAO.insertEstadoLeche(trx, ganList, usuarioId);
+                SecadosDAO.insertEstadoLeche(trx, secList, usuarioId);
                 trx.commit();
             } catch (SQLException ex) {
                 trx.rollback();

@@ -231,7 +231,7 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
             Intent intent = new Intent(act.getApplicationContext(), CaptureActivity.class);
             intent.setAction("com.google.zxing.client.android.SCAN");
             intent.putExtra("SAVE_HISTORY", false);
-            intent.putExtra("SCAN_FORMATS", "PRODUCT_MODE, QR_CODE_MODE");
+            intent.putExtra("SCAN_FORMATS", "EAN_13");
             intent.putExtra("PROMPT_MESSAGE", "Leer codigo");
             startActivityForResult(intent, SCANNER_REQUEST_CODE);
 			break;

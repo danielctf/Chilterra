@@ -18,6 +18,7 @@ import cl.a2r.sip.model.GanadoLogs;
 import cl.a2r.sip.model.Inseminacion;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.Medicamento;
+import cl.a2r.sip.model.MedicamentoControl;
 import cl.a2r.sip.model.MotivoBaja;
 import cl.a2r.sip.model.Movimiento;
 import cl.a2r.sip.model.PPD;
@@ -63,9 +64,10 @@ public class Test {
     	
     	try {
 
-    		List<EstadoLeche> list = WSSecadosCliente.traeEstadosLeche();
-    		for (EstadoLeche i : list){
-    			System.out.println(i.getId());
+    		List<MedicamentoControl> list = WSSecadosCliente.traeMedicamentos(14);
+    		for (MedicamentoControl i : list){
+    			System.out.println("se "+i.getSerie());
+    			System.out.println("n "+i.getMed().getNombre());
     		}
     		
 		} catch (AppException e) {

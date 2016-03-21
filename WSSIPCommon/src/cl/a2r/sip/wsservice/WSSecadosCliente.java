@@ -6,6 +6,7 @@ import cl.a2r.common.AppException;
 import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.common.wsutils.ServiceWS;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Secado;
 
 public class WSSecadosCliente {
 	
@@ -40,11 +41,11 @@ public class WSSecadosCliente {
 	       }
 	}
 	
-	public static void insertaEstadoLeche(List<Ganado> ganList, Integer usuarioId) throws AppException {
+	public static void insertaEstadoLeche(List<Secado> secList, Integer usuarioId) throws AppException {
 
 		   ParamServlet params = new ParamServlet();
 		   params.add("servicio", "insertaEstadoLeche" );
-		   params.add("ganList", ganList );
+		   params.add("ganList", secList );
 		   params.add("usuarioId", usuarioId );
 
 	       Object obj = ServiceWS.invocaWS("WSSecados", params );

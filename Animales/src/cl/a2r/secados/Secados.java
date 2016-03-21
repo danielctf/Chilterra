@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cl.a2r.animales.Aplicaciones;
+import cl.a2r.animales.Login;
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
-import cl.a2r.ecografias.Ecografias;
-import cl.a2r.sip.model.Ecografia;
 import cl.a2r.sip.model.EstadoLeche;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Medicamento;
+import cl.a2r.sip.model.MedicamentoControl;
+import cl.a2r.sip.model.Secado;
 import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.wsservice.WSSecadosCliente;
-import cl.ar2.sqlite.servicio.EcografiasServicio;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
 import cl.ar2.sqlite.servicio.SecadosServicio;
 import cl.ar2.sqlite.servicio.TrasladosServicio;
@@ -28,7 +28,6 @@ import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -52,10 +51,11 @@ public class Secados extends Activity implements View.OnClickListener {
 	private TextView tvLogs, tvDiio, tvTotalAnimales, tvMangada, tvAnimalesMangada;
 	private Spinner spEstado, spMedicamento;
 	private ProgressBar loading;
-	private List<Medicamento> medList;
+	private List<MedicamentoControl> medList;
 	private List<EstadoLeche> estList;
 	private Integer mangadaActual;
 	private boolean isMangadaCerrada;
+	private ArrayAdapter<EstadoLeche> spEstadoAdapter;
 	private Ganado gan;
 	
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +91,7 @@ public class Secados extends Activity implements View.OnClickListener {
 		loading = (ProgressBar)findViewById(R.id.loading);
 		loading.setVisibility(View.INVISIBLE);
 		
-		medList = new ArrayList<Medicamento>();
+		medList = new ArrayList<MedicamentoControl>();
 		estList = new ArrayList<EstadoLeche>();
 		isMangadaCerrada = false;
 		gan = new Ganado();
@@ -101,9 +101,18 @@ public class Secados extends Activity implements View.OnClickListener {
 		int id = v.getId();
 		switch (id){
 		case R.id.goBack:
-			finish();
+			ShowAlert.askYesNo("Advertencia", "¿Seguro que desea salir de la aplicación?", this, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					if (which == -2){
+						finish();
+					}
+				}
+			});
 			break;
 		case R.id.logs:
+			Intent i = new Intent(this, Logs.class);
+			i.putExtra("mangadaActual", mangadaActual);
+			startActivity(i);
 			break;
 		case R.id.confirmarAnimal:
 			agregarAnimal();
@@ -115,6 +124,7 @@ public class Secados extends Activity implements View.OnClickListener {
 			verificarCierreMangada();
 			break;
 		case R.id.sync:
+			new Sincronizacion(this, Login.user).execute();
 			break;
 		}
 	}
@@ -133,24 +143,8 @@ public class Secados extends Activity implements View.OnClickListener {
 			protected Void doInBackground(Void... arg0) {
 				try {
 					ganList = WSSecadosCliente.traeAllDiio();
-					System.out.println("ganList: "+ganList.size());
-					SecadosServicio.deleteSincronizados();
-					List<Ganado> ganExistentes = SecadosServicio.traeDiios();
-					List<Ganado> toAdd = new ArrayList<Ganado>();
-					for (Ganado g1 : ganList){
-						boolean exists = false;
-						for (Ganado g2 : ganExistentes){
-							if (g1.getId().intValue() == g2.getId().intValue()){
-								exists = true;
-								break;
-							}
-						}
-						if (!exists){
-							toAdd.add(g1);
-						}
-					}
-					System.out.println("toAdd: "+toAdd.size());
-					SecadosServicio.insertaDiio(toAdd);
+					SecadosServicio.deleteAllDiio();
+					SecadosServicio.insertaDiio(ganList);
 
 					medList = WSSecadosCliente.traeMedicamentos(Aplicaciones.appId);
 					estList = WSSecadosCliente.traeEstadosLeche();
@@ -167,13 +161,13 @@ public class Secados extends Activity implements View.OnClickListener {
 				if (title.equals("Error")){
 					ShowAlert.showAlert(title, msg, Secados.this);
 				} else {
-					Medicamento m = new Medicamento();
+					MedicamentoControl m = new MedicamentoControl();
 					medList.add(0, m);
-					ArrayAdapter<Medicamento> mAdapter1 = new ArrayAdapter<Medicamento>(Secados.this, android.R.layout.simple_list_item_1, medList);
+					ArrayAdapter<MedicamentoControl> mAdapter1 = new ArrayAdapter<MedicamentoControl>(Secados.this, android.R.layout.simple_list_item_1, medList);
 					spMedicamento.setAdapter(mAdapter1);
 					
-					ArrayAdapter<EstadoLeche> mAdapter2 = new ArrayAdapter<EstadoLeche>(Secados.this, android.R.layout.simple_list_item_1, estList);
-					spEstado.setAdapter(mAdapter2);
+					spEstadoAdapter = new ArrayAdapter<EstadoLeche>(Secados.this, android.R.layout.simple_list_item_1, estList);
+					spEstado.setAdapter(spEstadoAdapter);
 				}
 			}
 	
@@ -186,10 +180,17 @@ public class Secados extends Activity implements View.OnClickListener {
 			mangadaActual++;
 		}
 		
+		Secado s = new Secado();
+		gan.setMangada(mangadaActual);
+		s.setMed((MedicamentoControl) spMedicamento.getSelectedItem());
+		s.setGan(gan);
+		s.setSincronizado("N");
+		
 		try {
-			SecadosServicio.updateDiio(gan);
+			SecadosServicio.insertaSecado(s);
 			Toast.makeText(this, "Animal Registrado", Toast.LENGTH_LONG).show();
 			clearScreen();
+			mostrarCandidatos();
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
@@ -218,10 +219,10 @@ public class Secados extends Activity implements View.OnClickListener {
 		    public void onClick(DialogInterface dialog, int which) {
 		    	try {
 		    		int ingresados = Integer.parseInt(input.getText().toString());
-					List<Ganado> list = SecadosServicio.traeDiios();
+					List<Secado> list = SecadosServicio.traeGanadoASincronizar();
 					int totalesManga = 0;
-					for (Ganado g : list){
-						if (g.getMangada().intValue() == mangadaActual.intValue()){
+					for (Secado s : list){
+						if (s.getGan().getMangada().intValue() == mangadaActual.intValue()){
 							totalesManga++;
 						}
 					}
@@ -252,7 +253,7 @@ public class Secados extends Activity implements View.OnClickListener {
 	
 	private void mostrarCandidatos(){
 		try {
-			List<Ganado> list = SecadosServicio.traeDiios();
+			List<Secado> list = SecadosServicio.traeGanadoASincronizar();
 			if (list.size() > 0){
 				tvLogs.setText(Integer.toString(list.size()));
 			} else {
@@ -281,12 +282,12 @@ public class Secados extends Activity implements View.OnClickListener {
 		}
 		
 		try {
-			List<Ganado> list = SecadosServicio.traeDiios();
+			List<Secado> list = SecadosServicio.traeGanadoASincronizar();
 			tvTotalAnimales.setText(Integer.toString(list.size()));
 			tvMangada.setText(Integer.toString(mangadaActual));
 			int animalesMangada = 0;
-			for (Ganado g : list){
-				if (g.getMangada().intValue() == mangadaActual.intValue()){
+			for (Secado s : list){
+				if (s.getGan().getMangada() != null && s.getGan().getMangada().intValue() == mangadaActual.intValue()){
 					animalesMangada++;
 				}
 			}
@@ -295,7 +296,7 @@ public class Secados extends Activity implements View.OnClickListener {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
 	}
-	
+
 	private void clearScreen(){
 		gan = new Ganado();
 		resetCalculadora();
@@ -319,7 +320,6 @@ public class Secados extends Activity implements View.OnClickListener {
 							TrasladosServicio.insertaReubicacion(t);
 							TrasladosServicio.updateGanadoFundo(Aplicaciones.predioWS.getId(), gan.getId());
 							gan.setPredio(Aplicaciones.predioWS.getId());
-							//EcografiasServicio.updateEcoFundo(Aplicaciones.predioWS.getId(), gan.getId());
 							showDiio(gan);
 						} catch (AppException e) {
 							ShowAlert.showAlert("Error", e.getMessage(), Secados.this);
@@ -334,14 +334,18 @@ public class Secados extends Activity implements View.OnClickListener {
 	
 	private void verEstadoLeche(Ganado gan){
 		try {
-			SecadosServicio.traeGanado(gan.getId());
+			gan = SecadosServicio.traeGanado(gan.getId());
 			boolean found = false;
 			for (EstadoLeche e : estList){
 				if (gan.getEstadoLecheId() != null &&
 						e.getId().intValue() == gan.getEstadoLecheId().intValue()){
 					
+					if (spEstado.getAdapter() == null){
+						spEstado.setAdapter(spEstadoAdapter);
+					}
 					spEstado.setSelection(gan.getEstadoLecheId().intValue() - 1);
 					found = true;
+					break;
 				}
 			}
 			if (!found){
@@ -360,8 +364,17 @@ public class Secados extends Activity implements View.OnClickListener {
 	
 	private void checkDiioStatus(Ganado gan){
 		if (gan != null){
-			clearScreen();
-			verReubicacion(gan);
+			try {
+				boolean exists = SecadosServicio.existsGanado(gan.getId());
+				if (!exists){
+					clearScreen();
+					verReubicacion(gan);
+				} else {
+					Toast.makeText(this, "Animal ya existe", Toast.LENGTH_LONG).show();
+				}
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
 		}
 		updateStatus();
 	}
@@ -377,7 +390,7 @@ public class Secados extends Activity implements View.OnClickListener {
 		super.onStart();
 		
 		try {
-			mangadaActual = SecadosServicio.traeMangadaActual();
+			mangadaActual = SecadosServicio.mangadaActual();
 			if (mangadaActual == null){
 				mangadaActual = 0;
 				cerrarMangada(false);

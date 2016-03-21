@@ -22,7 +22,9 @@ import cl.ar2.sqlite.servicio.PredioLibreServicio;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -73,14 +75,38 @@ public class PredioLibreLobby extends Activity implements View.OnClickListener, 
 	}
 	
 	public void getPrediosLibreWS(){
-		try {
-			List<PredioLibre> list = WSPredioLibreCliente.traePredioLibre(Aplicaciones.predioWS.getId());
-			PredioLibreAdapter mAdapter = new PredioLibreAdapter(this, list);
-			lvPredioLibre.setAdapter(mAdapter);
-			Utility.setListViewHeightBasedOnChildren(lvPredioLibre);
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
-		}
+		new AsyncTask<Void, Void, Void>(){
+			List<PredioLibre> list;
+			String title, msg;
+			
+			protected void onPreExecute(){
+				loading.setVisibility(View.VISIBLE);
+				title = "";
+				msg = "";
+			}
+
+			protected Void doInBackground(Void... arg0) {
+				try {
+					list = WSPredioLibreCliente.traePredioLibre(Aplicaciones.predioWS.getId());
+				} catch (AppException e) {
+					title = "Error";
+					msg = e.getMessage();
+				}
+				return null;
+			}
+			
+			protected void onPostExecute(Void result){
+				loading.setVisibility(View.INVISIBLE);
+				if (title.equals("Error")){
+					ShowAlert.showAlert(title, msg, PredioLibreLobby.this);
+				} else {
+					PredioLibreAdapter mAdapter = new PredioLibreAdapter(PredioLibreLobby.this, list);
+					lvPredioLibre.setAdapter(mAdapter);
+					Utility.setListViewHeightBasedOnChildren(lvPredioLibre);
+				}
+			}
+			
+		}.execute();
 	}
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {

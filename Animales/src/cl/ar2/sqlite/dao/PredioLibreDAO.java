@@ -103,6 +103,15 @@ public class PredioLibreDAO {
 			+ " UPDATE predio_libre_brucelosis "
 			+ " SET fundoId = ? "
 			+ " WHERE ganadoId = ?";
+
+	private static final String SQL_SELECT_GANADO_PL_NO_SYNC = ""
+			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, mangada, tuboPPDId, tuboPPDSerie, lecturaTB, sincronizado "
+			+ " FROM predio_libre WHERE sincronizado = 'N' ORDER BY id DESC ";
+	
+	private static final String SQL_SELECT_GANADO_PL_BRUCELOSIS_NO_SYNC = ""
+			+ "SELECT ganadoId, fundoId, instancia, ganadoDiio, mangada, codBarra, sincronizado "
+			+ " FROM predio_libre_brucelosis WHERE sincronizado = 'N' ORDER BY id DESC ";
+	
 	
     public static void deleteDiio(SqLiteTrx trx) throws SQLException {
     	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_DIIO);
@@ -198,6 +207,7 @@ public class PredioLibreDAO {
     	statement.bindLong(7, tb.getTuboPPDSerie());
     	statement.bindString(8, tb.getSincronizado());
     	statement.executeInsert();
+    	statement.close();
 
     }
     
@@ -280,6 +290,7 @@ public class PredioLibreDAO {
     	statement.bindString(6, b.getCodBarra());
     	statement.bindString(7, b.getSincronizado());
     	statement.executeInsert();
+    	statement.close();
     }
     
     public static List selectGanadoPLBrucelosis(SqLiteTrx trx) throws SQLException {
@@ -433,6 +444,54 @@ public class PredioLibreDAO {
     	statement.bindLong(1, nuevoFundoId);
     	statement.bindLong(2, ganadoId);
     	statement.executeUpdateDelete();
+    }
+    
+    public static List selectGanadoTBNoSync(SqLiteTrx trx) throws SQLException {
+        List list = new ArrayList();
+        boolean hayReg;
+
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_GANADO_PL_NO_SYNC, null);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	InyeccionTB i = new InyeccionTB();
+        	i.setGanadoID(c.getInt(c.getColumnIndex("ganadoId")));
+        	i.setFundoId(c.getInt(c.getColumnIndex("fundoId")));
+        	i.setInstancia(c.getInt(c.getColumnIndex("instancia")));
+        	i.setGanadoDiio(c.getInt(c.getColumnIndex("ganadoDiio")));
+        	i.setMangada(c.getInt(c.getColumnIndex("mangada")));
+        	i.setTuboPPDId(c.getInt(c.getColumnIndex("tuboPPDId")));
+        	i.setTuboPPDSerie(c.getInt(c.getColumnIndex("tuboPPDSerie")));
+        	i.setLecturaTB(c.getString(c.getColumnIndex("lecturaTB")));
+        	i.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
+        	list.add(i);
+            hayReg = c.moveToNext();
+        }
+        c.close();
+
+        return list;
+    }
+    
+    public static List selectGanadoBRNoSync(SqLiteTrx trx) throws SQLException {
+        List list = new ArrayList();
+        boolean hayReg;
+
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_GANADO_PL_BRUCELOSIS_NO_SYNC, null);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	Brucelosis b = new Brucelosis();
+        	b.getGanado().setId(c.getInt(c.getColumnIndex("ganadoId")));
+        	b.getGanado().setPredio(c.getInt(c.getColumnIndex("fundoId")));
+        	b.setInstancia(c.getInt(c.getColumnIndex("instancia")));
+        	b.getGanado().setDiio(c.getInt(c.getColumnIndex("ganadoDiio")));
+        	b.getGanado().setMangada(c.getInt(c.getColumnIndex("mangada")));
+        	b.setCodBarra(c.getString(c.getColumnIndex("codBarra")));
+        	b.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
+        	list.add(b);
+            hayReg = c.moveToNext();
+        }
+        c.close();
+
+        return list;
     }
 
 }

@@ -543,4 +543,52 @@ public class PredioLibreServicio {
         }
     }
     
+    public static List traeGanadoTBNoSync() throws AppException {
+        List list = new ArrayList();
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                list = PredioLibreDAO.selectGanadoTBNoSync(trx);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return list;
+    }
+    
+    public static List traeGanadoBRNoSync() throws AppException {
+        List list = new ArrayList();
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                list = PredioLibreDAO.selectGanadoBRNoSync(trx);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return list;
+    }
+    
 }

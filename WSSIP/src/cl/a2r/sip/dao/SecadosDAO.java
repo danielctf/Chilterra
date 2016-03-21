@@ -10,6 +10,8 @@ import java.util.List;
 import cl.a2r.sip.model.EstadoLeche;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Medicamento;
+import cl.a2r.sip.model.MedicamentoControl;
+import cl.a2r.sip.model.Secado;
 
 public class SecadosDAO {
 	
@@ -20,7 +22,7 @@ public class SecadosDAO {
             + "select * from sip.ws_select_estado_leche()";
     
     private static final String SQL_INSERT_ESTADO_LECHE = ""
-            + "select * from sip.ws_insert_estado_leche(?, ?, ?)";
+            + "select * from sip.ws_insert_estado_leche(?, ?, ?, ?, ?)";
     
     private static final String SQL_SELECT_ALL_DIIO = ""
             + "select * from sip.ws_select_all_diio()";
@@ -37,10 +39,13 @@ public class SecadosDAO {
         pst.setObject(1, appId);
         res = pst.executeQuery();
         while (res.next() ){
-        	Medicamento m = new Medicamento();
-        	m.setId(res.getInt("g_medicamento_id"));
-        	m.setCodigo(res.getString("value"));
-        	m.setNombre(res.getString("name"));
+        	MedicamentoControl m = new MedicamentoControl();
+        	m.setId(res.getInt("g_medicamento_control_id"));
+        	m.setSerie(res.getInt("serie"));
+        	m.setLote(res.getInt("lote"));
+        	m.setLote(res.getInt("cantidad"));
+        	m.getMed().setNombre(res.getString("name"));
+        	m.getMed().setId(res.getInt("g_medicamento_id"));
             list.add(m);
         }
         res.close();
@@ -72,16 +77,18 @@ public class SecadosDAO {
         return list;
     }
     
-    public static void insertEstadoLeche(Transaccion trx, List<Ganado> ganList, Integer usuarioId) throws SQLException {
+    public static void insertEstadoLeche(Transaccion trx, List<Secado> secList, Integer usuarioId) throws SQLException {
         Connection conn = null;
         PreparedStatement pst = null;
 
         conn = trx.getConn();
         pst = conn.prepareStatement( SQL_INSERT_ESTADO_LECHE );
-        for (Ganado g : ganList){
+        for (Secado s : secList){
         	pst.setObject(1, usuarioId);
-        	pst.setObject(2, g.getId());
-        	pst.setObject(3, g.getEstadoLecheId());
+        	pst.setObject(2, s.getGan().getPredio());
+        	pst.setObject(3, s.getGan().getId());
+        	pst.setObject(4, s.getGan().getEstadoLecheId());
+        	pst.setObject(5, s.getMed().getId());
         	pst.executeQuery();
         }
         pst.close();
@@ -104,7 +111,6 @@ public class SecadosDAO {
         	g.setEid(Long.toString(res.getLong("eid")));
         	g.setPredio(res.getInt("g_fundo_id"));
         	g.setEstadoLecheId(res.getInt("g_estado_leche_id"));
-        	g.setSincronizado("Y");
             list.add(g);
         }
         res.close();

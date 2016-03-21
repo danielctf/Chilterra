@@ -49,6 +49,7 @@ public class AsyncPLDiio extends AsyncTask<Void, Void, Void>{
 					PredioLibreServicio.insertaGanadoPL(tb);
 				}
 			}
+
 			List<Brucelosis> listEncontradosBrucelosis = WSPredioLibreCliente.traeGanadoBrucelosis(instancia);
 			for (Brucelosis b : listEncontradosBrucelosis){
 				boolean exists = PredioLibreServicio.existsGanadoPLBrucelosis(b.getGanado().getId());

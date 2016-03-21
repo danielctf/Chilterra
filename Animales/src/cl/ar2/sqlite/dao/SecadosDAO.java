@@ -2,48 +2,55 @@ package cl.ar2.sqlite.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteStatement;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Secado;
 
 public class SecadosDAO {
 	
 	private static final String SQL_INSERT_DIIO = ""
-			+ "INSERT INTO diio (id, diio, eid, fundoId, g_estado_leche_id, mangada, sincronizado) "
+			+ "INSERT INTO diio (id, diio, eid, fundoId, g_estado_leche_id) "
+			+ " VALUES (?, ?, ?, ?, ?) ";
+	
+	private static final String SQL_INSERT_SECADO = ""
+			+ "INSERT INTO secado (ganadoId, ganadoDiio, fundoId, mangada, med_control_id, "
+			+ " serie, sincronizado ) "
 			+ " VALUES (?, ?, ?, ?, ?, ?, ?) ";
 	
-	private static final String SQL_UPDATE_DIIO = ""
-			+ "UPDATE diio "
-			+ " SET sincronizado = 'N' "
+	private static final String SQL_SELECT_GANADO_A_SINCRONIZAR = ""
+			+ "SELECT id, ganadoId, ganadoDiio, fundoId, mangada, med_control_id, "
+			+ " serie, sincronizado "
+			+ " FROM secado "
+			+ " WHERE sincronizado = 'N' "
+			+ " ORDER BY id DESC ";
+	
+	private static final String SQL_DELETE_ALL_SECADO = ""
+			+ "DELETE FROM secado";
+	
+	private static final String SQL_DELETE_GANADO_SECADO = ""
+			+ "DELETE FROM secado "
 			+ " WHERE id = ? ";
 	
-	private static final String SQL_DELETE_SINCRONIZADOS = ""
-			+ "DELETE FROM diio WHERE sincronizado = 'Y'";
-	
-	private static final String SQL_DELETE_ALL = ""
+	private static final String SQL_DELETE_ALL_DIIO = ""
 			+ "DELETE FROM diio";
-	
-	private static final String SQL_SELECT_DIIO = ""
-			+ "SELECT id, diio, eid, fundoId, g_estado_leche_id, mangada, sincronizado "
-			+ " FROM diio "
-			+ " WHERE sincronizado = 'N' ";
-	
-	private static final String SQL_EXISTS_DIIO = ""
-			+ "SELECT id "
-			+ " FROM diio "
-			+ " WHERE sincronizado = 'N' "
-			+ " AND id = ? ";
 	
 	private static final String SQL_MANGADA_ACTUAL = ""
 			+ "SELECT max(mangada) mangada "
-			+ " FROM diio "
+			+ " FROM secado "
 			+ " WHERE sincronizado = 'N' ";
 	
 	private static final String SQL_SELECT_GANADO = ""
-			+ "SELECT id, diio, eid, fundoId, g_estado_leche_id, mangada, sincronizado "
+			+ "SELECT id, diio, eid, fundoId, g_estado_leche_id "
 			+ " FROM diio "
 			+ " WHERE id = ? ";
+	
+	private static final String SQL_EXISTS_GANADO = ""
+			+ "SELECT id"
+			+ " FROM secado "
+			+ " WHERE ganadoId = ? ";
 	
     public static void insertDiio(SqLiteTrx trx, List<Ganado> ganList) throws SQLException {
 
@@ -60,59 +67,63 @@ public class SecadosDAO {
         	} else {
         		statement.bindNull(5);
         	}
-        	if (g.getMangada() != null){
-        		statement.bindLong(6, g.getMangada());
-        	} else {
-        		statement.bindNull(6);
-        	}
-        	statement.bindString(7, g.getSincronizado());
         	statement.executeInsert();
         }
     }
     
-    public static void updateDiio(SqLiteTrx trx, Ganado g) throws SQLException {
-        SQLiteStatement statement = trx.getDB().compileStatement(SQL_UPDATE_DIIO);
+    public static void insertSecado(SqLiteTrx trx, Secado s) throws SQLException {
+
+        SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_SECADO);
+        
     	statement.clearBindings();
-    	statement.bindLong(1, g.getId());
-    	statement.executeUpdateDelete();
+        statement.bindLong(1, s.getGan().getId());
+        statement.bindLong(2, s.getGan().getDiio());
+        statement.bindLong(3, s.getGan().getPredio());
+        statement.bindLong(4, s.getGan().getMangada());
+        if (s.getMed().getId() != null){
+        	statement.bindLong(5, s.getMed().getId());
+        	statement.bindString(6, s.getMed().getSerie().toString());
+        } else {
+        	statement.bindNull(5);
+        	statement.bindNull(6);
+        }
+        statement.bindString(7, s.getSincronizado());
+    	statement.executeInsert();
+    	statement.close();
     }
     
-    public static void deleteSincronizados(SqLiteTrx trx) throws SQLException {
-    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_SINCRONIZADOS);
-    	statement.clearBindings();
-    	statement.executeUpdateDelete();
-    }
-    
-    public static void deleteAll(SqLiteTrx trx) throws SQLException {
-    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_ALL);
-    	statement.clearBindings();
-    	statement.executeUpdateDelete();
-    }
-    
-    public static List selectDiio(SqLiteTrx trx) throws SQLException {
+    public static List selectGanASincronizar(SqLiteTrx trx) throws SQLException {
         List list = new ArrayList();
         boolean hayReg;
         
-        Cursor c = trx.getDB().rawQuery(SQL_SELECT_DIIO, null);
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_GANADO_A_SINCRONIZAR, null);
         hayReg = c.moveToFirst();
         while ( hayReg ) {
+        	Secado s = new Secado();
+        	s.setId(c.getInt(c.getColumnIndex("id")));
         	Ganado g = new Ganado();
-        	g.setId(c.getInt(c.getColumnIndex("id")));
-        	g.setDiio(c.getInt(c.getColumnIndex("diio")));
-        	g.setEid(c.getString(c.getColumnIndex("eid")));
+        	g.setId(c.getInt(c.getColumnIndex("ganadoId")));
+        	g.setDiio(c.getInt(c.getColumnIndex("ganadoDiio")));
         	g.setPredio(c.getInt(c.getColumnIndex("fundoId")));
-        	if (!c.isNull(c.getColumnIndex("g_estado_leche_id"))){
-        		g.setEstadoLecheId(c.getInt(c.getColumnIndex("g_estado_leche_id")));
+        	g.setMangada(c.getInt(c.getColumnIndex("mangada")));
+        	if (!c.isNull(c.getColumnIndex("med_control_id"))){
+        		s.getMed().setId(c.getInt(c.getColumnIndex("med_control_id")));
+        		s.getMed().setSerie(c.getInt(c.getColumnIndex("serie")));
         	}
-        	if (!c.isNull(c.getColumnIndex("mangada"))){
-        		g.setMangada(c.getInt(c.getColumnIndex("mangada")));
-        	}
-        	g.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
-        	list.add(g);
+        	s.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
+        	s.setGan(g);
+        	list.add(s);
             hayReg = c.moveToNext();
         }
+        c.close();
 
         return list;
+    }
+    
+    public static void deleteAllDiio(SqLiteTrx trx) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_ALL_DIIO);
+    	statement.clearBindings();
+    	statement.executeUpdateDelete();
     }
     
     public static Integer mangadaActual(SqLiteTrx trx) throws SQLException {
@@ -146,14 +157,39 @@ public class SecadosDAO {
         	if (!c.isNull(c.getColumnIndex("g_estado_leche_id"))){
         		g.setEstadoLecheId(c.getInt(c.getColumnIndex("g_estado_leche_id")));
         	}
-        	if (!c.isNull(c.getColumnIndex("mangada"))){
-        		g.setMangada(c.getInt(c.getColumnIndex("mangada")));
-        	}
-        	g.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
             hayReg = c.moveToNext();
         }
 
         return g;
     }
-	
+    
+    public static void deleteAllSecado(SqLiteTrx trx) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_ALL_SECADO);
+    	statement.clearBindings();
+    	statement.executeUpdateDelete();
+    }
+    
+    public static void deleteGanadoSecado(SqLiteTrx trx, Integer id) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_GANADO_SECADO);
+    	statement.clearBindings();
+    	statement.bindLong(1, id);
+    	statement.executeUpdateDelete();
+    }
+    
+    public static boolean existsGanado(SqLiteTrx trx, Integer ganadoId) throws SQLException {
+        boolean exists = false;
+        boolean hayReg;
+        
+        String[] args = {Integer.toString(ganadoId)};
+        Cursor c = trx.getDB().rawQuery(SQL_EXISTS_GANADO, args);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	exists = true;
+            hayReg = c.moveToNext();
+        }
+        c.close();
+
+        return exists;
+    }
+    
 }

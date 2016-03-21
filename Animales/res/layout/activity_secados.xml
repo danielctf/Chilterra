@@ -87,6 +87,60 @@
             android:textColor="@color/white"
             android:textSize="50sp" />
 
+        <LinearLayout
+            android:id="@+id/llCandidatos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/green"
+            android:layout_marginBottom="5dp"
+            android:layout_below="@+id/tvDiio"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/llFaltantes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center" >
+
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_cow" />
+
+                <TextView
+                    android:id="@+id/tvFaltantes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llEncontrados"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center" >
+
+                <ImageView
+                    android:id="@+id/ImageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_search_24" />
+
+                <TextView
+                    android:id="@+id/tvEncontrados"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tvMed"
             android:layout_width="wrap_content"
@@ -117,7 +171,7 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/tvDiio"
+            android:layout_below="@+id/llCandidatos"
             android:text="Estado Actual"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#ababab"

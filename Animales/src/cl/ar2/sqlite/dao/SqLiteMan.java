@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="animales";
-    private static final int version = 9;
+    private static final int version = 10;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
@@ -29,9 +29,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
             + " diio INTEGER,"
             + " eid TEXT,"
             + " fundoId INTEGER, "
-            + " g_estado_leche_id INTEGER, "
-            + " mangada INTEGER, "
-            + " sincronizado TEXT )");
+            + " g_estado_leche_id INTEGER )");
         
         db.execSQL( ""
             + "CREATE TABLE predio_libre ( "
@@ -103,6 +101,29 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " fundoOrigenId INTEGER, "
         	+ " fundoDestinoId INTEGER )");
         
+        db.execSQL( ""
+        	+ "CREATE TABLE secado ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " ganadoId INTEGER, "
+        	+ " ganadoDiio INTEGER, "
+        	+ " fundoId INTEGER, "
+        	+ " mangada INTEGER, "
+        	+ " med_control_id INTEGER, "
+        	+ " serie TEXT, "
+        	+ " sincronizado TEXT )");
+        
+        db.execSQL( ""
+        	+ "CREATE TABLE rb51 ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " ganadoId INTEGER, "
+        	+ " ganadoDiio INTEGER, "
+        	+ " fundoId INTEGER, "
+        	+ " mangada INTEGER, "
+        	+ " bang TEXT, "
+        	+ " med_control_id INTEGER, "
+        	+ " serie INTEGER, "
+        	+ " sincronizado TEXT )");
+        
     }
 
     @Override
@@ -119,6 +140,8 @@ public class SqLiteMan extends SQLiteOpenHelper {
     	db.execSQL("DROP TABLE IF EXISTS salvataje");
     	db.execSQL("DROP TABLE IF EXISTS salvataje_diio");
     	db.execSQL("DROP TABLE IF EXISTS reubicacion");
+    	db.execSQL("DROP TABLE IF EXISTS secado");
+    	db.execSQL("DROP TABLE IF EXISTS rb51");
     	
     	onCreate(db);
         

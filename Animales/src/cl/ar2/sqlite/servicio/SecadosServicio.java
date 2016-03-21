@@ -6,6 +6,7 @@ import java.util.List;
 import android.database.SQLException;
 import cl.a2r.common.AppException;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Secado;
 import cl.ar2.sqlite.dao.EcografiasDAO;
 import cl.ar2.sqlite.dao.SecadosDAO;
 import cl.ar2.sqlite.dao.SqLiteTrx;
@@ -34,7 +35,7 @@ public class SecadosServicio {
         }
     }
     
-    public static void deleteSincronizados() throws AppException {
+    public static void insertaSecado(Secado s) throws AppException {
         SqLiteTrx trx;
 
         try {
@@ -45,7 +46,7 @@ public class SecadosServicio {
 
         if (trx != null) {
             try {
-                SecadosDAO.deleteSincronizados(trx);
+                SecadosDAO.insertSecado(trx, s);
                 trx.commit();
             } catch ( SQLException ex ) {
                 trx.rollback();
@@ -56,29 +57,7 @@ public class SecadosServicio {
         }
     }
     
-    public static void deleteAll() throws AppException {
-        SqLiteTrx trx;
-
-        try {
-            trx = SqLiteTrx.getTrx(true);
-        } catch (Exception ex) {
-            throw new AppException(ex.getMessage(), ex);
-        }
-
-        if (trx != null) {
-            try {
-                SecadosDAO.deleteAll(trx);
-                trx.commit();
-            } catch ( SQLException ex ) {
-                trx.rollback();
-                throw new AppException(ex.getMessage(), null);
-            } finally {
-                trx.close();
-            }
-        }
-    }
-    
-    public static List traeDiios() throws AppException {
+    public static List traeGanadoASincronizar() throws AppException {
         List list = new ArrayList();
         SqLiteTrx trx;
 
@@ -90,7 +69,7 @@ public class SecadosServicio {
 
         if (trx != null) {
             try {
-                list = SecadosDAO.selectDiio(trx);
+            	list = SecadosDAO.selectGanASincronizar(trx);
             } catch ( SQLException ex ) {
                 throw new AppException(ex.getMessage(), null);
             } finally {
@@ -102,7 +81,29 @@ public class SecadosServicio {
         return list;
     }
     
-    public static Integer traeMangadaActual() throws AppException {
+    public static void deleteAllDiio() throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                SecadosDAO.deleteAllDiio(trx);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
+    public static Integer mangadaActual() throws AppException {
         Integer mangadaActual = null;
         SqLiteTrx trx;
 
@@ -124,28 +125,6 @@ public class SecadosServicio {
         }
 
         return mangadaActual;
-    }
-    
-    public static void updateDiio(Ganado g) throws AppException {
-        SqLiteTrx trx;
-
-        try {
-            trx = SqLiteTrx.getTrx(true);
-        } catch (Exception ex) {
-            throw new AppException(ex.getMessage(), ex);
-        }
-
-        if (trx != null) {
-            try {
-                SecadosDAO.updateDiio(trx, g);
-                trx.commit();
-            } catch ( SQLException ex ) {
-                trx.rollback();
-                throw new AppException(ex.getMessage(), null);
-            } finally {
-                trx.close();
-            }
-        }
     }
     
     public static Ganado traeGanado(Integer ganadoId) throws AppException {
@@ -170,6 +149,74 @@ public class SecadosServicio {
         }
 
         return g;
+    }
+    
+    public static void deleteAllSecado() throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                SecadosDAO.deleteAllSecado(trx);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
+    public static void deleteGanadoSecado(Integer id) throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                SecadosDAO.deleteGanadoSecado(trx, id);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
+    public static boolean existsGanado(Integer ganadoId) throws AppException {
+        boolean exists = false;
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+            	exists = SecadosDAO.existsGanado(trx, ganadoId);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return exists;
     }
     
 }

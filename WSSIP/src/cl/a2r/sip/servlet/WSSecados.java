@@ -17,6 +17,7 @@ import cl.a2r.sip.common.AppLog;
 import cl.a2r.sip.model.Areteo;
 import cl.a2r.sip.model.Baja;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Secado;
 import cl.a2r.sip.service.AreteosService;
 import cl.a2r.sip.service.BajasService;
 import cl.a2r.sip.service.SecadosService;
@@ -53,9 +54,9 @@ public class WSSecados extends HttpServlet{
             	List list = SecadosService.traeEstadosLeche();
             	retorno = list;
             } else if (servicio.equals("insertaEstadoLeche")){
-            	List<Ganado> ganList = (List<Ganado>) params.getParam("ganList");
+            	List<Secado> secList = (List<Secado>) params.getParam("ganList");
             	Integer usuarioId = (Integer) params.getParam("usuarioId");
-            	SecadosService.insertaEstadoLeche(ganList, usuarioId);
+            	SecadosService.insertaEstadoLeche(secList, usuarioId);
             	retorno = i;
             } else if (servicio.equals("traeAllDiio")){
             	List list = SecadosService.traeAllDiio();
