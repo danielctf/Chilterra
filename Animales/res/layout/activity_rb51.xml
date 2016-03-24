@@ -33,7 +33,7 @@
             android:textColor="@color/white" />
 
         <TextView
-            android:id="@+id/tvLogs"
+            android:id="@+id/tvSync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -92,19 +92,19 @@
                 android:layout_weight="0.5"
                 android:gravity="center" >
 
+                <TextView
+                    android:id="@+id/tvFaltantes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/white" />
+
                 <ImageView
                     android:id="@+id/imageView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_cow" />
-
-                <TextView
-                    android:id="@+id/tvFaltantes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/white" />
             </LinearLayout>
 
             <LinearLayout
@@ -114,19 +114,19 @@
                 android:layout_weight="0.5"
                 android:gravity="center" >
 
+                <TextView
+                    android:id="@+id/tvEncontrados"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/white" />
+
                 <ImageView
                     android:id="@+id/ImageView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_search_24" />
-
-                <TextView
-                    android:id="@+id/tvEncontrados"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/white" />
             </LinearLayout>
         </LinearLayout>
 
@@ -149,14 +149,14 @@
                     android:layout_marginTop="10dp"
                     android:text="Primera Vacuna: 00/00/0000"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
-
+                
                 <TextView
-                    android:id="@+id/tvSegundaV"
+                    android:id="@+id/tvBangActual"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:layout_marginTop="10dp"
-                    android:text="Segunda Vacuna: 00/00/0000"
+                    android:text="Bang Actual:"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <TextView
@@ -169,14 +169,14 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="#ababab"
                     android:textSize="15sp" />
-                
+
                 <Spinner
-                    android:id="@+id/spSerie"
+                    android:id="@+id/spMedicamento"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
-                    android:background="@drawable/spinner_style" />                
+                    android:background="@drawable/spinner_style" />
 
                 <CheckBox
                     android:id="@+id/checkBox1"
@@ -197,13 +197,29 @@
                     android:textColor="#ababab"
                     android:textSize="15sp" />
 
-                <Spinner
-                    android:id="@+id/spBang"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:background="@drawable/spinner_style" />
+                    android:orientation="horizontal" >
+
+                    <Spinner
+                        android:id="@+id/spBang"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.75"
+                        android:layout_marginLeft="15dp"
+                        android:background="@drawable/spinner_style" />
+
+                    <ImageButton
+                        android:id="@+id/btnDelete"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:layout_gravity="center"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_delete_black_36dp" />
+
+                </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

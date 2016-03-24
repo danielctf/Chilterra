@@ -1,6 +1,7 @@
 package cl.a2r.sip.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class VRB51 implements Serializable{
 	
@@ -8,12 +9,14 @@ public class VRB51 implements Serializable{
 	private Integer id;
 	private Ganado gan;
 	private MedicamentoControl med;
-	private String bang;
+	private Bang bang;
+	private Date fecha;
 	private String sincronizado;
 	
 	public VRB51(){
 		gan = new Ganado();
 		med = new MedicamentoControl();
+		bang = new Bang();
 	}
 	
 	public Integer getId() {
@@ -40,14 +43,22 @@ public class VRB51 implements Serializable{
 		this.med = med;
 	}
 	
-	public String getBang() {
+	public Bang getBang() {
 		return bang;
 	}
-	
-	public void setBang(String bang) {
+
+	public void setBang(Bang bang) {
 		this.bang = bang;
 	}
-	
+
+	public Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+
 	public String getSincronizado() {
 		return sincronizado;
 	}
@@ -57,9 +68,9 @@ public class VRB51 implements Serializable{
 	}
 	
 	public String toString(){
-		return "DIIO: " + Integer.toString(this.getGan().getDiio())
-				+ "  Bang: " + this.bang 
-				+ "  Serie: " + Integer.toString(this.getMed().getSerie());
+		return "DIIO: " + Integer.toString(this.gan.getDiio())
+				+ "  Bang: " + this.bang.getBang()
+				+ "  Serie: " + Integer.toString(this.med.getSerie());
 	}
 	
 }

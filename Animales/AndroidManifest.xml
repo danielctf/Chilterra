@@ -156,6 +156,10 @@
             android:name="cl.a2r.rb51.RB51"
             android:label="@string/title_activity_rb51" >
         </activity>
+        <activity
+            android:name="cl.a2r.rb51.Logs"
+            android:label="RB51" >
+        </activity>        
     </application>
 
 </manifest>

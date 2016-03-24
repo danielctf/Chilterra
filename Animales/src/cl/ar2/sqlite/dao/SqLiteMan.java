@@ -119,10 +119,18 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " ganadoDiio INTEGER, "
         	+ " fundoId INTEGER, "
         	+ " mangada INTEGER, "
+        	+ " bang_id INTEGER, "
         	+ " bang TEXT, "
         	+ " med_control_id INTEGER, "
         	+ " serie INTEGER, "
+        	+ " fecha TEXT, "
         	+ " sincronizado TEXT )");
+        
+        db.execSQL( ""
+        	+ "CREATE TABLE bang ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " bang TEXT, "
+        	+ " borrar TEXT )");
         
     }
 

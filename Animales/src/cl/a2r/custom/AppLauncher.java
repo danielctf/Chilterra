@@ -13,6 +13,7 @@ import cl.a2r.animales.Salvatajes;
 import cl.a2r.animales.Traslados;
 import cl.a2r.common.AppException;
 import cl.a2r.ecografias.Ecografias;
+import cl.a2r.rb51.RB51;
 import cl.a2r.salvatajes.SalvatajesV2;
 import cl.a2r.secados.Secados;
 import cl.a2r.sip.model.Ganado;
@@ -63,6 +64,10 @@ public class AppLauncher {
 			break;
 		case 14:
 			launchApp = Secados.class;
+			hasLogAccess = true;
+			break;
+		case 15:
+			launchApp = RB51.class;
 			hasLogAccess = true;
 			break;
 		}

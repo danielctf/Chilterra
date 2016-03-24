@@ -3,6 +3,7 @@ import cl.a2r.common.AppException;
 import cl.a2r.sip.model.Aplicacion;
 import cl.a2r.sip.model.Areteo;
 import cl.a2r.sip.model.Baja;
+import cl.a2r.sip.model.Bang;
 import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.Camion;
 import cl.a2r.sip.model.CausaBaja;
@@ -30,6 +31,7 @@ import cl.a2r.sip.model.Raza;
 import cl.a2r.sip.model.TipoGanado;
 import cl.a2r.sip.model.Transportista;
 import cl.a2r.sip.model.Traslado;
+import cl.a2r.sip.model.VRB51;
 import cl.a2r.sip.wsservice.WSAreteosCliente;
 import cl.a2r.sip.wsservice.WSAutorizacionCliente;
 import cl.a2r.sip.wsservice.WSBajasCliente;
@@ -37,6 +39,7 @@ import cl.a2r.sip.wsservice.WSEcografiasCliente;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
+import cl.a2r.sip.wsservice.WSRB51Cliente;
 import cl.a2r.sip.wsservice.WSSecadosCliente;
 import cl.a2r.sip.wsservice.WSTrasladosCliente;
 
@@ -64,10 +67,10 @@ public class Test {
     	
     	try {
 
-    		List<MedicamentoControl> list = WSSecadosCliente.traeMedicamentos(14);
-    		for (MedicamentoControl i : list){
-    			System.out.println("se "+i.getSerie());
-    			System.out.println("n "+i.getMed().getNombre());
+    		List<Bang> list = WSRB51Cliente.traeBang();
+    		
+    		for (Bang i : list){
+    			System.out.println("se "+i.getId() + " "+i.getBang());
     		}
     		
 		} catch (AppException e) {
