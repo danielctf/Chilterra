@@ -334,4 +334,52 @@ public class RB51Servicio {
         return mangadaActual;
     }
     
+    public static List traeCandidatosEncontradosSegundaVacuna(Integer fundoId) throws AppException {
+        List list = new ArrayList();
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                list = RB51DAO.selectCandidatosEncontradosSegundaVacuna(trx, fundoId);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return list;
+    }
+    
+    public static VRB51 traeGanRB51(Integer ganadoId) throws AppException {
+    	VRB51 rb = new VRB51();
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                rb = RB51DAO.selectGanRB51(trx, ganadoId);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return rb;
+    }
+    
 }

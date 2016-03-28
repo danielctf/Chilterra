@@ -1,5 +1,6 @@
 package cl.a2r.rb51;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,7 +53,7 @@ import android.widget.Toast;
 public class RB51 extends Activity implements View.OnClickListener{
 
 	private ImageButton goBack, confirmarAnimal, sync, cerrarMangada, btnDelete;
-	private TextView tvSync, tvDiio, tvTotalAnimales, tvMangada, tvAnimalesMangada, tvPrimeraV, tvBangActual, tvFaltantes, tvEncontrados;
+	private TextView tvSync, tvDiio, tvTotalAnimales, tvMangada, tvAnimalesMangada, tvPrimeraV, tvBangActual, tvFaltantes, tvEncontrados, tvBang;
 	private Spinner spMedicamento, spBang;
 	private ProgressBar loading;
 	private LinearLayout llEncontrados, llFaltantes;
@@ -60,7 +61,7 @@ public class RB51 extends Activity implements View.OnClickListener{
 	private Integer mangadaActual, numeroVacuna;
 	private List<VRB51> rbGanList;
 	private List<Ganado> faltantesWS;
-	private boolean isMangadaCerrada, logAccessed, hayBangsDisponibles;
+	private boolean isMangadaCerrada, logAccessed, hayBangsDisponibles, esSegundaVacuna;
 	private Ganado gan;
 	public static List<Ganado> faltantesFiltrado = new ArrayList<Ganado>();
 	
@@ -97,11 +98,10 @@ public class RB51 extends Activity implements View.OnClickListener{
 		btnDelete = (ImageButton)findViewById(R.id.btnDelete);
 		btnDelete.setOnClickListener(this);
 		tvPrimeraV = (TextView)findViewById(R.id.tvPrimeraV);
-		tvPrimeraV.setVisibility(View.GONE);
 		tvBangActual = (TextView)findViewById(R.id.tvBangActual);
-		tvBangActual.setVisibility(View.GONE);
+		tvBang = (TextView)findViewById(R.id.tvBang);
 		checkBoxBang = (CheckBox)findViewById(R.id.checkBox1);
-		checkBoxBang.setVisibility(View.GONE);
+		checkBoxBang.setOnClickListener(this);
 		tvFaltantes = (TextView)findViewById(R.id.tvFaltantes);
 		tvEncontrados = (TextView)findViewById(R.id.tvEncontrados);
 		llEncontrados = (LinearLayout)findViewById(R.id.llEncontrados);
@@ -109,11 +109,33 @@ public class RB51 extends Activity implements View.OnClickListener{
 		llFaltantes = (LinearLayout)findViewById(R.id.llFaltantes);
 		llFaltantes.setOnClickListener(this);
 		
+		esSegundaVacuna = false;
 		hayBangsDisponibles = true;
 		logAccessed = false;
 		isMangadaCerrada = false;
 		gan = new Ganado();
 		
+	}
+	
+	private void verNumeroVacuna(){
+		if (numeroVacuna.intValue() == 1){
+			tvPrimeraV.setVisibility(View.GONE);
+			tvBangActual.setVisibility(View.GONE);
+			checkBoxBang.setVisibility(View.GONE);
+			tvBang.setVisibility(View.VISIBLE);
+			spBang.setVisibility(View.VISIBLE);
+			btnDelete.setVisibility(View.VISIBLE);
+			esSegundaVacuna = false;
+		} else if (numeroVacuna.intValue() == 2){
+			tvPrimeraV.setVisibility(View.VISIBLE);
+			tvBangActual.setVisibility(View.VISIBLE);
+			checkBoxBang.setVisibility(View.VISIBLE);
+			checkBoxBang.setChecked(false);
+			tvBang.setVisibility(View.GONE);
+			spBang.setVisibility(View.GONE);
+			btnDelete.setVisibility(View.GONE);
+			esSegundaVacuna = true;
+		}
 	}
 	
 	private void traeDatosWS(){
@@ -164,6 +186,7 @@ public class RB51 extends Activity implements View.OnClickListener{
 					spMedicamento.setAdapter(mAdapter);
 					traeBangs();
 					mostrarCandidatos();
+					verNumeroVacuna();
 				} else {
 					ShowAlert.showAlert(title, msg, RB51.this);
 				}
@@ -188,39 +211,42 @@ public class RB51 extends Activity implements View.OnClickListener{
 	}
 	
 	private void mostrarCandidatos(){
-		if (numeroVacuna.intValue() == 1){
-			//Primera Vacuna
-			try {
-				List<VRB51> encontradosList = RB51Servicio.traeCandidatosEncontrados(Aplicaciones.predioWS.getId());
-				if (encontradosList.size() > 0){
-					tvEncontrados.setText(Integer.toString(encontradosList.size()));
-				} else {
-					tvEncontrados.setText("");
+		try {
+			List<VRB51> list = RB51Servicio.traeCandidatosEncontrados(Aplicaciones.predioWS.getId());
+			List<VRB51> encontradosList = new ArrayList<VRB51>();
+			Date date = new Date(new Date().getTime() - (30L * (24L * 60L * 60L * 1000L)));
+			for (VRB51 rb : list){
+				if (rb.getFecha().getTime() > date.getTime()){
+					encontradosList.add(rb);
 				}
-				
-				faltantesFiltrado = new ArrayList<Ganado>();
-				for (Ganado g : faltantesWS){
-					boolean exists = false;
-					for (VRB51 rb : encontradosList){
-						if (g.getId().intValue() == rb.getGan().getId().intValue()){
-							exists = true;
-							break;
-						}
-					}
-					if (!exists){
-						faltantesFiltrado.add(g);
-					}
-				}
-				if (faltantesFiltrado.size() > 0){
-					tvFaltantes.setText(Integer.toString(faltantesFiltrado.size()));
-				} else {
-					tvFaltantes.setText("");
-				}
-			} catch (AppException e) {
-				ShowAlert.showAlert("Error", e.getMessage(), this);
 			}
-		} else if (numeroVacuna.intValue() == 2){
-			//Segunda Vacuna
+			
+			if (encontradosList.size() > 0){
+				tvEncontrados.setText(Integer.toString(encontradosList.size()));
+			} else {
+				tvEncontrados.setText("");
+			}
+			
+			faltantesFiltrado = new ArrayList<Ganado>();
+			for (Ganado g : faltantesWS){
+				boolean exists = false;
+				for (VRB51 rb : encontradosList){
+					if (g.getId().intValue() == rb.getGan().getId().intValue()){
+						exists = true;
+						break;
+					}
+				}
+				if (!exists){
+					faltantesFiltrado.add(g);
+				}
+			}
+			if (faltantesFiltrado.size() > 0){
+				tvFaltantes.setText(Integer.toString(faltantesFiltrado.size()));
+			} else {
+				tvFaltantes.setText("");
+			}
+		} catch (AppException e) {
+			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
 		
 	}
@@ -290,6 +316,18 @@ public class RB51 extends Activity implements View.OnClickListener{
 			i = new Intent(this, Candidatos.class);
 			i.putExtra("stance", "rb51Faltantes");
 			startActivity(i);
+			break;
+		case R.id.checkBox1:
+			if (checkBoxBang.isChecked()){
+				tvBang.setVisibility(View.VISIBLE);
+				spBang.setVisibility(View.VISIBLE);
+				btnDelete.setVisibility(View.VISIBLE);
+			} else {
+				tvBang.setVisibility(View.GONE);
+				spBang.setVisibility(View.GONE);
+				btnDelete.setVisibility(View.GONE);
+			}
+			updateStatus();
 			break;
 		}
 	}
@@ -364,13 +402,16 @@ public class RB51 extends Activity implements View.OnClickListener{
 		
 		VRB51 rb = new VRB51();
 		MedicamentoControl m = (MedicamentoControl) spMedicamento.getSelectedItem();
-		Bang b = (Bang) spBang.getSelectedItem();
 		gan.setMangada(mangadaActual);
 		rb.setFecha(new Date());
 		rb.setSincronizado("N");
 		rb.setMed(m);
-		rb.setBang(b);
 		rb.setGan(gan);
+		
+		if (!esSegundaVacuna || (esSegundaVacuna && checkBoxBang.isChecked())){
+			Bang b = (Bang) spBang.getSelectedItem();
+			rb.setBang(b);
+		}
 		
 		List<VRB51> list = new ArrayList<VRB51>();
 		list.add(rb);
@@ -437,8 +478,20 @@ public class RB51 extends Activity implements View.OnClickListener{
 		if (gan.getId() != null && gan.getDiio() != null){
 			tvDiio.setText(Integer.toString(gan.getDiio()));
 			tvDiio.setGravity(Gravity.CENTER_HORIZONTAL);
-			if (hayBangsDisponibles){
-				confirmarAnimal.setEnabled(true);
+			if (esSegundaVacuna){
+				if (!checkBoxBang.isChecked()){
+					confirmarAnimal.setEnabled(true);
+				} else if (hayBangsDisponibles){
+					confirmarAnimal.setEnabled(true);
+				} else {
+					confirmarAnimal.setEnabled(false);
+				}
+			} else {
+				if (hayBangsDisponibles){
+					confirmarAnimal.setEnabled(true);
+				} else {
+					confirmarAnimal.setEnabled(false);
+				}
 			}
 		} else {
 			tvDiio.setGravity(Gravity.LEFT);
@@ -484,6 +537,10 @@ public class RB51 extends Activity implements View.OnClickListener{
 	
 	private void clearScreen(){
 		gan = new Ganado();
+		if (esSegundaVacuna){
+			tvPrimeraV.setText("Primera Vacuna:");
+			tvBangActual.setText("Bang Actual:");
+		}
 		resetCalculadora();
 		updateStatus();
 	}
@@ -519,6 +576,20 @@ public class RB51 extends Activity implements View.OnClickListener{
 	
 	private void showDiio(Ganado gan){
 		this.gan = gan;
+		if (numeroVacuna.intValue() == 2){
+			try {
+				VRB51 rb = RB51Servicio.traeGanRB51(gan.getId());
+				if (rb.getId() != null){
+					SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+					tvPrimeraV.setText("Primera Vacuna: " + df.format(rb.getFecha()));
+					if (rb.getBang().getBang() != null){
+						tvBangActual.setText("Bang Actual: " + rb.getBang().getBang());
+					}
+				}
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
+		}
 		updateStatus();
 	}
 	

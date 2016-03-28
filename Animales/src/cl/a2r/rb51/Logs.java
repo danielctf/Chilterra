@@ -1,6 +1,7 @@
 package cl.a2r.rb51;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cl.a2r.animales.Aplicaciones;
@@ -83,11 +84,16 @@ public class Logs extends Activity implements View.OnClickListener, ListView.OnI
 		try {
 			List<VRB51> list = RB51Servicio.traeCandidatosEncontrados(Aplicaciones.predioWS.getId());
 			List<VRB51> toShow = new ArrayList<VRB51>();
+			Date date = new Date(new Date().getTime() - (30L * (24L * 60L * 60L * 1000L)));
 			for (VRB51 rb : list){
 				if (rb.getGan().getMangada() == null && spinnerMangada.getSelectedItemPosition() == 0){
-					toShow.add(rb);
+					if (rb.getFecha().getTime() > date.getTime()){
+						toShow.add(rb);
+					}
 				} else if (rb.getGan().getMangada() != null && rb.getGan().getMangada().intValue() == mangadaActual.intValue()){
-					toShow.add(rb);
+					if (rb.getFecha().getTime() > date.getTime()){
+						toShow.add(rb);
+					}
 				}
 			}
 			ArrayAdapter<VRB51> mAdapter = new ArrayAdapter<VRB51>(this, android.R.layout.simple_list_item_1, toShow);

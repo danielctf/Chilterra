@@ -68,9 +68,15 @@ public class VRB51 implements Serializable{
 	}
 	
 	public String toString(){
-		return "DIIO: " + Integer.toString(this.gan.getDiio())
-				+ "  Bang: " + this.bang.getBang()
-				+ "  Serie: " + Integer.toString(this.med.getSerie());
+		if (this.bang.getBang() != null){
+			return "DIIO: " + Integer.toString(this.gan.getDiio())
+					+ "  Bang: " + this.bang.getBang()
+					+ "  Serie: " + Integer.toString(this.med.getSerie());
+		} else {
+			return "DIIO: " + Integer.toString(this.gan.getDiio())
+					+ "  Bang:" 
+					+ "  Serie: " + Integer.toString(this.med.getSerie());
+		}
 	}
 	
 }

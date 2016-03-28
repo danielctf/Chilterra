@@ -113,7 +113,6 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
             ShowAlert.showAlert("Error", ex.getMessage(), this);
             processSignOut();
         }
-		
 	}
 	
 	private void processSignOut(){
