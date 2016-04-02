@@ -43,7 +43,6 @@ public class TrasladosDAO {
     public static List selectReubicaciones(SqLiteTrx trx) throws SQLException {
         List list = new ArrayList();
         boolean hayReg;
-        
         Cursor c = trx.getDB().rawQuery(SQL_SELECT_REUBICACIONES, null);
         hayReg = c.moveToFirst();
         while ( hayReg ) {

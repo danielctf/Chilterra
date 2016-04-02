@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="animales";
-    private static final int version = 10;
+    private static final int version = 11;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
@@ -127,10 +127,26 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " sincronizado TEXT )");
         
         db.execSQL( ""
+        	+ "CREATE TABLE rb51_anterior ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " ganadoId INTEGER )");
+        
+        db.execSQL( ""
         	+ "CREATE TABLE bang ( "
         	+ " id INTEGER PRIMARY KEY, "
         	+ " bang TEXT, "
         	+ " borrar TEXT )");
+        
+        db.execSQL( ""
+        	+ "CREATE TABLE auditoria ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " ganadoId INTEGER, "
+        	+ " ganadoDiio INTEGER, "
+        	+ " fundoId INTEGER, "
+        	+ " mangada INTEGER, "
+        	+ " instancia INTEGER, "
+        	+ " fecha TEXT, "
+        	+ " sincronizado TEXT )");
         
     }
 
@@ -150,6 +166,9 @@ public class SqLiteMan extends SQLiteOpenHelper {
     	db.execSQL("DROP TABLE IF EXISTS reubicacion");
     	db.execSQL("DROP TABLE IF EXISTS secado");
     	db.execSQL("DROP TABLE IF EXISTS rb51");
+    	db.execSQL("DROP TABLE IF EXISTS rb51_anterior");
+    	db.execSQL("DROP TABLE IF EXISTS bang");
+    	db.execSQL("DROP TABLE IF EXISTS auditoria");
     	
     	onCreate(db);
         

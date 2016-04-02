@@ -13,7 +13,6 @@ import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sip.model.EstadoLeche;
 import cl.a2r.sip.model.Ganado;
-import cl.a2r.sip.model.Medicamento;
 import cl.a2r.sip.model.MedicamentoControl;
 import cl.a2r.sip.model.Secado;
 import cl.a2r.sip.model.Traslado;
@@ -39,6 +38,7 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,10 +47,11 @@ import android.widget.Toast;
 
 public class Secados extends Activity implements View.OnClickListener {
 
-	private ImageButton goBack, logs, confirmarAnimal, sync, cerrarMangada;
-	private TextView tvLogs, tvDiio, tvTotalAnimales, tvMangada, tvAnimalesMangada;
+	private ImageButton goBack, confirmarAnimal, sync, cerrarMangada;
+	private TextView tvSync, tvDiio, tvTotalAnimales, tvMangada, tvAnimalesMangada, tvFaltantes, tvEncontrados;
 	private Spinner spEstado, spMedicamento;
 	private ProgressBar loading;
+	private LinearLayout llEncontrados, llFaltantes;
 	private List<MedicamentoControl> medList;
 	private List<EstadoLeche> estList;
 	private Integer mangadaActual;
@@ -71,8 +72,6 @@ public class Secados extends Activity implements View.OnClickListener {
 	private void cargarInterfaz(){
 		goBack = (ImageButton)findViewById(R.id.goBack);
 		goBack.setOnClickListener(this);
-		logs = (ImageButton)findViewById(R.id.logs);
-		logs.setOnClickListener(this);
 		sync = (ImageButton)findViewById(R.id.sync);
 		sync.setOnClickListener(this);
 		cerrarMangada = (ImageButton)findViewById(R.id.cerrarMangada);
@@ -81,7 +80,7 @@ public class Secados extends Activity implements View.OnClickListener {
 		confirmarAnimal.setOnClickListener(this);
 		tvDiio = (TextView)findViewById(R.id.tvDiio);
 		tvDiio.setOnClickListener(this);
-		tvLogs = (TextView)findViewById(R.id.tvLogs);
+		tvSync = (TextView)findViewById(R.id.tvSync);
     	tvTotalAnimales = (TextView)findViewById(R.id.tvTotalAnimales);
     	tvMangada = (TextView)findViewById(R.id.tvMangada);
     	tvAnimalesMangada = (TextView)findViewById(R.id.tvAnimalesMangada);
@@ -90,6 +89,12 @@ public class Secados extends Activity implements View.OnClickListener {
     	spMedicamento = (Spinner)findViewById(R.id.spMedicamento);
 		loading = (ProgressBar)findViewById(R.id.loading);
 		loading.setVisibility(View.INVISIBLE);
+		tvFaltantes = (TextView)findViewById(R.id.tvFaltantes);
+		tvEncontrados = (TextView)findViewById(R.id.tvEncontrados);
+		llEncontrados = (LinearLayout)findViewById(R.id.llEncontrados);
+		llEncontrados.setOnClickListener(this);
+		llFaltantes = (LinearLayout)findViewById(R.id.llFaltantes);
+		llFaltantes.setOnClickListener(this);
 		
 		medList = new ArrayList<MedicamentoControl>();
 		estList = new ArrayList<EstadoLeche>();
@@ -109,7 +114,7 @@ public class Secados extends Activity implements View.OnClickListener {
 				}
 			});
 			break;
-		case R.id.logs:
+		case R.id.llEncontrados:
 			Intent i = new Intent(this, Logs.class);
 			i.putExtra("mangadaActual", mangadaActual);
 			startActivity(i);
@@ -191,6 +196,7 @@ public class Secados extends Activity implements View.OnClickListener {
 			Toast.makeText(this, "Animal Registrado", Toast.LENGTH_LONG).show();
 			clearScreen();
 			mostrarCandidatos();
+			syncPendientes();
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
@@ -254,10 +260,25 @@ public class Secados extends Activity implements View.OnClickListener {
 	private void mostrarCandidatos(){
 		try {
 			List<Secado> list = SecadosServicio.traeGanadoASincronizar();
+			System.out.println("size: "+list.size());
 			if (list.size() > 0){
-				tvLogs.setText(Integer.toString(list.size()));
+				tvEncontrados.setText(Integer.toString(list.size()));
 			} else {
-				tvLogs.setText("");
+				tvEncontrados.setText("");
+			}
+		} catch (AppException e) {
+			ShowAlert.showAlert("Error", e.getMessage(), this);
+		}
+	}
+	
+	private void syncPendientes(){
+		try {
+			List<Secado> list = SecadosServicio.traeGanadoASincronizar();
+			System.out.println("size: "+list.size());
+			if (list.size() > 0){
+				tvSync.setText(Integer.toString(list.size()));
+			} else {
+				tvSync.setText("");
 			}
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
@@ -400,7 +421,7 @@ public class Secados extends Activity implements View.OnClickListener {
 		}
 		
 		mostrarCandidatos();
-		
+		syncPendientes();
 		Calculadora.isPredioLibre = true;
 		ConnectThread.setHandler(mHandler);
 		

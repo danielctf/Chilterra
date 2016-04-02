@@ -2,6 +2,7 @@
 import cl.a2r.common.AppException;
 import cl.a2r.sip.model.Aplicacion;
 import cl.a2r.sip.model.Areteo;
+import cl.a2r.sip.model.Auditoria;
 import cl.a2r.sip.model.Baja;
 import cl.a2r.sip.model.Bang;
 import cl.a2r.sip.model.Brucelosis;
@@ -33,6 +34,7 @@ import cl.a2r.sip.model.Transportista;
 import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.model.VRB51;
 import cl.a2r.sip.wsservice.WSAreteosCliente;
+import cl.a2r.sip.wsservice.WSAuditoriaCliente;
 import cl.a2r.sip.wsservice.WSAutorizacionCliente;
 import cl.a2r.sip.wsservice.WSBajasCliente;
 import cl.a2r.sip.wsservice.WSEcografiasCliente;
@@ -64,14 +66,11 @@ public class Test {
 
     public static void main(String[] arg) {
     	
-    	
     	try {
 
-    		List<Bang> list = WSRB51Cliente.traeBang();
+    		Auditoria a = WSAuditoriaCliente.traeGanado(131424);
     		
-    		for (Bang i : list){
-    			System.out.println("se "+i.getId() + " "+i.getBang());
-    		}
+    		System.out.println(a.getId());
     		
 		} catch (AppException e) {
 			// TODO Auto-generated catch block

@@ -3,12 +3,14 @@ package cl.a2r.animales;
 import java.util.List;
 
 import cl.a2r.animales.R;
+import cl.a2r.auditoria.Auditorias;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.rb51.RB51;
 import cl.a2r.sip.model.Areteo;
+import cl.a2r.sip.model.Auditoria;
 import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.CollarParto;
 import cl.a2r.sip.model.Ganado;
@@ -17,6 +19,7 @@ import cl.a2r.sip.model.Movimiento;
 import cl.a2r.sip.wsservice.WSAreteosCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
 import cl.a2r.sip.wsservice.WSTrasladosCliente;
+import cl.ar2.sqlite.servicio.AuditoriasServicio;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -189,6 +192,20 @@ public class Candidatos extends Activity implements View.OnClickListener, ListVi
 			ArrayAdapter<Ganado> mAdapter7 = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, RB51.faltantesFiltrado);
 			lvCandidatos.setAdapter(mAdapter7);
 			break;
+		case "auditoriaFaltantes":
+			tvApp.setText("Candidatos Faltantes");
+			try {
+				Integer instancia = null;
+				Bundle extras = getIntent().getExtras();
+				if (extras != null) {
+				    instancia = extras.getInt("instancia");
+				}
+				Auditoria a = AuditoriasServicio.traeCandidatosFaltantes(Aplicaciones.predioWS.getId(), instancia);
+				ArrayAdapter<Ganado> mAdapter8 = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, a.getGanList());
+				lvCandidatos.setAdapter(mAdapter8);
+			} catch (AppException e) {
+				ShowAlert.showAlert("Error", e.getMessage(), this);
+			}
 		}
 		
 	}

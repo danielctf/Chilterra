@@ -37,6 +37,9 @@ public class RB51DAO {
     private static final String SQL_INSERT_RB51 = ""
             + "select * from sip.ws_rb51_insert_rb51(?, ?, ?, ?, ?, ?)";
     
+    private static final String SQL_SELECT_RB51_ANTERIOR = ""
+    		+ "select * from sip.ws_rb51_select_ganado_anterior()";
+    
     public static List selectBang(Transaccion trx) throws SQLException {
         List list = new ArrayList();
 
@@ -198,6 +201,27 @@ public class RB51DAO {
         	pst.executeQuery();
         }
         pst.close();
+    }
+    
+    public static List selectGanadoRB51Anterior(Transaccion trx) throws SQLException {
+        List list = new ArrayList();
+
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_RB51_ANTERIOR );
+        res = pst.executeQuery();
+        while (res.next() ){
+        	Ganado g = new Ganado();
+        	g.setId(res.getInt("g_ganado_id"));
+            list.add(g);
+        }
+        res.close();
+        pst.close();
+
+        return list;
     }
 	
 }

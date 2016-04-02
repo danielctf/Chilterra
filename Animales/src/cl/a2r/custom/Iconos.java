@@ -32,9 +32,6 @@ public class Iconos {
 		case 8:
 			icon = R.drawable.iconoecografias;
 			break;
-		case 9:
-			icon = R.drawable.iconoinventariorotativo;
-			break;
 		case 10:
 			icon = R.drawable.iconoinventariorotativo;
 			break;
@@ -47,8 +44,14 @@ public class Iconos {
 		case 13:
 			icon = R.drawable.iconoprediolibre;
 			break;
+		case 14:
+			icon = R.drawable.ic_registro_de_leche48x48;
+			break;
 		case 15:
 			icon = R.drawable.iconorb51;
+			break;
+		case 16:
+			icon = R.drawable.iconoinventariorotativo;
 			break;
 		}
 		return icon;

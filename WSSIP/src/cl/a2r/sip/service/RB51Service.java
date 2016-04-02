@@ -160,4 +160,23 @@ public class RB51Service {
         }
     }
 	
+    public static List traeGanadoRB51Anterior() throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = RB51DAO.selectGanadoRB51Anterior(trx);
+            } catch (SQLException ex) {
+                AppLog.logSevere("RB51Service.traeGanadoRB51Anterior()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
 }

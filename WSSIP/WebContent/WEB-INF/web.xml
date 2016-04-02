@@ -44,6 +44,10 @@
   <servlet-name>WSRB51</servlet-name> 
   <servlet-class>cl.a2r.sip.servlet.WSRB51</servlet-class> 
   </servlet>  
+  <servlet>
+  <servlet-name>WSAuditoria</servlet-name> 
+  <servlet-class>cl.a2r.sip.servlet.WSAuditoria</servlet-class> 
+  </servlet>    
  <servlet-mapping>
   <servlet-name>WSAutorizacion</servlet-name> 
   <url-pattern>/WSAutorizacion</url-pattern> 
@@ -87,7 +91,11 @@
   <servlet-mapping>
   <servlet-name>WSRB51</servlet-name> 
   <url-pattern>/WSRB51</url-pattern> 
-  </servlet-mapping>   
+  </servlet-mapping>
+  <servlet-mapping>
+  <servlet-name>WSAuditoria</servlet-name> 
+  <url-pattern>/WSAuditoria</url-pattern> 
+  </servlet-mapping>     
  <session-config>
   <session-timeout>30</session-timeout> 
   </session-config>

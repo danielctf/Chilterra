@@ -61,7 +61,7 @@ public class RB51 extends Activity implements View.OnClickListener{
 	private Integer mangadaActual, numeroVacuna;
 	private List<VRB51> rbGanList;
 	private List<Ganado> faltantesWS;
-	private boolean isMangadaCerrada, logAccessed, hayBangsDisponibles, esSegundaVacuna;
+	private boolean isMangadaCerrada, logAccessed, esSegundaVacuna;
 	private Ganado gan;
 	public static List<Ganado> faltantesFiltrado = new ArrayList<Ganado>();
 	
@@ -110,7 +110,6 @@ public class RB51 extends Activity implements View.OnClickListener{
 		llFaltantes.setOnClickListener(this);
 		
 		esSegundaVacuna = false;
-		hayBangsDisponibles = true;
 		logAccessed = false;
 		isMangadaCerrada = false;
 		gan = new Ganado();
@@ -172,6 +171,12 @@ public class RB51 extends Activity implements View.OnClickListener{
 					//Actualiza ganados con rb51
 					RB51Servicio.deleteSyncedRB51();
 					RB51Servicio.insertaRB51(rbGanList);
+					
+					//Actualiza ganados con vacunas rb51 anteriores
+					List<Ganado> antGanList = WSRB51Cliente.traeGanadoRB51Anterior();
+					RB51Servicio.deleteRB51Anterior();
+					RB51Servicio.insertaRB51Anterior(antGanList);
+					
 				} catch (AppException e) {
 					title = "Error";
 					msg = e.getMessage();
@@ -198,11 +203,6 @@ public class RB51 extends Activity implements View.OnClickListener{
 	private void traeBangs(){
 		try {
 			List<Bang> bangs = RB51Servicio.traeBang();
-			if (bangs.size() == 0){
-				hayBangsDisponibles = false;
-			} else {
-				hayBangsDisponibles = true;
-			}
 			ArrayAdapter<Bang> mAdapter2 = new ArrayAdapter<Bang>(RB51.this, android.R.layout.simple_list_item_1, bangs);
 			spBang.setAdapter(mAdapter2);
 		} catch (AppException e) {
@@ -294,14 +294,11 @@ public class RB51 extends Activity implements View.OnClickListener{
 				public void onClick(DialogInterface dialog, int which) {
 					if (which == -2){
 						try {
-							if (hayBangsDisponibles){
-								Integer bangId = ((Bang) spBang.getSelectedItem()).getId();
-								RB51Servicio.borrarBang(bangId);
-								traeBangs();
-							}
+							Integer bangId = ((Bang) spBang.getSelectedItem()).getId();
+							RB51Servicio.borrarBang(bangId);
+							traeBangs();
 						} catch (AppException e) {
-							ShowAlert.showAlert("Erro", e.getMessage(), RB51.this);
-						}
+						} catch (NullPointerException ne){}
 					}
 				}
 			});
@@ -410,7 +407,12 @@ public class RB51 extends Activity implements View.OnClickListener{
 		
 		if (!esSegundaVacuna || (esSegundaVacuna && checkBoxBang.isChecked())){
 			Bang b = (Bang) spBang.getSelectedItem();
-			rb.setBang(b);
+			if (b != null && b.getId().intValue() != 0){
+				rb.setBang(b);
+			} else {
+				Bang b2 = new Bang();
+				rb.setBang(b2);
+			}
 		}
 		
 		List<VRB51> list = new ArrayList<VRB51>();
@@ -478,21 +480,7 @@ public class RB51 extends Activity implements View.OnClickListener{
 		if (gan.getId() != null && gan.getDiio() != null){
 			tvDiio.setText(Integer.toString(gan.getDiio()));
 			tvDiio.setGravity(Gravity.CENTER_HORIZONTAL);
-			if (esSegundaVacuna){
-				if (!checkBoxBang.isChecked()){
-					confirmarAnimal.setEnabled(true);
-				} else if (hayBangsDisponibles){
-					confirmarAnimal.setEnabled(true);
-				} else {
-					confirmarAnimal.setEnabled(false);
-				}
-			} else {
-				if (hayBangsDisponibles){
-					confirmarAnimal.setEnabled(true);
-				} else {
-					confirmarAnimal.setEnabled(false);
-				}
-			}
+			confirmarAnimal.setEnabled(true);
 		} else {
 			tvDiio.setGravity(Gravity.LEFT);
 			tvDiio.setText("DIIO:");
@@ -599,7 +587,13 @@ public class RB51 extends Activity implements View.OnClickListener{
 				boolean exists = RB51Servicio.existsGanado(gan.getId(), numeroVacuna);
 				clearScreen();
 				if (!exists){
-					verReubicacion(gan);
+					boolean existsAnterior = RB51Servicio.existsGanRB51Anterior(gan.getId());
+					List<Ganado> list = RB51Servicio.traeRB51Anterior();
+					if (!existsAnterior){
+						verReubicacion(gan);	
+					} else {
+						ShowAlert.showAlert("Animal", "Animal ya existe en una temporada anterior", this);
+					}
 				} else {
 					ShowAlert.showAlert("Animal", "Animal ya existe", this);
 				}

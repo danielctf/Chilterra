@@ -145,7 +145,8 @@ public class SalvatajesV2 extends Activity implements View.OnClickListener, List
 				if (root.canWrite()){
 					File dir = new File (root.getAbsolutePath() + "/Bastoneo");
 				    dir.mkdirs();
-				    file   =   new File(dir, "Grupo " + sList.get(j).getNombreGrupo() + ".csv");
+				    String nombreGrupo = deleteInvalidChars(sList.get(j).getNombreGrupo());
+				    file   =   new File(dir, "Grupo " + nombreGrupo + ".csv");
 				    FileOutputStream out   =   null;
 				    try {
 				        out = new FileOutputStream(file);
@@ -182,6 +183,11 @@ public class SalvatajesV2 extends Activity implements View.OnClickListener, List
 		ei.putExtra(Intent.EXTRA_SUBJECT, "Salvataje " + df.format(new Date()));
 		ei.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
 		startActivityForResult(Intent.createChooser(ei, "Compartir"), 12345);
+	}
+	
+	private String deleteInvalidChars(String nombreGrupo){
+		nombreGrupo = nombreGrupo.replaceAll("/", " ");
+		return nombreGrupo;
 	}
 	
 	private void getGrupos(){

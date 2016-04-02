@@ -257,7 +257,6 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 							TrasladosServicio.insertaReubicacion(t);
 							TrasladosServicio.updateGanadoFundo(Aplicaciones.predioWS.getId(), gan.getId());
 							gan.setPredio(Aplicaciones.predioWS.getId());
-							//PredioLibreServicio.updateGanFundo(Aplicaciones.predioWS.getId(), gan.getId());
 							mostrarCandidatos();
 							showDiio(gan);
 						} catch (AppException e) {

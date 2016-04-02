@@ -117,4 +117,19 @@ public class WSRB51Cliente {
 	       }
 	   }
 	
+	public static List traeGanadoRB51Anterior() throws AppException {
+
+		   ParamServlet params = new ParamServlet();
+	       params.add("servicio", "traeGanadoRB51Anterior" );
+
+	       Object obj = ServiceWS.invocaWS("WSRB51", params );
+	       if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	           throw (AppException) obj;
+	       } else if (obj == null){
+	    	   throw new AppException("Error de conexión a Internet", null);
+	       } else {
+	           return (List) obj;
+	       }
+	   }
+	
 }

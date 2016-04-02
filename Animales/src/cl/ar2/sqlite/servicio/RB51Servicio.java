@@ -6,6 +6,7 @@ import java.util.List;
 import android.database.SQLException;
 import cl.a2r.common.AppException;
 import cl.a2r.sip.model.Bang;
+import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.VRB51;
 import cl.ar2.sqlite.dao.RB51DAO;
 import cl.ar2.sqlite.dao.SqLiteTrx;
@@ -380,6 +381,98 @@ public class RB51Servicio {
         }
 
         return rb;
+    }
+    
+    public static void insertaRB51Anterior(List<Ganado> list) throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                RB51DAO.insertRB51Anterior(trx, list);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
+    public static boolean existsGanRB51Anterior(Integer ganadoId) throws AppException {
+        boolean exists = false;
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                exists = RB51DAO.existsGanRB51Anterior(trx, ganadoId);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return exists;
+    }
+    
+    public static void deleteRB51Anterior() throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                RB51DAO.deleteGanRB51Anterior(trx);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
+    public static List traeRB51Anterior() throws AppException {
+    	List list = new ArrayList();
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                list = RB51DAO.selectRB51Anterior(trx);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return list;
     }
     
 }

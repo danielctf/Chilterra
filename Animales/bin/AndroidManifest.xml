@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cl.a2r.animales"
     android:installLocation="preferExternal"
-    android:versionCode="144"
-    android:versionName="1.44" >
+    android:versionCode="145"
+    android:versionName="1.45" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -159,7 +159,27 @@
         <activity
             android:name="cl.a2r.rb51.Logs"
             android:label="RB51" >
-        </activity>        
+        </activity>
+        <activity
+            android:name="cl.a2r.auditoria.GruposAuditoria"
+            android:label="@string/title_activity_grupos_auditoria" >
+        </activity>
+        <activity
+            android:name="cl.a2r.auditoria.Auditorias"
+            android:label="@string/title_activity_auditorias" >
+        </activity>
+        <activity
+            android:name=".TestGrupo"
+            android:label="@string/title_activity_test_grupo" >
+        </activity>
+        <activity
+            android:name="cl.a2r.auditoria.Logs"
+            android:label="Auditoria" >
+        </activity>
+        <activity
+            android:name="cl.a2r.prediolibre.GruposPredioLibre"
+            android:label="@string/title_activity_grupos_predio_libre" >
+        </activity>
     </application>
 
 </manifest>

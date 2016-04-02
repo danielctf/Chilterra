@@ -134,6 +134,7 @@
             android:id="@+id/scrollView1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/rlMangas"
             android:layout_below="@+id/llCandidatos" >
 
             <LinearLayout
@@ -191,7 +192,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:text="Bang"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="#ababab"
@@ -221,84 +222,86 @@
 
                 </LinearLayout>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginTop="20dp" >
-
-                    <ImageButton
-                        android:id="@+id/confirmarAnimal"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginLeft="20dp"
-                        android:background="@drawable/circlebutton_state"
-                        android:src="@drawable/ic_action_done" />
-
-                    <ImageButton
-                        android:id="@+id/cerrarMangada"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="20dp"
-                        android:background="@drawable/circlebutton_lock"
-                        android:src="@drawable/ic_lock_outline_white_36dp" />
-
-                    <TextView
-                        android:id="@+id/tvTotalAnimales"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@+id/dot1"
-                        android:text="0"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="30sp" />
-
-                    <TextView
-                        android:id="@+id/dot1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@+id/tvMangada"
-                        android:text="•"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="30sp" />
-
-                    <TextView
-                        android:id="@+id/tvMangada"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
-                        android:text="0"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="30sp" />
-
-                    <TextView
-                        android:id="@+id/dot2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/tvMangada"
-                        android:text="•"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="30sp" />
-
-                    <TextView
-                        android:id="@+id/tvAnimalesMangada"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/dot2"
-                        android:text="0"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="30sp" />
-                </RelativeLayout>
-
             </LinearLayout>
 
         </ScrollView>
+
+        <RelativeLayout
+            android:id="@+id/rlMangas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp" >
+
+            <ImageButton
+                android:id="@+id/confirmarAnimal"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/circlebutton_state"
+                android:src="@drawable/ic_action_done" />
+
+            <ImageButton
+                android:id="@+id/cerrarMangada"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/circlebutton_lock"
+                android:src="@drawable/ic_lock_outline_white_36dp" />
+
+            <TextView
+                android:id="@+id/tvTotalAnimales"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/dot1"
+                android:text="0"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/dot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/tvMangada"
+                android:text="•"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/tvMangada"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="0"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/dot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/tvMangada"
+                android:text="•"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/tvAnimalesMangada"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/dot2"
+                android:text="0"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="30sp" />
+        </RelativeLayout>
 
         <ProgressBar
             android:id="@+id/loading"

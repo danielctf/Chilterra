@@ -1,6 +1,7 @@
 package cl.a2r.sip.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Ganado implements Serializable{
 
@@ -16,6 +17,7 @@ public class Ganado implements Serializable{
 	private String brucelosis;
 	private Integer tipoGanadoId;
 	private Integer estadoLecheId;
+	private Date fecha;
 	private String sincronizado;
 	
 	public Integer getId() {
@@ -120,6 +122,14 @@ public class Ganado implements Serializable{
 
 	public void setSincronizado(String sincronizado) {
 		this.sincronizado = sincronizado;
+	}
+
+	public Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
 	}
 	
 }

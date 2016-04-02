@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import cl.a2r.sip.model.Bang;
+import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.VRB51;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -105,6 +106,22 @@ public class RB51DAO {
 			+ " WHERE sincronizado = 'N' "
 			+ " AND fundoId = ? ";
 	
+	private static final String SQL_EXISTS_GAN_RB51_ANTERIOR = ""
+			+ "SELECT id, ganadoId "
+			+ " FROM rb51_anterior "
+			+ " WHERE ganadoId = ? ";
+	
+	private static final String SQL_INSERT_RB51_ANTERIOR = ""
+			+ "INSERT INTO rb51_anterior (ganadoId) "
+			+ " VALUES (?) ";
+	
+	private static final String SQL_DELETE_RB51_ANTERIOR = ""
+			+ "DELETE FROM rb51_anterior";
+	
+	private static final String SQL_SELECT_RB51_ANTERIOR = ""
+			+ "SELECT id, ganadoId "
+			+ " FROM rb51_anterior ";
+	
     public static void insertRB51(SqLiteTrx trx, List<VRB51> list) throws SQLException {
 
         SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_RB51);
@@ -158,7 +175,7 @@ public class RB51DAO {
         		rb.getBang().setId(c.getInt(c.getColumnIndex("bang_id")));	
         	}
         	if (!c.isNull(c.getColumnIndex("bang"))){
-        		rb.getBang().setBang(c.getString(c.getColumnIndex("bang")));	
+        		rb.getBang().setBang(c.getString(c.getColumnIndex("bang")));
         	}
         	rb.getMed().setId(c.getInt(c.getColumnIndex("med_control_id")));
         	rb.getMed().setSerie(c.getInt(c.getColumnIndex("serie")));
@@ -433,6 +450,54 @@ public class RB51DAO {
         	rb.setSincronizado(c.getString(c.getColumnIndex("sincronizado")));
         	
         	list.add(rb);
+            hayReg = c.moveToNext();
+        }
+
+        return list;
+    }
+    
+    public static void insertRB51Anterior(SqLiteTrx trx, List<Ganado> list) throws SQLException {
+
+        SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_RB51_ANTERIOR);
+        
+        for (Ganado g : list){
+        	statement.clearBindings();
+        	statement.bindLong(1, g.getId());
+        	statement.executeInsert();	
+        }
+    }
+    
+    public static boolean existsGanRB51Anterior(SqLiteTrx trx, Integer ganadoId) throws SQLException {
+        boolean exists = false;
+        boolean hayReg;
+        
+        String[] args = {Integer.toString(ganadoId)};
+        Cursor c = trx.getDB().rawQuery(SQL_EXISTS_GAN_RB51_ANTERIOR, args);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	exists = true;
+            hayReg = c.moveToNext();
+        }
+
+        return exists;
+    }
+    
+    public static void deleteGanRB51Anterior(SqLiteTrx trx) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_RB51_ANTERIOR);
+    	statement.clearBindings();
+    	statement.executeUpdateDelete();
+    }
+    
+    public static List selectRB51Anterior(SqLiteTrx trx) throws SQLException {
+        List list = new ArrayList();
+        boolean hayReg;
+        
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_RB51_ANTERIOR, null);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	Ganado g = new Ganado();
+        	g.setId(c.getInt(c.getColumnIndex("ganadoId")));
+        	list.add(g);
             hayReg = c.moveToNext();
         }
 

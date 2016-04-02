@@ -75,6 +75,9 @@ public class WSRB51 extends HttpServlet{
             	Integer usuarioId = (Integer) params.getParam("usuarioId");
             	RB51Service.insertaRB51(list, usuarioId);
             	retorno = i;
+            } else if (servicio.equals("traeGanadoRB51Anterior")){
+            	List list = RB51Service.traeGanadoRB51Anterior();
+            	retorno = list;
             } else {
                 retorno = new AppException("Servicio no válido.", null);
             }
