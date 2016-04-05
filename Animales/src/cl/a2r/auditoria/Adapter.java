@@ -10,6 +10,7 @@ import cl.a2r.animales.R;
 import cl.a2r.animales.R.layout;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.ShowAlert;
+import cl.a2r.custom.Signature;
 import cl.a2r.custom.Utility;
 import cl.a2r.salvatajes.SalvatajesV2;
 import cl.a2r.sip.model.Auditoria;
@@ -22,6 +23,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -96,7 +98,7 @@ public class Adapter extends BaseAdapter{
 					ShowAlert.askYesNo("Cerrar Procedimiento", "¿Está seguro que desea cerrar el procedimiento?", act, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							if (which == -2){
-								cerrarProcedimiento(position);
+								((GruposAuditoria) act).solicitarFirma(position);
 							}
 						}
 					});
@@ -105,45 +107,6 @@ public class Adapter extends BaseAdapter{
           
           return grid;
       }
-	  
-	  private void cerrarProcedimiento(final int position){
-			new AsyncTask<Void, Void, Void>(){
-				
-				String title, msg;
-				
-				protected void onPreExecute(){
-					loading.setVisibility(View.VISIBLE);
-					title = "";
-					msg = "";
-				}
-				
-				protected Void doInBackground(Void... arg0) {
-					try {
-						Integer id = auList.get(position).getId();
-						Auditoria auditoria = new Auditoria();
-						auditoria.setId(id);
-						WSAuditoriaCliente.cerrarAuditoria(auditoria, Login.user);
-						auList = WSAuditoriaCliente.traeAuditoria(Aplicaciones.predioWS.getId());
-					} catch (AppException e) {
-						title = "Error";
-						msg = e.getMessage();
-					}
-					return null;
-				}
-				
-				protected void onPostExecute(Void result){
-					loading.setVisibility(View.INVISIBLE);
-					if (!title.equals("Error")){
-						Adapter mAdapter = new Adapter(act, auList);
-						lvAuditoria.setAdapter(mAdapter);
-						Utility.setListViewHeightBasedOnChildren(lvAuditoria);
-					} else {
-						ShowAlert.showAlert(title, msg, act);
-					}
-				}
-				
-			}.execute();
-	  }
 	
 	  private void checkBtnState(int position){
 		  String estado = auList.get(position).getEstado();

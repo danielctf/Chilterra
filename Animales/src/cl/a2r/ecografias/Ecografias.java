@@ -184,6 +184,16 @@ public class Ecografias extends Activity implements View.OnClickListener, View.O
 			} else {
 				tvLogs.setText("");
 			}
+			
+			tvTotalAnimales.setText(Integer.toString(list.size()));
+			tvMangada.setText(Integer.toString(mangadaActual));
+			int animalesMangada = 0; 
+			for (Ecografia e : list){
+				if (e.getMangada().intValue() == mangadaActual.intValue()){
+					animalesMangada++;
+				}
+			}
+			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
@@ -236,21 +246,6 @@ public class Ecografias extends Activity implements View.OnClickListener, View.O
 			cerrarMangada.setEnabled(false);
 		} else {
 			cerrarMangada.setEnabled(true);
-		}
-		
-		try {
-			List<Ecografia> list = EcografiasServicio.traeEcografias();
-			tvTotalAnimales.setText(Integer.toString(list.size()));
-			tvMangada.setText(Integer.toString(mangadaActual));
-			int animalesMangada = 0; 
-			for (Ecografia e : list){
-				if (e.getMangada().intValue() == mangadaActual.intValue()){
-					animalesMangada++;
-				}
-			}
-			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), Ecografias.this);
 		}
 		
 	}

@@ -37,5 +37,9 @@
     <string name="title_activity_auditorias">Auditorias</string>
     <string name="title_activity_test_grupo">TestGrupo</string>
     <string name="title_activity_grupos_predio_libre">GruposPredioLibre</string>
+    <string name="title_activity_salida_v2">SalidaV2</string>
+    <string name="title_activity_signature">Signature</string>
+    <string name="external_dir">GetSignature</string>
+    <string name="title_activity_firma_digital">FirmaDigital</string>
 
 </resources>

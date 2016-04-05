@@ -379,7 +379,6 @@ public class Auditorias extends Activity implements View.OnClickListener{
 	
 	private void showDiio(Ganado gan){
 		this.gan = gan;
-
 		updateStatus();
 	}
 	

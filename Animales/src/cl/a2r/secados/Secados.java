@@ -266,6 +266,18 @@ public class Secados extends Activity implements View.OnClickListener {
 			} else {
 				tvEncontrados.setText("");
 			}
+			
+			//Contadores mangada
+			List<Secado> list2 = SecadosServicio.traeGanadoASincronizar();
+			tvTotalAnimales.setText(Integer.toString(list2.size()));
+			tvMangada.setText(Integer.toString(mangadaActual));
+			int animalesMangada = 0;
+			for (Secado s : list2){
+				if (s.getGan().getMangada() != null && s.getGan().getMangada().intValue() == mangadaActual.intValue()){
+					animalesMangada++;
+				}
+			}
+			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
@@ -300,21 +312,6 @@ public class Secados extends Activity implements View.OnClickListener {
 			cerrarMangada.setEnabled(false);
 		} else {
 			cerrarMangada.setEnabled(true);
-		}
-		
-		try {
-			List<Secado> list = SecadosServicio.traeGanadoASincronizar();
-			tvTotalAnimales.setText(Integer.toString(list.size()));
-			tvMangada.setText(Integer.toString(mangadaActual));
-			int animalesMangada = 0;
-			for (Secado s : list){
-				if (s.getGan().getMangada() != null && s.getGan().getMangada().intValue() == mangadaActual.intValue()){
-					animalesMangada++;
-				}
-			}
-			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
 	}
 

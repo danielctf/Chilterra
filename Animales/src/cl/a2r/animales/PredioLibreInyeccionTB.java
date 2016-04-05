@@ -138,6 +138,19 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			}
 			tvFaltantes.setText(Integer.toString(listFaltantes.size()));
 			tvEncontrados.setText(Integer.toString(listEncontrados.size()));
+			
+			//Contadores mangada
+			List<InyeccionTB> list2 = PredioLibreServicio.traeGanadoPL();
+			totalAnimales = list2.size();
+			animalesMangada = 0;
+			for (InyeccionTB tb : list2){
+				if (tb.getMangada().intValue() == mangadaActual){
+					animalesMangada++;
+				}
+			}
+			tvTotalAnimales.setText(Integer.toString(totalAnimales));
+			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
+			tvMangada.setText(Integer.toString(mangadaActual));
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), act);
 		}
@@ -156,24 +169,6 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 			confirmarAnimal.setEnabled(false);
 		}
 		
-		//Actualizar contadores de mangada
-		try {
-			List<InyeccionTB> list = PredioLibreServicio.traeGanadoPL();
-			totalAnimales = list.size();
-			animalesMangada = 0;
-			for (InyeccionTB tb : list){
-				if (tb.getMangada().intValue() == mangadaActual){
-					animalesMangada++;
-				}
-			}
-			tvTotalAnimales.setText(Integer.toString(totalAnimales));
-			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
-			tvMangada.setText(Integer.toString(mangadaActual));
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), act);
-		}
-		
-		//Actualiza boton cerrar mangada
 		if (isMangadaCerrada){
 			cerrarMangada.setEnabled(false);
 		} else {
@@ -257,7 +252,6 @@ public class PredioLibreInyeccionTB extends Fragment implements View.OnClickList
 							TrasladosServicio.insertaReubicacion(t);
 							TrasladosServicio.updateGanadoFundo(Aplicaciones.predioWS.getId(), gan.getId());
 							gan.setPredio(Aplicaciones.predioWS.getId());
-							mostrarCandidatos();
 							showDiio(gan);
 						} catch (AppException e) {
 							ShowAlert.showAlert("Error", e.getMessage(), act);

@@ -159,6 +159,19 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 			}
 			tvFaltantes.setText(Integer.toString(listFaltantes.size()));
 			tvEncontrados.setText(Integer.toString(listEncontrados.size()));
+			
+			//Contadores mangadas
+			List<Brucelosis> list2 = PredioLibreServicio.traeGanadoPLBrucelosis();
+			totalAnimales = list2.size();
+			animalesMangada = 0;
+			for (Brucelosis b : list2){
+				if (b.getGanado().getMangada().intValue() == mangadaActual){
+					animalesMangada++;
+				}
+			}
+			tvTotalAnimales.setText(Integer.toString(totalAnimales));
+			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
+			tvMangada.setText(Integer.toString(mangadaActual));
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), act);
 		}
@@ -181,24 +194,6 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 			confirmarAnimal.setEnabled(false);
 		}
 		
-		//Actualizar contadores de mangada
-		try {
-			List<Brucelosis> list = PredioLibreServicio.traeGanadoPLBrucelosis();
-			totalAnimales = list.size();
-			animalesMangada = 0;
-			for (Brucelosis b : list){
-				if (b.getGanado().getMangada().intValue() == mangadaActual){
-					animalesMangada++;
-				}
-			}
-			tvTotalAnimales.setText(Integer.toString(totalAnimales));
-			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
-			tvMangada.setText(Integer.toString(mangadaActual));
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), act);
-		}
-		
-		//Actualiza boton cerrar mangada
 		if (isMangadaCerrada){
 			cerrarMangada.setEnabled(false);
 		} else {
@@ -311,8 +306,6 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 							TrasladosServicio.insertaReubicacion(t);
 							TrasladosServicio.updateGanadoFundo(Aplicaciones.predioWS.getId(), gan.getId());
 							gan.setPredio(Aplicaciones.predioWS.getId());
-							//PredioLibreServicio.updateGanFundo(Aplicaciones.predioWS.getId(), gan.getId());
-							mostrarCandidatos();
 							showDiio(gan);
 						} catch (AppException e) {
 							ShowAlert.showAlert("Error", e.getMessage(), act);

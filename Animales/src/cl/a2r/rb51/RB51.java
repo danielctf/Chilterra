@@ -245,6 +245,24 @@ public class RB51 extends Activity implements View.OnClickListener{
 			} else {
 				tvFaltantes.setText("");
 			}
+			
+			//Contadores mangada
+			List<VRB51> list2 = RB51Servicio.traeNoSyncRB51();
+			List<VRB51> listaFiltrada = new ArrayList<VRB51>();
+			for (VRB51 rb : list2){
+				if (rb.getGan().getPredio().intValue() == Aplicaciones.predioWS.getId().intValue()){
+					listaFiltrada.add(rb);
+				}
+			}
+			tvTotalAnimales.setText(Integer.toString(listaFiltrada.size()));
+			tvMangada.setText(Integer.toString(mangadaActual));
+			int animalesMangada = 0;
+			for (VRB51 rb : listaFiltrada){
+				if (rb.getGan().getMangada().intValue() == mangadaActual.intValue()){
+					animalesMangada++;
+				}
+			}
+			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
@@ -491,27 +509,6 @@ public class RB51 extends Activity implements View.OnClickListener{
 			cerrarMangada.setEnabled(false);
 		} else {
 			cerrarMangada.setEnabled(true);
-		}
-		
-		try {
-			List<VRB51> list = RB51Servicio.traeNoSyncRB51();
-			List<VRB51> listaFiltrada = new ArrayList<VRB51>();
-			for (VRB51 rb : list){
-				if (rb.getGan().getPredio().intValue() == Aplicaciones.predioWS.getId().intValue()){
-					listaFiltrada.add(rb);
-				}
-			}
-			tvTotalAnimales.setText(Integer.toString(listaFiltrada.size()));
-			tvMangada.setText(Integer.toString(mangadaActual));
-			int animalesMangada = 0;
-			for (VRB51 rb : listaFiltrada){
-				if (rb.getGan().getMangada().intValue() == mangadaActual.intValue()){
-					animalesMangada++;
-				}
-			}
-			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
 	}
 	

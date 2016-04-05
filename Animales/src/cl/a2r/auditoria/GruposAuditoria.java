@@ -9,6 +9,7 @@ import cl.a2r.common.AppException;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
+import cl.a2r.custom.Signature;
 import cl.a2r.custom.Utility;
 import cl.a2r.sip.model.Auditoria;
 import cl.a2r.sip.model.Ganado;
@@ -44,6 +45,7 @@ public class GruposAuditoria extends Activity implements View.OnClickListener, L
 	private ImageButton goBack, addAuditoria;
 	private ProgressBar loading;
 	private ListView lvAuditoria;
+	private List<Auditoria> auList;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -76,7 +78,6 @@ public class GruposAuditoria extends Activity implements View.OnClickListener, L
 		new AsyncTask<Void, Void, Void>(){
 			
 			String title, msg;
-			List<Auditoria> auList;
 			
 			protected void onPreExecute(){
 				loading.setVisibility(View.VISIBLE);
@@ -259,6 +260,66 @@ public class GruposAuditoria extends Activity implements View.OnClickListener, L
 		i.putExtra("instancia", instancia);
 		startActivity(i);
 	}
+	
+	public void solicitarFirma(Integer position){
+		Intent intent = new Intent(this, Signature.class);
+		intent.putExtra("position", position);
+		startActivityForResult(intent, 1);
+	}
+	
+	private void completarProcedimiento(String strFirma, final Integer position){
+		System.out.println("str: "+strFirma);
+		System.out.println("pos:"+position);
+		new AsyncTask<Void, Void, Void>(){
+			
+			String title, msg;
+			
+			protected void onPreExecute(){
+				loading.setVisibility(View.VISIBLE);
+				title = "";
+				msg = "";
+			}
+			
+			protected Void doInBackground(Void... arg0) {
+				try {
+					Integer id = auList.get(position).getId();
+					Auditoria auditoria = new Auditoria();
+					auditoria.setId(id);
+					WSAuditoriaCliente.cerrarAuditoria(auditoria, Login.user);
+					auList = WSAuditoriaCliente.traeAuditoria(Aplicaciones.predioWS.getId());
+				} catch (AppException e) {
+					title = "Error";
+					msg = e.getMessage();
+				}
+				return null;
+			}
+			
+			protected void onPostExecute(Void result){
+				loading.setVisibility(View.INVISIBLE);
+				if (!title.equals("Error")){
+					Adapter mAdapter = new Adapter(GruposAuditoria.this, auList);
+					lvAuditoria.setAdapter(mAdapter);
+					Utility.setListViewHeightBasedOnChildren(lvAuditoria);
+				} else {
+					ShowAlert.showAlert(title, msg, GruposAuditoria.this);
+				}
+			}
+			
+		}.execute();
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        switch(requestCode) {
+        case 1:
+            if (resultCode == RESULT_OK) {
+                Bundle bundle = data.getExtras();
+                String strFirma = bundle.getString("strFirma");
+                Integer position = bundle.getInt("position");
+                completarProcedimiento(strFirma, position);
+            }
+            break;
+        }
+    }
 	
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		int id = arg0.getId();
