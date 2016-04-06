@@ -12,6 +12,7 @@ import cl.a2r.animales.PredioLibreLobby;
 import cl.a2r.animales.Salvatajes;
 import cl.a2r.animales.Traslados;
 import cl.a2r.auditoria.GruposAuditoria;
+import cl.a2r.busquedas.Busquedas;
 import cl.a2r.common.AppException;
 import cl.a2r.ecografias.Ecografias;
 import cl.a2r.rb51.RB51;
@@ -74,6 +75,11 @@ public class AppLauncher {
 		case 16:
 			launchApp = GruposAuditoria.class;
 			hasLogAccess = true;
+			break;
+		case 17:
+			launchApp = Busquedas.class;
+			hasLogAccess = true;
+			break;
 		}
 	}
 	

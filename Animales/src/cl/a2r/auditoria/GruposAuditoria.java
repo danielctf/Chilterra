@@ -46,6 +46,7 @@ public class GruposAuditoria extends Activity implements View.OnClickListener, L
 	private ProgressBar loading;
 	private ListView lvAuditoria;
 	private List<Auditoria> auList;
+	private Integer position;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -131,7 +132,6 @@ public class GruposAuditoria extends Activity implements View.OnClickListener, L
 		new AsyncTask<Void, Void, Void>(){
 			
 			String title, msg;
-			List<Auditoria> auList;
 			
 			protected void onPreExecute(){
 				loading.setVisibility(View.VISIBLE);
@@ -172,7 +172,6 @@ public class GruposAuditoria extends Activity implements View.OnClickListener, L
 		new AsyncTask<Void, Void, Void>(){
 			
 			String title, msg;
-			List<Auditoria> auList;
 			
 			protected void onPreExecute(){
 				loading.setVisibility(View.VISIBLE);
@@ -262,14 +261,12 @@ public class GruposAuditoria extends Activity implements View.OnClickListener, L
 	}
 	
 	public void solicitarFirma(Integer position){
+		this.position = position;
 		Intent intent = new Intent(this, Signature.class);
-		intent.putExtra("position", position);
 		startActivityForResult(intent, 1);
 	}
 	
-	private void completarProcedimiento(String strFirma, final Integer position){
-		System.out.println("str: "+strFirma);
-		System.out.println("pos:"+position);
+	private void completarProcedimiento(final byte[] firma){
 		new AsyncTask<Void, Void, Void>(){
 			
 			String title, msg;
@@ -285,6 +282,7 @@ public class GruposAuditoria extends Activity implements View.OnClickListener, L
 					Integer id = auList.get(position).getId();
 					Auditoria auditoria = new Auditoria();
 					auditoria.setId(id);
+					auditoria.setFirma(firma);
 					WSAuditoriaCliente.cerrarAuditoria(auditoria, Login.user);
 					auList = WSAuditoriaCliente.traeAuditoria(Aplicaciones.predioWS.getId());
 				} catch (AppException e) {
@@ -313,9 +311,8 @@ public class GruposAuditoria extends Activity implements View.OnClickListener, L
         case 1:
             if (resultCode == RESULT_OK) {
                 Bundle bundle = data.getExtras();
-                String strFirma = bundle.getString("strFirma");
-                Integer position = bundle.getInt("position");
-                completarProcedimiento(strFirma, position);
+                byte[] firma = bundle.getByteArray("firma");
+                completarProcedimiento(firma);
             }
             break;
         }

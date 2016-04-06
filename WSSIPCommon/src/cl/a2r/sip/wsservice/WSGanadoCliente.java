@@ -87,4 +87,19 @@ public class WSGanadoCliente {
 	    	   throw new AppException("Error de conexión a Internet", null);
 	       }
 	   }
+	   
+	   public static List traeGanadoBusqueda() throws AppException {
+
+	       ParamServlet params = new ParamServlet();
+	       params.add("servicio", "traeGanadoBusqueda" );
+
+	       Object obj = ServiceWS.invocaWS("WSGanado", params );
+	       if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	           throw (AppException) obj;
+	       } else if (obj == null){
+	    	   throw new AppException("Error de conexión a Internet", null);
+	       } else {
+	           return (List) obj;
+	       }
+	   }
 }

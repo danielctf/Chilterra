@@ -16,8 +16,11 @@ public class Ganado implements Serializable{
 	private String observacion;
 	private String brucelosis;
 	private Integer tipoGanadoId;
+	private Integer venta;
 	private Integer estadoLecheId;
 	private Date fecha;
+	private Integer flag;
+	private Integer sqlId;
 	private String sincronizado;
 	
 	public Integer getId() {
@@ -130,6 +133,30 @@ public class Ganado implements Serializable{
 
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
+	}
+
+	public Integer getFlag() {
+		return flag;
+	}
+
+	public void setFlag(Integer flag) {
+		this.flag = flag;
+	}
+
+	public Integer getSqlId() {
+		return sqlId;
+	}
+
+	public void setSqlId(Integer sqlId) {
+		this.sqlId = sqlId;
+	}
+
+	public Integer getVenta() {
+		return venta;
+	}
+
+	public void setVenta(Integer venta) {
+		this.venta = venta;
 	}
 	
 }

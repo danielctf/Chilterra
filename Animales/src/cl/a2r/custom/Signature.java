@@ -46,7 +46,7 @@ public class Signature extends Activity {
     View mView;
     File mypath;
     ImageView iv1;
-    String strFirma;
+    byte[] firma;
 
     private String uniqueId;
 
@@ -98,7 +98,7 @@ public class Signature extends Activity {
                     mView.setDrawingCacheEnabled(true);
                     mSignature.save(mView);
                     Bundle b = new Bundle();
-                    b.putString("strFirma", strFirma);
+                    b.putByteArray("firma", firma);
                     Intent intent = new Intent();
                     intent.putExtras(b);
                     setResult(RESULT_OK,intent);   
@@ -116,7 +116,7 @@ public class Signature extends Activity {
                 b.putString("status", "cancel");
                 Intent intent = new Intent();
                 intent.putExtras(b);
-                setResult(RESULT_OK,intent);  
+                setResult(RESULT_CANCELED,intent);
                 finish();
             }
         });
@@ -244,8 +244,9 @@ public class Signature extends Activity {
                 
                 ByteArrayOutputStream baos = new  ByteArrayOutputStream();
                 mBitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
-                byte [] b = baos.toByteArray();
-                strFirma = Base64.encodeToString(b, Base64.DEFAULT);
+                firma = baos.toByteArray();
+                mBitmap = null;
+                //strFirma = Base64.encodeToString(b, Base64.DEFAULT);
 //                String url = Images.Media.insertImage(getContentResolver(), mBitmap, "title", null);
 //                Log.v("log_tag","url: " + url);
                 //In case you want to delete the file

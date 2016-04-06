@@ -4,6 +4,7 @@ import java.util.List;
 
 import cl.a2r.animales.R;
 import cl.a2r.auditoria.Auditorias;
+import cl.a2r.busquedas.Busquedas;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
@@ -206,6 +207,12 @@ public class Candidatos extends Activity implements View.OnClickListener, ListVi
 			} catch (AppException e) {
 				ShowAlert.showAlert("Error", e.getMessage(), this);
 			}
+			break;
+		case "busquedasFaltantes":
+			tvApp.setText("Candidatos Faltantes");
+			ArrayAdapter<Ganado> mAdapter9 = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, Busquedas.faltantes);
+			lvCandidatos.setAdapter(mAdapter9);
+			break;
 		}
 		
 	}

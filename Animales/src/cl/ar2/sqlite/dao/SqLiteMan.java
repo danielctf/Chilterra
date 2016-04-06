@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="animales";
-    private static final int version = 11;
+    private static final int version = 13;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
@@ -148,6 +148,14 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " fecha TEXT, "
         	+ " sincronizado TEXT )");
         
+        db.execSQL( ""
+        	+ "CREATE TABLE busqueda ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " ganadoId INTEGER, "
+        	+ " ganadoDiio INTEGER,"
+        	+ " flag INTEGER,"
+        	+ " venta INTEGER )");
+        
     }
 
     @Override
@@ -156,6 +164,12 @@ public class SqLiteMan extends SQLiteOpenHelper {
         // Las actualizaciones debieran borrar la tabla anterior y crear las nuevas
         // Siempre debieran estar todos los pasos de cambios desde la version 1 
         
+    	if (oldVersion == 12){
+    		db.execSQL("DROP TABLE IF EXISTS busqueda");
+    		version13(db);
+    		return;
+    	}
+    	
     	db.execSQL("DROP TABLE IF EXISTS diio");
     	db.execSQL("DROP TABLE IF EXISTS predio_libre");
     	db.execSQL("DROP TABLE IF EXISTS predio_libre_brucelosis");
@@ -169,9 +183,20 @@ public class SqLiteMan extends SQLiteOpenHelper {
     	db.execSQL("DROP TABLE IF EXISTS rb51_anterior");
     	db.execSQL("DROP TABLE IF EXISTS bang");
     	db.execSQL("DROP TABLE IF EXISTS auditoria");
+    	db.execSQL("DROP TABLE IF EXISTS busqueda");
     	
     	onCreate(db);
         
+    }
+    
+    private void version13(SQLiteDatabase db){
+        db.execSQL( ""
+        	+ "CREATE TABLE busqueda ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " ganadoId INTEGER, "
+        	+ " ganadoDiio INTEGER,"
+        	+ " flag INTEGER,"
+        	+ " venta INTEGER )");
     }
 
 }

@@ -20,7 +20,7 @@ public class AuditoriaDAO {
             + "select * from sip.ws_auditoria_select_auditorias(?)";
     
     private static final String SQL_CERRAR_AUDITORIA = ""
-    		+ "select * from sip.ws_auditoria_cerrar_auditoria(?, ?)";
+    		+ "select * from sip.ws_auditoria_cerrar_auditoria(?, ?, ?)";
     
     private static final String SQL_BORRAR_AUDITORIA = ""
     		+ "select * from sip.ws_auditoria_eliminar_auditoria(?, ?)";
@@ -78,6 +78,7 @@ public class AuditoriaDAO {
         pst = conn.prepareStatement( SQL_CERRAR_AUDITORIA );
         pst.setObject(1, usuarioId);
         pst.setObject(2, a.getId());
+        pst.setObject(3, a.getFirma());
         pst.executeQuery();
         pst.close();
     }

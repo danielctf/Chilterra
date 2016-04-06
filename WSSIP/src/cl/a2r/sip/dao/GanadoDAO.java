@@ -22,6 +22,9 @@ public class GanadoDAO {
     
     private static final String SQL_SELECT_DIIO_BASTON = ""
     		+ "select * from sip.ws_select_diio_baston(?)";
+    
+    private static final String SQL_SELECT_BUSQUEDA = ""
+    		+ "select * from sip.ws_busqueda_select_busqueda()";
 	
     public static List selectGanado(Transaccion trx, Integer diio) throws SQLException {
     	List list = new ArrayList();
@@ -115,6 +118,31 @@ public class GanadoDAO {
         pst.close();
 
         return diio;
+    }
+    
+    public static List selectGanadoBusqueda(Transaccion trx) throws SQLException {
+    	List list = new ArrayList();
+        
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_BUSQUEDA );
+
+        res = pst.executeQuery();
+        while (res.next() ){
+        	Ganado g = new Ganado();
+            g.setId(res.getInt("g_ganado_id"));
+            g.setDiio(res.getInt("diio"));
+            g.setFlag(res.getInt("flag"));
+            g.setVenta(res.getInt("venta"));
+            list.add(g);
+        }
+        res.close();
+        pst.close();
+
+        return list;
     }
     
 }

@@ -70,6 +70,9 @@ public class WSGanado extends HttpServlet{
             	}
             	Integer i = 1;
             	retorno = i;
+            } else if (servicio.equals("traeGanadoBusqueda")){
+            	List list = GanadoService.traeGanadoBusqueda();
+            	retorno = list;
             } else {
         		retorno = new AppException("Servicio no válido.", null);
             }

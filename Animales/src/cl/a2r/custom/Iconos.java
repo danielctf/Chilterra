@@ -53,6 +53,9 @@ public class Iconos {
 		case 16:
 			icon = R.drawable.iconoinventariorotativo;
 			break;
+		case 17:
+			icon = R.drawable.ic_iconobusquedaxprocedimiento;
+			break;
 		}
 		return icon;
 	}

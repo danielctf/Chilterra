@@ -68,9 +68,10 @@ public class Test {
     	
     	try {
 
-    		Auditoria a = WSAuditoriaCliente.traeGanado(131424);
-    		
-    		System.out.println(a.getId());
+    		List<Ganado> list = WSGanadoCliente.traeGanadoBusqueda();
+    		for (Ganado g : list){
+    			System.out.println(g.getId());
+    		}
     		
 		} catch (AppException e) {
 			// TODO Auto-generated catch block

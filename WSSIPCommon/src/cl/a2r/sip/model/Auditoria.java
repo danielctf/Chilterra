@@ -13,6 +13,7 @@ public class Auditoria implements Serializable{
 	private Date fecha_inicio;
 	private Date fecha_termino;
 	private String estado;
+	private byte[] firma;
 	private List<Ganado> ganList;
 	
 	public Auditoria(){
@@ -65,6 +66,14 @@ public class Auditoria implements Serializable{
 	
 	public void setEstado(String estado) {
 		this.estado = estado;
+	}
+
+	public byte[] getFirma() {
+		return firma;
+	}
+
+	public void setFirma(byte[] firma) {
+		this.firma = firma;
 	}
 	
 }

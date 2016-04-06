@@ -103,4 +103,28 @@ public class GanadoService {
         }
         return diio;
     }
+    
+    public static List traeGanadoBusqueda() throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = GanadoDAO.selectGanadoBusqueda(trx);
+            } catch (SQLException ex) {
+                AppLog.logSevere("GanadoService.traeGanado()", ex);
+                if (ex.getSQLState().equals("SIP01")){
+                	throw new AppException(ex.getMessage(), null);
+                } else {
+                	throw new AppException("No se pudo recuperar los registros.", null);
+                }
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
 }
