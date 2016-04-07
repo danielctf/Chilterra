@@ -3,10 +3,12 @@ package cl.a2r.secados;
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.a2r.animales.Aplicaciones;
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sip.model.Secado;
+import cl.a2r.sip.model.VRB51;
 import cl.ar2.sqlite.servicio.SecadosServicio;
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -60,7 +62,7 @@ public class Logs extends Activity implements View.OnClickListener, ListView.OnI
 	private void cargarListeners(){
 		spinnerMangada.setOnItemSelectedListener(new OnItemSelectedListener(){
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				mangadaActual = arg2 + 1;
+				mangadaActual = arg2;
 				getLogs();
 			}
 			public void onNothingSelected(AdapterView<?> arg0) {}
@@ -68,21 +70,24 @@ public class Logs extends Activity implements View.OnClickListener, ListView.OnI
 	}
 	
 	private void getMangadas(){
-		String[] items = new String[mangadaActual];
+		String[] items = new String[mangadaActual + 1];
+		items[0] = "Sincronizados";
 		for (int i = 0; i < mangadaActual; i++){
-			items[i] = "Mangada " + Integer.toString(i+1); 
+			items[i + 1] = "Mangada " + Integer.toString(i + 1);
 		}
 		ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
 		spinnerMangada.setAdapter(mAdapter);
-		spinnerMangada.setSelection(mangadaActual.intValue() - 1);
+		spinnerMangada.setSelection(mangadaActual.intValue());
 	}
 	
 	private void getLogs(){
 		try {
-			List<Secado> list = SecadosServicio.traeGanadoASincronizar();
+			List<Secado> list = SecadosServicio.traeGanadoSecado(Aplicaciones.predioWS.getId());
 			List<Secado> toShow = new ArrayList<Secado>();
 			for (Secado s : list){
-				if (s.getGan().getMangada().intValue() == mangadaActual.intValue()){
+				if (spinnerMangada.getSelectedItemPosition() == 0 && s.getGan().getMangada() == null){
+					toShow.add(s);
+				} else if (s.getGan().getMangada() != null && s.getGan().getMangada().intValue() == mangadaActual.intValue()){
 					toShow.add(s);
 				}
 			}
@@ -112,8 +117,13 @@ public class Logs extends Activity implements View.OnClickListener, ListView.OnI
 				public void onClick(DialogInterface dialog, int which) {
 					if (which == -2){
 						try {
-							Integer id = ((Secado) arg0.getItemAtPosition(arg2)).getId();
-							SecadosServicio.deleteGanadoSecado(id);
+							String sincronizado = ((Secado) arg0.getItemAtPosition(arg2)).getSincronizado();
+							if (sincronizado.equals("N")){
+								Integer id = ((Secado) arg0.getItemAtPosition(arg2)).getId();
+								SecadosServicio.deleteGanadoSecado(id);
+							} else {
+								ShowAlert.showAlert("Error", "No puede eliminar registros sincronizados", Logs.this);
+							}
 						} catch (AppException e) {
 							ShowAlert.showAlert("Error", e.getMessage(), Logs.this);
 						} finally {

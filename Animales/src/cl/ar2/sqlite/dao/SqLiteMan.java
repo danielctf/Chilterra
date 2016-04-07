@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="animales";
-    private static final int version = 13;
+    private static final int version = 14;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
@@ -110,6 +110,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " mangada INTEGER, "
         	+ " med_control_id INTEGER, "
         	+ " serie TEXT, "
+        	+ " venta INTEGER, "
         	+ " sincronizado TEXT )");
         
         db.execSQL( ""
@@ -163,12 +164,6 @@ public class SqLiteMan extends SQLiteOpenHelper {
         // Aqui dependiendo de los numeros de version se deben crear o modificar las nuevas tablas
         // Las actualizaciones debieran borrar la tabla anterior y crear las nuevas
         // Siempre debieran estar todos los pasos de cambios desde la version 1 
-        
-    	if (oldVersion == 12){
-    		db.execSQL("DROP TABLE IF EXISTS busqueda");
-    		version13(db);
-    		return;
-    	}
     	
     	db.execSQL("DROP TABLE IF EXISTS diio");
     	db.execSQL("DROP TABLE IF EXISTS predio_libre");
@@ -187,16 +182,6 @@ public class SqLiteMan extends SQLiteOpenHelper {
     	
     	onCreate(db);
         
-    }
-    
-    private void version13(SQLiteDatabase db){
-        db.execSQL( ""
-        	+ "CREATE TABLE busqueda ( "
-        	+ " id INTEGER PRIMARY KEY, "
-        	+ " ganadoId INTEGER, "
-        	+ " ganadoDiio INTEGER,"
-        	+ " flag INTEGER,"
-        	+ " venta INTEGER )");
     }
 
 }

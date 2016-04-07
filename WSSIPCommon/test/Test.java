@@ -29,6 +29,7 @@ import cl.a2r.sip.model.Persona;
 import cl.a2r.sip.model.Predio;
 import cl.a2r.sip.model.PredioLibre;
 import cl.a2r.sip.model.Raza;
+import cl.a2r.sip.model.Secado;
 import cl.a2r.sip.model.TipoGanado;
 import cl.a2r.sip.model.Transportista;
 import cl.a2r.sip.model.Traslado;
@@ -67,11 +68,8 @@ public class Test {
     public static void main(String[] arg) {
     	
     	try {
-
-    		List<Ganado> list = WSGanadoCliente.traeGanadoBusqueda();
-    		for (Ganado g : list){
-    			System.out.println(g.getId());
-    		}
+    		List<Ganado> faltantes = WSSecadosCliente.traeGanado();
+    		System.out.println(faltantes.size());
     		
 		} catch (AppException e) {
 			// TODO Auto-generated catch block

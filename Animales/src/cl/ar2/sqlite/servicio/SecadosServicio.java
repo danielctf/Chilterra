@@ -35,7 +35,7 @@ public class SecadosServicio {
         }
     }
     
-    public static void insertaSecado(Secado s) throws AppException {
+    public static void insertaSecado(List<Secado> secList) throws AppException {
         SqLiteTrx trx;
 
         try {
@@ -46,7 +46,7 @@ public class SecadosServicio {
 
         if (trx != null) {
             try {
-                SecadosDAO.insertSecado(trx, s);
+                SecadosDAO.insertSecado(trx, secList);
                 trx.commit();
             } catch ( SQLException ex ) {
                 trx.rollback();
@@ -217,6 +217,52 @@ public class SecadosServicio {
         }
 
         return exists;
+    }
+    
+    public static void deleteSynced() throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                SecadosDAO.deleteSynced(trx);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
+    public static List traeGanadoSecado(Integer fundoId) throws AppException {
+        List list = new ArrayList();
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+            	list = SecadosDAO.selectGanadoSecado(trx, fundoId);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return list;
     }
     
 }

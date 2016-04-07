@@ -61,6 +61,9 @@ public class WSSecados extends HttpServlet{
             } else if (servicio.equals("traeAllDiio")){
             	List list = SecadosService.traeAllDiio();
             	retorno = list;
+            } else if (servicio.equals("traeGanado")){
+            	List list = SecadosService.traeGanado();
+            	retorno = list;
             } else {
                 retorno = new AppException("Servicio no válido.", null);
             }

@@ -48,12 +48,34 @@ public class Secado implements Serializable{
 	}
 
 	public String toString(){
-		if (this.med.getId() != null){
+		if (this.med.getId() != null && this.gan.getVenta() != null){
+			if (this.gan.getVenta().intValue() == 1){
+				return "DIIO: " + Integer.toString(this.gan.getDiio()) 
+						+ "  Serie: " + Integer.toString(this.med.getSerie())
+						+ "  Venta: Si";
+			} else {
+				return "DIIO: " + Integer.toString(this.gan.getDiio()) 
+						+ "  Serie: " + Integer.toString(this.med.getSerie())
+						+ "  Venta: No";
+			}
+		} else if (this.med.getId() != null){
 			return "DIIO: " + Integer.toString(this.gan.getDiio()) 
-					+ "   Serie: " + Integer.toString(this.med.getSerie());
+					+ "  Serie: " + Integer.toString(this.med.getSerie())
+					+ "  Venta:";
+		} else if (this.gan.getVenta() != null){
+			if (this.gan.getVenta().intValue() == 1){
+				return "DIIO: " + Integer.toString(this.gan.getDiio()) 
+						+ "  Serie:"
+						+ "  Venta: Si";
+			} else {
+				return "DIIO: " + Integer.toString(this.gan.getDiio()) 
+						+ "  Serie:"
+						+ "  Venta: No";
+			}
 		} else {
 			return "DIIO: " + Integer.toString(this.gan.getDiio()) 
-					+ "   Serie: ";
+					+ "  Serie:"
+					+ "  Venta:";
 		}
 	}
 

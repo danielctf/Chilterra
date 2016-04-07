@@ -27,6 +27,9 @@ public class SecadosDAO {
     private static final String SQL_SELECT_ALL_DIIO = ""
             + "select * from sip.ws_select_all_diio()";
     
+    private static final String SQL_SELECT_ENCONTRADOS = ""
+            + "select * from sip.ws_secado_select_encontrados()";
+    
     public static List selectMedicamento(Transaccion trx, Integer appId) throws SQLException {
         List list = new ArrayList();
 
@@ -112,6 +115,34 @@ public class SecadosDAO {
         	g.setPredio(res.getInt("g_fundo_id"));
         	g.setEstadoLecheId(res.getInt("g_estado_leche_id"));
             list.add(g);
+        }
+        res.close();
+        pst.close();
+
+        return list;
+    }
+    
+    public static List selectGanado(Transaccion trx) throws SQLException {
+        List list = new ArrayList();
+
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_ENCONTRADOS );
+
+        res = pst.executeQuery();
+        while (res.next() ){
+        	Secado s = new Secado();
+        	s.getGan().setId(res.getInt("g_ganado_id"));
+        	s.getGan().setPredio(res.getInt("g_fundo_id"));
+        	s.getGan().setDiio(res.getInt("diio"));
+        	s.getMed().setId(res.getInt("g_medicamento_control_id"));
+        	s.getMed().setSerie(res.getInt("serie"));
+        	s.getGan().setVenta(res.getInt("venta"));
+        	s.setSincronizado("Y");
+            list.add(s);
         }
         res.close();
         pst.close();

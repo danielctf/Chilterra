@@ -137,6 +137,7 @@ public class GanadoDAO {
             g.setDiio(res.getInt("diio"));
             g.setFlag(res.getInt("flag"));
             g.setVenta(res.getInt("venta"));
+            g.setPredio(res.getInt("g_fundo_id"));
             list.add(g);
         }
         res.close();

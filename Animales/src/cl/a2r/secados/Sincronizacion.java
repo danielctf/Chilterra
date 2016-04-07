@@ -59,6 +59,10 @@ public class Sincronizacion extends AsyncTask<Void, Void, Void>{
 			SecadosServicio.deleteAllDiio();
 			SecadosServicio.insertaDiio(ganList);
 			
+			List<Secado> list = WSSecadosCliente.traeGanado();
+			SecadosServicio.deleteSynced();
+			SecadosServicio.insertaSecado(list);
+			
 			title = "Sincronización";
 			msg = "Sincronización Completa";
 		} catch (AppException e) {

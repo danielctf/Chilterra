@@ -71,4 +71,19 @@ public class WSSecadosCliente {
 	       }
 	}
 	
+	public static List traeGanado() throws AppException {
+
+		   ParamServlet params = new ParamServlet();
+		   params.add("servicio", "traeGanado" );
+
+	       Object obj = ServiceWS.invocaWS("WSSecados", params );
+	       if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	           throw (AppException) obj;
+	       } else if (obj == null){
+	    	   throw new AppException("Error de conexión a Internet", null);
+	       } else {
+	           return (List) obj;
+	       }
+	}
+	
 }

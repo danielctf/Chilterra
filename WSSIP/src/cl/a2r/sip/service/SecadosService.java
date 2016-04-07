@@ -92,4 +92,23 @@ public class SecadosService {
         return list;
     }
     
+    public static List traeGanado() throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = SecadosDAO.selectGanado(trx);
+            } catch (SQLException ex) {
+                AppLog.logSevere("SecadosService.traeGanado()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
 }
