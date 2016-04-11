@@ -1,5 +1,6 @@
 package cl.a2r.animales;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cl.a2r.animales.R;
@@ -10,13 +11,16 @@ import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.rb51.RB51;
+import cl.a2r.secados.Secados;
 import cl.a2r.sip.model.Areteo;
 import cl.a2r.sip.model.Auditoria;
 import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.CollarParto;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.GanadoBusqueda;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.Movimiento;
+import cl.a2r.sip.model.Secado;
 import cl.a2r.sip.wsservice.WSAreteosCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
 import cl.a2r.sip.wsservice.WSTrasladosCliente;
@@ -213,8 +217,18 @@ public class Candidatos extends Activity implements View.OnClickListener, ListVi
 			ArrayAdapter<Ganado> mAdapter9 = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, Busquedas.faltantes);
 			lvCandidatos.setAdapter(mAdapter9);
 			break;
-		}
-		
+		case "secadosFaltantes":
+			tvApp.setText("Candidatos Faltantes");
+			List<GanadoBusqueda> gbList = new ArrayList<GanadoBusqueda>();
+			for (Ganado g : Secados.faltantesActual){
+				GanadoBusqueda gb = new GanadoBusqueda();
+				gb.setGan(g);
+				gbList.add(gb);
+			}
+			ArrayAdapter<GanadoBusqueda> mAdapter10 = new ArrayAdapter<GanadoBusqueda>(this, android.R.layout.simple_list_item_1, gbList);
+			lvCandidatos.setAdapter(mAdapter10);
+			break;
+		}		
 	}
 	
 	public void onClick(View arg0) {

@@ -6,7 +6,6 @@ public class GanadoBusqueda implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private Ganado gan;
-	private Integer flag;
 	
 	public GanadoBusqueda(){
 		gan = new Ganado();
@@ -18,14 +17,6 @@ public class GanadoBusqueda implements Serializable{
 
 	public void setGan(Ganado gan) {
 		this.gan = gan;
-	}
-
-	public Integer getFlag() {
-		return flag;
-	}
-
-	public void setFlag(Integer flag) {
-		this.flag = flag;
 	}
 	
 	public String toString(){

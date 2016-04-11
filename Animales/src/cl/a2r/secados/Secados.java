@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cl.a2r.animales.Aplicaciones;
+import cl.a2r.animales.Candidatos;
 import cl.a2r.animales.Login;
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
@@ -56,6 +57,7 @@ public class Secados extends Activity implements View.OnClickListener {
 	private List<MedicamentoControl> medList;
 	private List<EstadoLeche> estList;
 	private List<Ganado> faltantesFiltrado, faltantes;
+	public static List<Ganado> faltantesActual;
 	private Integer mangadaActual;
 	private boolean isMangadaCerrada;
 	private ArrayAdapter<EstadoLeche> spEstadoAdapter;
@@ -69,7 +71,7 @@ public class Secados extends Activity implements View.OnClickListener {
 		
 		cargarInterfaz();
 		traeDatosWS();
-
+		
 	}
 	
 	private void cargarInterfaz(){
@@ -108,6 +110,7 @@ public class Secados extends Activity implements View.OnClickListener {
 
 	public void onClick(View v) {
 		int id = v.getId();
+		Intent i;
 		switch (id){
 		case R.id.goBack:
 			ShowAlert.askYesNo("Advertencia", "¿Seguro que desea salir de la aplicación?", this, new DialogInterface.OnClickListener() {
@@ -118,8 +121,13 @@ public class Secados extends Activity implements View.OnClickListener {
 				}
 			});
 			break;
+		case R.id.llFaltantes:
+			i = new Intent(this, Candidatos.class);
+			i.putExtra("stance", "secadosFaltantes");
+			startActivity(i);
+			break;
 		case R.id.llEncontrados:
-			Intent i = new Intent(this, Logs.class);
+			i = new Intent(this, Logs.class);
 			i.putExtra("mangadaActual", mangadaActual);
 			startActivity(i);
 			break;
@@ -288,7 +296,7 @@ public class Secados extends Activity implements View.OnClickListener {
 		try {
 			List<Secado> list = SecadosServicio.traeGanadoSecado(Aplicaciones.predioWS.getId());
 			//faltantes
-			List<Ganado> filter = new ArrayList<Ganado>();
+			faltantesActual = new ArrayList<Ganado>();
 			for (Ganado g : faltantesFiltrado){
 				boolean exists = false;
 				for (Secado s : list){
@@ -298,10 +306,10 @@ public class Secados extends Activity implements View.OnClickListener {
 					}
 				}
 				if (!exists){
-					filter.add(g);
+					faltantesActual.add(g);
 				}
 			}
-			tvFaltantes.setText(Integer.toString(filter.size()));
+			tvFaltantes.setText(Integer.toString(faltantesActual.size()));
 			
 			//encontrados
 			tvEncontrados.setText(Integer.toString(list.size()));
@@ -351,6 +359,7 @@ public class Secados extends Activity implements View.OnClickListener {
 	}
 
 	private void clearScreen(){
+		spMedicamento.setSelection(0);
 		tvCandidato.setText("");
 		gan = new Ganado();
 		resetCalculadora();
