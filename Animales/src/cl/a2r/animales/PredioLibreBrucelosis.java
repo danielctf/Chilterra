@@ -244,6 +244,10 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
             if (resultCode == Activity.RESULT_OK) {
                 // Handle successful scan
                 String contents = intent.getStringExtra("SCAN_RESULT");
+                if (contents.charAt(0) != '1'){
+                	ShowAlert.showAlert("Error", "Código de barra inválido", act);
+                	return;
+                }
                 bru.setCodBarra(contents);
                 tvCodBarra.setText(contents);
             }

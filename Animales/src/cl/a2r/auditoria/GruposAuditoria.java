@@ -283,6 +283,7 @@ public class GruposAuditoria extends Activity implements View.OnClickListener, L
 					Auditoria auditoria = new Auditoria();
 					auditoria.setId(id);
 					auditoria.setFirma(firma);
+					auditoria.setFundoId(Aplicaciones.predioWS.getId());
 					WSAuditoriaCliente.cerrarAuditoria(auditoria, Login.user);
 					auList = WSAuditoriaCliente.traeAuditoria(Aplicaciones.predioWS.getId());
 				} catch (AppException e) {

@@ -69,18 +69,29 @@ public class AuditoriaDAO {
         return list;
     }
     
-    public static void cerrarAuditoria(Transaccion trx, Auditoria a, Integer usuarioId) throws SQLException {
-
+    public static List cerrarAuditoria(Transaccion trx, Auditoria a, Integer usuarioId) throws SQLException {
+    	List list = new ArrayList();
+    	
         Connection conn = null;
         PreparedStatement pst = null;
-
+        ResultSet res = null;
+        
         conn = trx.getConn();
         pst = conn.prepareStatement( SQL_CERRAR_AUDITORIA );
         pst.setObject(1, usuarioId);
         pst.setObject(2, a.getId());
         pst.setObject(3, a.getFirma());
-        pst.executeQuery();
+        res = pst.executeQuery();
+        while (res.next()){
+        	Ganado g = new Ganado();
+        	g.setId(res.getInt("g_ganado_id"));
+        	list.add(g);
+        }
+        
+        res.close();
         pst.close();
+        
+        return list;
     }
     
     public static void borrarAuditoria(Transaccion trx, Auditoria a, Integer usuarioId) throws SQLException {

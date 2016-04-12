@@ -15,9 +15,12 @@ import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sip.common.AppLog;
 import cl.a2r.sip.model.Auditoria;
 import cl.a2r.sip.model.Bang;
+import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.model.VRB51;
 import cl.a2r.sip.service.AuditoriaService;
 import cl.a2r.sip.service.RB51Service;
+import cl.a2r.sip.service.TrasladosService;
 
 public class WSAuditoria extends HttpServlet{
 
@@ -55,7 +58,16 @@ public class WSAuditoria extends HttpServlet{
             } else if (servicio.equals("cerrarAuditoria")){
             	Auditoria a = (Auditoria) params.getParam("auditoria");
             	Integer usuarioId = (Integer) params.getParam("usuarioId");
-            	AuditoriaService.cerrarAuditoria(a, usuarioId);
+            	List<Ganado> reubicaList = AuditoriaService.cerrarAuditoria(a, usuarioId);
+            	Traslado t = new Traslado();
+            	t.setGanado(reubicaList);
+            	t.setUsuarioId(usuarioId);
+            	t.setFundoOrigenId(a.getFundoId());
+            	t.setFundoDestinoId(28);
+            	t.setDescripcion("AUDITORIA " + Integer.toString(a.getId()));
+            	Integer g_movimiento_id = TrasladosService.insertaMovimiento(t);
+            	t.setG_movimiento_id(g_movimiento_id);
+            	TrasladosService.insertaMovtoConfirm(t);
             	retorno = i;
             } else if (servicio.equals("borrarAuditoria")){
             	Auditoria a = (Auditoria) params.getParam("auditoria");

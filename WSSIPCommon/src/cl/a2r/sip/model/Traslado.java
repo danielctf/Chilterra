@@ -26,10 +26,14 @@ public class Traslado implements Serializable{
 		ganado = new ArrayList<Ganado>();
 	}
 	
-	public List<Ganado> getGanado(){
-		return this.ganado;
+	public List<Ganado> getGanado() {
+		return ganado;
 	}
-	
+
+	public void setGanado(List<Ganado> ganado) {
+		this.ganado = ganado;
+	}
+
 	public Integer getUsuarioId() {
 		return usuarioId;
 	}

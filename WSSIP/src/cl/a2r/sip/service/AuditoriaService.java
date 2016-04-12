@@ -53,11 +53,12 @@ public class AuditoriaService {
         return list;
     }
     
-    public static void cerrarAuditoria(Auditoria a, Integer usuarioId) throws AppException {
+    public static List cerrarAuditoria(Auditoria a, Integer usuarioId) throws AppException {
+    	List list = new ArrayList();
         Transaccion trx = Transaccion.getTransaccion(true);
         if (trx != null){
             try {
-                AuditoriaDAO.cerrarAuditoria(trx, a, usuarioId);
+            	list = AuditoriaDAO.cerrarAuditoria(trx, a, usuarioId);
                 trx.commit();
             } catch (SQLException ex) {
                 trx.rollback();
@@ -73,6 +74,7 @@ public class AuditoriaService {
         } else {
             throw new AppException("No se pudo obtener la conexión.", null);
         }
+        return list;
     }
     
     public static void borrarAuditoria(Auditoria a, Integer usuarioId) throws AppException {
