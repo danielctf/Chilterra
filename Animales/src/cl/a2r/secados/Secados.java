@@ -159,6 +159,7 @@ public class Secados extends Activity implements View.OnClickListener {
 			
 			protected Void doInBackground(Void... arg0) {
 				try {
+					Thread.sleep(100);
 					List<Traslado> trasList = TrasladosServicio.traeReubicaciones();
 					for (Traslado t : trasList){
 						t.setUsuarioId(Login.user);
@@ -182,6 +183,9 @@ public class Secados extends Activity implements View.OnClickListener {
 				} catch (AppException e) {
 					title = "Error";
 					msg = e.getMessage();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				return null;
 			}

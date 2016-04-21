@@ -47,7 +47,11 @@
   <servlet>
   <servlet-name>WSAuditoria</servlet-name> 
   <servlet-class>cl.a2r.sip.servlet.WSAuditoria</servlet-class> 
-  </servlet>    
+  </servlet>
+  <servlet>
+  <servlet-name>WSPesajes</servlet-name> 
+  <servlet-class>cl.a2r.sip.servlet.WSPesajes</servlet-class> 
+  </servlet>  
  <servlet-mapping>
   <servlet-name>WSAutorizacion</servlet-name> 
   <url-pattern>/WSAutorizacion</url-pattern> 
@@ -95,7 +99,11 @@
   <servlet-mapping>
   <servlet-name>WSAuditoria</servlet-name> 
   <url-pattern>/WSAuditoria</url-pattern> 
-  </servlet-mapping>     
+  </servlet-mapping>
+  <servlet-mapping>
+  <servlet-name>WSPesajes</servlet-name> 
+  <url-pattern>/WSPesajes</url-pattern> 
+  </servlet-mapping>  
  <session-config>
   <session-timeout>30</session-timeout> 
   </session-config>

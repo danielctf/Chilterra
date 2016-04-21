@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SqLiteMan extends SQLiteOpenHelper {
 
     private static final String dbName="animales";
-    private static final int version = 14;
+    private static final int version = 15;
 
     public SqLiteMan(Context context) {
         super(context, dbName, null, version);
@@ -156,6 +156,18 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " ganadoDiio INTEGER,"
         	+ " flag INTEGER,"
         	+ " venta INTEGER )");
+        
+        db.execSQL( ""
+        	+ "CREATE TABLE pesaje ( "
+        	+ " id INTEGER PRIMARY KEY, "
+        	+ " ganadoId INTEGER, "
+        	+ " ganadoDiio INTEGER, "
+        	+ " fundoId INTEGER, "
+        	+ " mangada INTEGER, "
+        	+ " fecha TEXT, "
+        	+ " peso REAL, "
+        	+ " gpd REAL, "
+        	+ " sincronizado TEXT )");
         
     }
 

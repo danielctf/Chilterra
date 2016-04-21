@@ -15,6 +15,7 @@ import cl.a2r.auditoria.GruposAuditoria;
 import cl.a2r.busquedas.Busquedas;
 import cl.a2r.common.AppException;
 import cl.a2r.ecografias.Ecografias;
+import cl.a2r.pesajes.Pesajes;
 import cl.a2r.rb51.RB51;
 import cl.a2r.salvatajes.SalvatajesV2;
 import cl.a2r.secados.Secados;
@@ -50,6 +51,10 @@ public class AppLauncher {
 			break;
 		case 6:
 			launchApp = Traslados.class;
+			hasLogAccess = true;
+			break;
+		case 7:
+			launchApp = Pesajes.class;
 			hasLogAccess = true;
 			break;
 		case 8:

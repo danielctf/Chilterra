@@ -42,5 +42,6 @@
     <string name="external_dir">GetSignature</string>
     <string name="title_activity_firma_digital">FirmaDigital</string>
     <string name="title_activity_busquedas">Busquedas</string>
+    <string name="title_activity_pesajes">Pesajes</string>
 
 </resources>

@@ -26,6 +26,7 @@ import cl.a2r.sip.model.Movimiento;
 import cl.a2r.sip.model.PPD;
 import cl.a2r.sip.model.Parto;
 import cl.a2r.sip.model.Persona;
+import cl.a2r.sip.model.Pesaje;
 import cl.a2r.sip.model.Predio;
 import cl.a2r.sip.model.PredioLibre;
 import cl.a2r.sip.model.Raza;
@@ -41,6 +42,7 @@ import cl.a2r.sip.wsservice.WSBajasCliente;
 import cl.a2r.sip.wsservice.WSEcografiasCliente;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
+import cl.a2r.sip.wsservice.WSPesajesCliente;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
 import cl.a2r.sip.wsservice.WSRB51Cliente;
 import cl.a2r.sip.wsservice.WSSecadosCliente;
@@ -68,7 +70,7 @@ public class Test {
     public static void main(String[] arg) {
     	
     	try {
-    		List<Ganado> faltantes = WSSecadosCliente.traeGanado();
+    		List<Pesaje> faltantes = WSPesajesCliente.traePesaje();
     		System.out.println(faltantes.size());
     		
 		} catch (AppException e) {
