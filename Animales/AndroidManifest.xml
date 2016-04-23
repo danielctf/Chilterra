@@ -181,7 +181,7 @@
             android:label="@string/title_activity_grupos_predio_libre" >
         </activity>
         <activity
-            android:name="cl.a2r.traslados.SalidaV2"
+            android:name="cl.a2r.traslados.TrasladosV2"
             android:label="@string/title_activity_salida_v2" >
         </activity>
         <activity
@@ -207,7 +207,11 @@
         <activity
             android:name="cl.a2r.pesajes.Logs"
             android:label="Logs" >
-        </activity>        
+        </activity>
+        <activity
+            android:name="cl.a2r.traslados.Menu"
+            android:label="@string/title_activity_traslados_v2" >
+        </activity>
     </application>
 
 </manifest>

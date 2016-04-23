@@ -8,4 +8,6 @@
     <color name="green">#4caf50</color>
     <color name="naranjo">#ff8000</color>
     <color name="lightgris">#50cccccc</color>
+    <color name="azul">#5899df</color>
+    <color name="lightgreen">#ace5b4</color>
 </resources>

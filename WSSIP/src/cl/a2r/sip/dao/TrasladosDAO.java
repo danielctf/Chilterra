@@ -70,6 +70,13 @@ public class TrasladosDAO {
 	
 	private static final String SQL_INSERTA_MOVTO_REUBICACION = ""
 			+ "select * from sip.ws_insert_movto_reubicacion(?, ?)";
+	
+	//------------------------- TRASLADOS V2 ----------------------------
+	
+	private static final String SQL_SELECT_TRASLADO = ""
+			+ "select * from sip.ws_traslado_select_traslado(?)";
+	
+	
 
     public static List selectTransportistas(Transaccion trx) throws SQLException {
         List list = new ArrayList();
@@ -461,6 +468,29 @@ public class TrasladosDAO {
         
         return g_movimiento_id;
 
+    }
+    
+    //--------------------- TRASLADOS V2 ----------------------------
+    
+    public static List selectTraslados(Transaccion trx, Integer fundoId) throws SQLException {
+    	List list = new ArrayList();
+    	
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_TRASLADO );
+        pst.setObject(1, fundoId);
+        res = pst.executeQuery();
+        while (res.next()){
+        	
+        }
+        
+        res.close();
+        pst.close();
+
+        return list;
     }
 	
 }

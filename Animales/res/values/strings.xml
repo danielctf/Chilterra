@@ -43,5 +43,6 @@
     <string name="title_activity_firma_digital">FirmaDigital</string>
     <string name="title_activity_busquedas">Busquedas</string>
     <string name="title_activity_pesajes">Pesajes</string>
+    <string name="title_activity_traslados_v2">TrasladosV2</string>
 
 </resources>

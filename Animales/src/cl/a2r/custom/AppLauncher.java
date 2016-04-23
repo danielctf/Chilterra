@@ -25,6 +25,7 @@ import cl.a2r.sip.model.Salvataje;
 import cl.a2r.sip.wsservice.WSAreteosCliente;
 import cl.a2r.sip.wsservice.WSBajasCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
+import cl.a2r.traslados.Menu;
 
 @SuppressWarnings("rawtypes")
 public class AppLauncher {
@@ -50,7 +51,7 @@ public class AppLauncher {
 			hasLogAccess = true;
 			break;
 		case 6:
-			launchApp = Traslados.class;
+			launchApp = Menu.class;
 			hasLogAccess = true;
 			break;
 		case 7:

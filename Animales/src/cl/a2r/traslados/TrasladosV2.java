@@ -6,12 +6,15 @@ import cl.a2r.sip.model.Persona;
 import cl.a2r.sip.model.Predio;
 import cl.a2r.sip.model.Transportista;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -19,8 +22,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class SalidaV2 extends Activity implements View.OnClickListener{
+public class TrasladosV2 extends Activity implements View.OnClickListener{
 
+	private Fragment frEncabezado, frAnimales;
+	private Button btnEncabezado, btnAnimales;
+	
 	private Spinner spinnerOrigen, spinnerDestino, spinnerTipoTransporte, spinnerTransportista, spinnerChofer, spinnerCamion, spinnerAcoplado;
 	private TextView despliegaGD, tvApp, deshacer;
 	private TextView tvVacas, tvVaquillas, tvTerneras, tvToros, tvToretes, tvTerneros, tvAnimales, tvBueyes;
@@ -34,12 +40,22 @@ public class SalidaV2 extends Activity implements View.OnClickListener{
 		super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		setContentView(R.layout.activity_traslados_salida);
+		setContentView(R.layout.activity_traslado_salida_v2);
 		
 		cargarInterfaz();
 	}
 
 	private void cargarInterfaz(){
+		frEncabezado = new Encabezado();
+		frAnimales = new Animales();
+		
+		btnEncabezado = (Button)findViewById(R.id.btnEncabezado);
+		btnEncabezado.setOnClickListener(this);
+		btnAnimales = (Button)findViewById(R.id.btnAnimales);
+		btnAnimales.setOnClickListener(this);
+		
+		btnEncabezado.performClick();
+		/*
 		tvVacas = (TextView)findViewById(R.id.tvVacas);
 		tvVaquillas = (TextView)findViewById(R.id.tvVaquillas);
 		tvTerneras = (TextView)findViewById(R.id.tvTerneras);
@@ -80,7 +96,7 @@ public class SalidaV2 extends Activity implements View.OnClickListener{
 		confirmarMovimiento = (ImageButton)findViewById(R.id.confirmarMovimiento);
 		confirmarMovimiento.setOnClickListener(this);
 		loading = (ProgressBar)findViewById(R.id.loading);
-
+		*/
 	}
 	
 	/*
@@ -135,7 +151,24 @@ public class SalidaV2 extends Activity implements View.OnClickListener{
 */
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		int id = v.getId();
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		switch (id){
+		case R.id.btnEncabezado:
+			transaction.replace(R.id.container, frEncabezado);
+			btnEncabezado.setBackgroundResource(R.drawable.tab_state_activated);
+			btnAnimales.setBackgroundResource(R.drawable.tab_state_deactivated);
+			transaction.commit();
+			getFragmentManager().executePendingTransactions();
+			break;
+		case R.id.btnAnimales:
+			transaction.replace(R.id.container, frAnimales);
+			btnEncabezado.setBackgroundResource(R.drawable.tab_state_deactivated);
+			btnAnimales.setBackgroundResource(R.drawable.tab_state_activated);
+			transaction.commit();
+			getFragmentManager().executePendingTransactions();
+			break;
+		}
 		
 	}
 	
