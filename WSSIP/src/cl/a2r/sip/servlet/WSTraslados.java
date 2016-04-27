@@ -16,6 +16,7 @@ import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.sip.common.AppLog;
 import cl.a2r.sip.model.DctoAdem;
 import cl.a2r.sip.model.FMA;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.service.TrasladosService;
 
@@ -39,7 +40,6 @@ public class WSTraslados extends HttpServlet {
 
         try {
             params = (ParamServlet) inputFromApplet.readObject();
-
             String servicio = (String) params.getParam("servicio");
 
             if (servicio.equals("traeTransportistas")){
@@ -95,6 +95,25 @@ public class WSTraslados extends HttpServlet {
             	TrasladosService.reubicaGanado(traslado);
             	Integer i = 1;
             	retorno = i;
+                //--------------------- TRASLADOS V2 ----------------------------
+            } else if (servicio.equals("traeTraslados")){
+            	Integer fundoId = (Integer) params.getParam("fundoId");
+            	List list = TrasladosService.traeTraslados(fundoId);
+            	retorno = list;
+            } else if (servicio.equals("borrarTraslado")){
+            	Instancia instancia = (Instancia) params.getParam("instancia");
+            	TrasladosService.borrarTraslado(instancia);
+            	Integer i = 1;
+            	retorno = i;
+            } else if (servicio.equals("traeChoferV2")){
+            	List list = TrasladosService.traeChofer();
+            	retorno = list;
+            } else if (servicio.equals("traeCamionV2")){
+            	List list = TrasladosService.traeCamion();
+            	retorno = list;
+            } else if (servicio.equals("traeAcopladoV2")){
+            	List list = TrasladosService.traeAcoplado();
+            	retorno = list;
             } else {
                 retorno = new AppException("Servicio no válido.", null);
             }

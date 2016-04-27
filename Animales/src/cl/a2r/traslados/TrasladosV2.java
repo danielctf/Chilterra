@@ -46,7 +46,7 @@ public class TrasladosV2 extends Activity implements View.OnClickListener{
 	}
 
 	private void cargarInterfaz(){
-		frEncabezado = new Encabezado();
+		frEncabezado = new Encabezado(this);
 		frAnimales = new Animales();
 		
 		btnEncabezado = (Button)findViewById(R.id.btnEncabezado);

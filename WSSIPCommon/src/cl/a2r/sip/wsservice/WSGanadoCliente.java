@@ -102,4 +102,19 @@ public class WSGanadoCliente {
 	           return (List) obj;
 	       }
 	   }
+	   
+	   public static List traeOfflineDiioBasico() throws AppException {
+
+	       ParamServlet params = new ParamServlet();
+	       params.add("servicio", "traeOfflineDiioBasico" );
+
+	       Object obj = ServiceWS.invocaWS("WSGanado", params );
+	       if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	           throw (AppException) obj;
+	       } else if (obj == null){
+	    	   throw new AppException("Error de conexión a Internet", null);
+	       } else {
+	           return (List) obj;
+	       }
+	   }
 }

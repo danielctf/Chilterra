@@ -1,6 +1,8 @@
 package cl.a2r.traslados;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import cl.a2r.animales.Aplicaciones;
@@ -14,6 +16,8 @@ import cl.a2r.custom.Signature;
 import cl.a2r.custom.Utility;
 import cl.a2r.salvatajes.SalvatajesV2;
 import cl.a2r.sip.model.Auditoria;
+import cl.a2r.sip.model.Instancia;
+import cl.a2r.sip.model.Predio;
 import cl.a2r.sip.model.PredioLibre;
 import cl.a2r.sip.model.Salvataje;
 import cl.a2r.sip.wsservice.WSAuditoriaCliente;
@@ -31,7 +35,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -40,30 +46,35 @@ import android.widget.TextView;
 public class Adapter extends BaseAdapter{
 	
     private Activity act;
+    private SimpleDateFormat dfFecha;
+    private SimpleDateFormat dfTime;
     private SimpleDateFormat df;
-    private List<Auditoria> auList;
-    private ImageButton btnLock;
+    private List<Instancia> trasList;
     private ProgressBar loading;
-    private ListView lvAuditoria;
+    private ListView lvTraslados;
+    private Date currentDate;
 
-      public Adapter(Activity act, List<Auditoria> auList) {
+      public Adapter(Activity act, List<Instancia> trasList) {
           this.act = act;
-          this.auList = auList;
-          df = new SimpleDateFormat("dd-MM-yyyy");
+          this.trasList = trasList;
+          dfFecha = new SimpleDateFormat("dd-MM");
+          dfTime = new SimpleDateFormat("HH:mm");
+          df = new SimpleDateFormat("dd");
+          currentDate = new Date();
           loading = (ProgressBar)act.findViewById(R.id.loading);
-          lvAuditoria = (ListView)act.findViewById(R.id.lvAuditoria);
+          lvTraslados = (ListView)act.findViewById(R.id.lvTraslados);
       }
 
       @Override
       public int getCount() {
           // TODO Auto-generated method stub
-          return auList.size();
+          return trasList.size();
       }
 
       @Override
       public Object getItem(int position) {
           // TODO Auto-generated method stub
-          return auList.get(position);
+          return trasList.get(position);
       }
 
       @Override
@@ -78,44 +89,78 @@ public class Adapter extends BaseAdapter{
           View grid;
           LayoutInflater inflater = (LayoutInflater) act.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
           grid = new View(act.getApplicationContext());
-          grid = inflater.inflate(R.layout.layout_lv_auditoria, null);
+          grid = inflater.inflate(R.layout.layout_lv_traslados, null);
 
-          TextView tvFechaInicio = (TextView)grid.findViewById(R.id.tvFechaInicio);
-          tvFechaInicio.setText("Fecha: " + df.format(auList.get(position).getFecha_inicio()));
-          TextView tvEstado = (TextView)grid.findViewById(R.id.tvEstado);
-          tvEstado.setText("Estado: " + auList.get(position).getEstado().toString());
-          btnLock = (ImageButton)grid.findViewById(R.id.btnLock);
-          checkBtnState(position);
+          Button btnES = (Button)grid.findViewById(R.id.btnES);
+          TextView tvES = (TextView)grid.findViewById(R.id.tvES);
+          TextView tvDetalle = (TextView)grid.findViewById(R.id.tvDetalle);
           
-          btnLock.setOnClickListener(new OnClickListener(){
-			  public void onClick(View arg0) {
-				    String estado = auList.get(position).getEstado();
-				    if (estado.equals("CO")){
-				    	ShowAlert.showAlert("Procedimiento Cerrado", "El procedimiento ya se encuentra cerrado", act);
-				    	return;
-				    }
-				    
-					ShowAlert.askYesNo("Cerrar Procedimiento", "¿Está seguro que desea cerrar el procedimiento?", act, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							if (which == -2){
-								
-							}
-						}
-					});
-			  }
-          });
+          Predio origen = trasList.get(position).getInstancia().getTraslado().getOrigen();
+          if (origen.getId() != null && origen.getId().intValue() != 0){
+        	  if (Aplicaciones.predioWS.getId().intValue() == origen.getId().intValue()){
+        		  //Salida
+        		  btnES.setText("S");
+        		  btnES.setBackgroundResource(R.drawable.circlebutton_azul);
+        		  tvES.setText("Salida");
+        		  tvDetalle.setText("Destino: " + trasList.get(position).getInstancia().getTraslado().getDestino().getNombre());
+        	  } else {
+        		  //Entrada
+        		  btnES.setText("E");
+        		  btnES.setBackgroundResource(R.drawable.circlebutton_lightgreen);
+        		  tvES.setText("Entrada");
+        		  tvDetalle.setText("Origen: " + trasList.get(position).getInstancia().getTraslado().getOrigen().getNombre());
+        	  }
+          } else {
+        	  //Salida borrador
+        	  btnES.setText("S");
+        	  btnES.setBackgroundResource(R.drawable.circlebutton_azul);
+        	  tvES.setText("Salida");
+        	  tvDetalle.setText("Destino:");
+          }
+          
+          TextView tvGuia = (TextView)grid.findViewById(R.id.tvGuia);
+          Integer nro_documento = trasList.get(position).getInstancia().getTraslado().getNro_documento();
+          if (nro_documento != null && nro_documento.intValue() != 0){
+        	  tvGuia.setText("Guia: " + nro_documento);
+          } else {
+        	  tvGuia.setText("Guia:");
+          }
+          
+          ImageView ivEstado = (ImageView)grid.findViewById(R.id.ivEstado);
+          String estado = trasList.get(position).getInstancia().getEstado();
+          if (estado.equals("BO")){
+        	  ivEstado.setImageResource(R.drawable.ic_insert_drive_file_black_24dp);
+          } else if (estado.equals("EP")){
+        	  ivEstado.setImageResource(R.drawable.ic_local_shipping_black_24dp);
+          } else if (estado.equals("CO")){
+        	  ivEstado.setImageResource(R.drawable.ic_done_all_black_24dp);
+          }
+          
+          TextView tvFecha = (TextView)grid.findViewById(R.id.tvFecha);
+          Date fecha = trasList.get(position).getInstancia().getTraslado().getFecha();
+          if (fecha != null){
+        	  int diaMovto = Integer.parseInt(df.format(fecha));
+        	  int diaActual = Integer.parseInt(df.format(currentDate));
+        	  if (diaMovto < diaActual){
+        		  tvFecha.setText(dfFecha.format(fecha));
+        	  } else {
+        		  tvFecha.setText(dfTime.format(fecha));
+        	  }
+          } else {
+        	  tvFecha.setText("");
+          }
           
           return grid;
       }
-	
-	  private void checkBtnState(int position){
-		  String estado = auList.get(position).getEstado();
-		  if (estado.equals("EP")){
-			  btnLock.setImageResource(R.drawable.ic_lock_open_white_36dp);
-			  btnLock.setBackgroundResource(R.drawable.circlebutton_green);
-		  } else {
-			  btnLock.setImageResource(R.drawable.ic_lock_outline_white_36dp);
-			  btnLock.setBackgroundResource(R.drawable.circlebutton_rojo);
-		  }
-	  }
+      
+//	  private void checkBtnState(int position){
+//		  String estado = auList.get(position).getEstado();
+//		  if (estado.equals("EP")){
+//			  btnLock.setImageResource(R.drawable.ic_lock_open_white_36dp);
+//			  btnLock.setBackgroundResource(R.drawable.circlebutton_green);
+//		  } else {
+//			  btnLock.setImageResource(R.drawable.ic_lock_outline_white_36dp);
+//			  btnLock.setBackgroundResource(R.drawable.circlebutton_rojo);
+//		  }
+//	  }
 }

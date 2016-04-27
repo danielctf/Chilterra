@@ -4,18 +4,19 @@
     android:layout_height="wrap_content"
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
+    android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal" >
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
         android:orientation="vertical" >
 
         <Button
             android:id="@+id/btnES"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
             android:text="S"
             android:textSize="25sp" />
 
@@ -24,7 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Entrada"
-            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </LinearLayout>
@@ -40,6 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Guía:"
+            android:textColor="@color/black"
             android:textAppearance="?android:attr/textAppearanceMedium" />
         
         <TextView
@@ -48,6 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="detalle"
+            android:textColor="@color/black"
             android:textAppearance="?android:attr/textAppearanceMedium" />        
 
     </LinearLayout>
@@ -55,6 +59,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginRight="20dp"
         android:orientation="vertical" >
 
         <TextView
@@ -62,8 +67,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_marginRight="10dp"
             android:text="10:50"
+            android:textColor="@color/black"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ImageView
@@ -72,7 +77,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp"
             android:src="@drawable/ic_local_shipping_black_24dp" />
 
     </LinearLayout>

@@ -18,6 +18,7 @@ import cl.a2r.sip.model.FMA;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.GanadoLogs;
 import cl.a2r.sip.model.Inseminacion;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.Medicamento;
 import cl.a2r.sip.model.MedicamentoControl;
@@ -70,7 +71,7 @@ public class Test {
     public static void main(String[] arg) {
     	
     	try {
-    		List<Pesaje> faltantes = WSPesajesCliente.traePesaje();
+    		List<Ganado> faltantes = WSGanadoCliente.traeOfflineDiioBasico();
     		System.out.println(faltantes.size());
     		
 		} catch (AppException e) {

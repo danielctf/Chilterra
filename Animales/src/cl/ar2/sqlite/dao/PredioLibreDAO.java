@@ -128,7 +128,11 @@ public class PredioLibreDAO {
         	statement.bindLong(1, g.getId());
         	statement.bindLong(2, g.getDiio());
         	statement.bindString(3, g.getEid());
-        	statement.bindLong(4, g.getPredio());
+        	if (g.getPredio() != null){
+        		statement.bindLong(4, g.getPredio());
+        	} else {
+        		statement.bindNull(4);
+        	}
         	statement.executeInsert();
         }
     }

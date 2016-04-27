@@ -7,11 +7,14 @@ import java.util.List;
 import cl.a2r.common.AppException;
 import cl.a2r.sip.common.AppLog;
 import cl.a2r.sip.dao.AreteosDAO;
+import cl.a2r.sip.dao.AuditoriaDAO;
 import cl.a2r.sip.dao.Transaccion;
 import cl.a2r.sip.dao.TrasladosDAO;
 import cl.a2r.sip.model.Areteo;
+import cl.a2r.sip.model.Auditoria;
 import cl.a2r.sip.model.DctoAdem;
 import cl.a2r.sip.model.FMA;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.Traslado;
 
 public class TrasladosService {
@@ -266,6 +269,106 @@ public class TrasladosService {
             throw new AppException("No se pudo obtener la conexión.", null);
         }
         
+    }
+    
+    //--------------------- TRASLADOS V2 ----------------------------
+    
+    public static List traeTraslados(Integer fundoId) throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = TrasladosDAO.selectTraslados(trx, fundoId);
+            } catch (SQLException ex) {
+                AppLog.logSevere("TrasladosService.traeTraslados()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
+    public static void borrarTraslado(Instancia instancia) throws AppException {
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                TrasladosDAO.borrarTraslado(trx, instancia);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+                AppLog.logSevere("TrasladosService.borrarTraslado()", ex);
+                if (ex.getSQLState().equals("SIP05")){
+                	throw new AppException(ex.getMessage(), null);
+                } else {
+                	throw new AppException("No se pudo recuperar los registros.", null);
+                }
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+    }
+    
+    public static List traeChofer() throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = TrasladosDAO.selectChofer(trx);
+            } catch (SQLException ex) {
+                AppLog.logSevere("TrasladosService.traeChofer()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
+    public static List traeCamion() throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = TrasladosDAO.selectCamion(trx);
+            } catch (SQLException ex) {
+                AppLog.logSevere("TrasladosService.traeCamion()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
+    
+    public static List traeAcoplado() throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = TrasladosDAO.selectAcoplado(trx);
+            } catch (SQLException ex) {
+                AppLog.logSevere("TrasladosService.traeAcoplado()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
     }
 	
 }

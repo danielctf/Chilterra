@@ -170,19 +170,13 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " sincronizado TEXT )");
         
         db.execSQL( ""
-        	+ "CREATE TABLE traslado_salida ( "
+        	+ "CREATE TABLE traslado ( "
         	+ " id INTEGER PRIMARY KEY, "
         	+ " ganadoId INTEGER, "
         	+ " ganadoDiio INTEGER, "
-        	+ " mangada INTEGER, "
+        	+ " mangada INTEGER,"
         	+ " instancia INTEGER )");
         
-        db.execSQL( ""
-        	+ "CREATE TABLE traslado_entrada ( "
-        	+ " id INTEGER PRIMARY KEY, "
-        	+ " ganadoId INTEGER, "
-        	+ " ganadoDiio INTEGER, "
-        	+ " instancia INTEGER )");        
     }
 
     @Override
@@ -205,6 +199,8 @@ public class SqLiteMan extends SQLiteOpenHelper {
     	db.execSQL("DROP TABLE IF EXISTS bang");
     	db.execSQL("DROP TABLE IF EXISTS auditoria");
     	db.execSQL("DROP TABLE IF EXISTS busqueda");
+    	db.execSQL("DROP TABLE IF EXISTS pesaje");
+    	db.execSQL("DROP TABLE IF EXISTS traslado");
     	
     	onCreate(db);
         

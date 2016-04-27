@@ -8,15 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cl.a2r.sip.mail.Correo;
+import cl.a2r.sip.model.Auditoria;
 import cl.a2r.sip.model.Camion;
 import cl.a2r.sip.model.Chofer;
 import cl.a2r.sip.model.DctoAdem;
 import cl.a2r.sip.model.FMA;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.Movimiento;
 import cl.a2r.sip.model.Persona;
+import cl.a2r.sip.model.Predio;
 import cl.a2r.sip.model.Transportista;
 import cl.a2r.sip.model.Traslado;
+import cl.a2r.sip.model.TrasladoV2;
 
 public class TrasladosDAO {
 
@@ -74,8 +78,19 @@ public class TrasladosDAO {
 	//------------------------- TRASLADOS V2 ----------------------------
 	
 	private static final String SQL_SELECT_TRASLADO = ""
-			+ "select * from sip.ws_traslado_select_traslado(?)";
+			+ "select * from sip.ws_traslado_select_traslados(?)";
 	
+	private static final String SQL_DELETE_TRASLADO = ""
+			+ "select * from sip.ws_traslado_delete_traslado(?, ?)";
+	
+	private static final String SQL_SELECT_CHOFERV2 = ""
+			+ "select * from sip.ws_traslado_select_chofer()";
+	
+	private static final String SQL_SELECT_CAMIONV2 = ""
+			+ "select * from sip.ws_traslado_select_camion()";
+	
+	private static final String SQL_SELECT_ACOPLADOV2 = ""
+			+ "select * from sip.ws_traslado_select_acoplado()";
 	
 
     public static List selectTransportistas(Transaccion trx) throws SQLException {
@@ -484,9 +499,117 @@ public class TrasladosDAO {
         pst.setObject(1, fundoId);
         res = pst.executeQuery();
         while (res.next()){
+        	Instancia superInstancia = new Instancia();
+        	superInstancia.setId(res.getInt("g_superprocedimiento_instancia_id"));
+        	superInstancia.setFundoId(res.getInt("g_fundo_instancia_id"));
+        	Instancia instancia = new Instancia();
+        	instancia.setId(res.getInt("g_procedimiento_instancia_id"));
+        	instancia.setEstado(res.getString("estado_instancia"));
+        	instancia.setUsuarioId(res.getInt("usuario"));
+        	TrasladoV2 traslado = new TrasladoV2();
+        	traslado.setId(res.getInt("g_procedimiento_instancia_movto_salida_id"));
+        	traslado.setNro_documento(res.getInt("nro_documento"));
+        	traslado.setFecha(res.getTimestamp("fecha_movimiento"));
+        	Predio origen = new Predio();
+        	origen.setId(res.getInt("g_fundo_origen_id"));
+        	origen.setNombre(res.getString("fundo_origen_name"));
+        	Predio destino = new Predio();
+        	destino.setId(res.getInt("g_fundo_destino_id"));
+        	destino.setNombre(res.getString("fundo_destino_name"));
+        	traslado.setDescription(res.getString("description"));
         	
+        	traslado.setOrigen(origen);
+        	traslado.setDestino(destino);
+        	instancia.setTraslado(traslado);
+        	superInstancia.setInstancia(instancia);
+        	list.add(superInstancia);
         }
         
+        res.close();
+        pst.close();
+
+        return list;
+    }
+    
+    public static void borrarTraslado(Transaccion trx, Instancia instancia) throws SQLException {
+
+        Connection conn = null;
+        PreparedStatement pst = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_DELETE_TRASLADO );
+        pst.setObject(1, instancia.getId());
+        pst.setObject(2, instancia.getUsuarioId());
+        pst.executeQuery();
+        pst.close();
+    }
+    
+    public static List selectChofer(Transaccion trx) throws SQLException {
+        List list = new ArrayList();
+
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_CHOFERV2 );
+        res = pst.executeQuery();
+        
+        while (res.next() ){
+        	Chofer t = new Chofer();
+        	t.setId(res.getInt("g_chofer_id"));
+        	t.setActiva(res.getString("isactive"));
+        	t.setNombre(res.getString("nombre"));
+            list.add(t);
+        }
+        res.close();
+        pst.close();
+
+        return list;
+    }
+    
+    public static List selectCamion(Transaccion trx) throws SQLException {
+        List list = new ArrayList();
+
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_CAMIONV2 );
+        res = pst.executeQuery();
+        
+        while (res.next() ){
+        	Camion t = new Camion();
+        	t.setId(res.getInt("g_camion_id"));
+        	t.setActiva(res.getString("isactive"));
+        	t.setNombre(res.getString("patente"));
+            list.add(t);
+        }
+        res.close();
+        pst.close();
+
+        return list;
+    }
+    
+    public static List selectAcoplado(Transaccion trx) throws SQLException {
+        List list = new ArrayList();
+
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_ACOPLADOV2 );
+        res = pst.executeQuery();
+        
+        while (res.next() ){
+        	Camion t = new Camion();
+        	t.setId(res.getInt("g_camion_id"));
+        	t.setActiva(res.getString("isactive"));
+        	t.setNombre(res.getString("patente"));
+            list.add(t);
+        }
         res.close();
         pst.close();
 

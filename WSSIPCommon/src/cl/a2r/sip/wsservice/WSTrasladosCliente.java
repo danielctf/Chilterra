@@ -7,6 +7,7 @@ import cl.a2r.common.wsutils.ParamServlet;
 import cl.a2r.common.wsutils.ServiceWS;
 import cl.a2r.sip.model.DctoAdem;
 import cl.a2r.sip.model.FMA;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.Traslado;
 
 public class WSTrasladosCliente {
@@ -192,4 +193,81 @@ public class WSTrasladosCliente {
 	        }
 	   }
 	
+	    //--------------------- TRASLADOS V2 ----------------------------
+	   
+	   public static List traeTraslados(Integer fundoId) throws AppException {
+		   
+	        ParamServlet params = new ParamServlet();
+	        params.add("servicio", "traeTraslados");
+	        params.add("fundoId", fundoId);
+	
+	        Object obj = ServiceWS.invocaWS("WSTraslados", params );
+	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	            throw (AppException) obj;
+	        } else if (obj == null){
+	        	throw new AppException("Error de conexión a Internet", null);
+	        } else {
+	        	return (List) obj;
+	        }
+	   }
+	   
+	   public static void borrarTraslado(Instancia instancia) throws AppException {
+		   
+	        ParamServlet params = new ParamServlet();
+	        params.add("servicio", "borrarTraslado");
+	        params.add("instancia", instancia);
+	
+	        Object obj = ServiceWS.invocaWS("WSTraslados", params );
+	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	            throw (AppException) obj;
+	        } else if (obj == null){
+	        	throw new AppException("Error de conexión a Internet", null);
+	        }
+	   }
+	   
+	   public static List traeChofer() throws AppException {
+			
+	        ParamServlet params = new ParamServlet();
+	        params.add("servicio", "traeChoferV2" );
+	
+	        Object obj = ServiceWS.invocaWS("WSTraslados", params );
+	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	            throw (AppException) obj;
+	        } else if (obj == null){
+	        	throw new AppException("Error de conexión a Internet", null);
+	        } else {
+	            return (List) obj;
+	        }
+	   }
+	   
+	   public static List traeCamion() throws AppException {
+			
+	        ParamServlet params = new ParamServlet();
+	        params.add("servicio", "traeCamionV2" );
+	
+	        Object obj = ServiceWS.invocaWS("WSTraslados", params );
+	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	            throw (AppException) obj;
+	        } else if (obj == null){
+	        	throw new AppException("Error de conexión a Internet", null);
+	        } else {
+	            return (List) obj;
+	        }
+	   }
+	   
+	   public static List traeAcoplado() throws AppException {
+			
+	        ParamServlet params = new ParamServlet();
+	        params.add("servicio", "traeAcopladoV2" );
+	
+	        Object obj = ServiceWS.invocaWS("WSTraslados", params );
+	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	            throw (AppException) obj;
+	        } else if (obj == null){
+	        	throw new AppException("Error de conexión a Internet", null);
+	        } else {
+	            return (List) obj;
+	        }
+	   }
+	   
 }

@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteStatement;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.Traslado;
 
 public class TrasladosDAO {
@@ -26,6 +27,29 @@ public class TrasladosDAO {
 			+ "UPDATE diio "
 			+ " SET fundoId = ? "
 			+ " WHERE id = ? ";
+	
+	private static final String SQL_INSERTA_TRASLADO = ""
+			+ "INSERT INTO traslado (ganadoId, ganadoDiio, mangada, instancia) "
+			+ " VALUES (?, ?, ?) ";
+	
+	private static final String SQL_SELECT_GAN_TRASLADO = ""
+			+ "SELECT id, ganadoId, ganadoDiio, mangada, instancia "
+			+ " FROM traslado "
+			+ " ORDER BY id DESC ";
+	
+	private static final String SQL_EXISTS_GANADO = ""
+			+ "SELECT id "
+			+ " FROM traslado "
+			+ " WHERE ganadoId = ? ";
+	
+	private static final String SQL_DELETE_GAN_TRASLADO = ""
+			+ "DELETE FROM traslado ";
+	
+	private static final String SQL_CHECK_INSTANCE = ""
+			+ "SELECT id "
+			+ " FROM traslado "
+			+ " WHERE instancia != ? "
+			+ " LIMIT 1 ";
 	
     public static void insertReubicacion(SqLiteTrx trx, Traslado t) throws SQLException {
 
@@ -70,6 +94,68 @@ public class TrasladosDAO {
     	statement.bindLong(1, nuevoFundoId);
     	statement.bindLong(2, ganadoId);
     	statement.executeUpdateDelete();
+    }
+    
+    public static void insertaTraslado(SqLiteTrx trx, Instancia superInstancia) throws SQLException {
+
+        SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERTA_TRASLADO);
+        
+        for (Ganado g : superInstancia.getInstancia().getGanList()){
+	    	statement.clearBindings();
+	    	statement.bindLong(1, g.getId());
+	    	statement.bindLong(2, g.getDiio());
+	    	statement.bindLong(3, g.getMangada());
+	    	statement.bindLong(4, superInstancia.getId());
+	    	statement.executeInsert();
+        }
+    }
+    
+    public static List selectGanTraslado(SqLiteTrx trx) throws SQLException {
+    	List list = new ArrayList();
+        boolean hayReg;
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_GAN_TRASLADO, null);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	Ganado g = new Ganado();
+        	g.setId(c.getInt(c.getColumnIndex("ganadoId")));
+        	g.setDiio(c.getInt(c.getColumnIndex("ganadoDiio")));
+        	g.setMangada(c.getInt(c.getColumnIndex("mangada")));
+        	list.add(g);
+            hayReg = c.moveToNext();
+        }
+        return list;
+    }
+    
+    public static boolean existsGanado(SqLiteTrx trx, Integer ganadoId) throws SQLException {
+    	boolean exists = false;
+        boolean hayReg;
+        String[] args = {Integer.toString(ganadoId)};
+        Cursor c = trx.getDB().rawQuery(SQL_EXISTS_GANADO, args);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	exists = true;
+            hayReg = c.moveToNext();
+        }
+        return exists;
+    }
+    
+    public static void deleteGanadoTraslado(SqLiteTrx trx) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_GAN_TRASLADO);
+    	statement.clearBindings();
+    	statement.executeUpdateDelete();
+    }
+    
+    public static boolean checkInstance(SqLiteTrx trx, Integer superInstanciaId) throws SQLException {
+    	boolean replace = false;
+        boolean hayReg;
+        String[] args = {Integer.toString(superInstanciaId)};
+        Cursor c = trx.getDB().rawQuery(SQL_CHECK_INSTANCE, args);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	replace = true;
+            hayReg = c.moveToNext();
+        }
+        return replace;
     }
 	
 }

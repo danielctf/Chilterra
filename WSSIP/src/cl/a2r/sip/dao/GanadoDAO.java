@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import cl.a2r.sip.model.Ganado;
 
 public class GanadoDAO {
@@ -25,6 +26,9 @@ public class GanadoDAO {
     
     private static final String SQL_SELECT_BUSQUEDA = ""
     		+ "select * from sip.ws_busqueda_select_busqueda()";
+    
+    private static final String SQL_SELECT_OFFLINE_DIIO_BASICO = ""
+    		+ "select * from sip.ws_select_offline_diio_basico()";
 	
     public static List selectGanado(Transaccion trx, Integer diio) throws SQLException {
     	List list = new ArrayList();
@@ -139,6 +143,29 @@ public class GanadoDAO {
             g.setVenta(res.getInt("venta"));
             g.setPredio(res.getInt("g_fundo_id"));
             list.add(g);
+        }
+        res.close();
+        pst.close();
+
+        return list;
+    }
+    
+    public static List selectOfflineDiioBasico(Transaccion trx) throws SQLException {
+        List list = new ArrayList();
+
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_OFFLINE_DIIO_BASICO );
+        res = pst.executeQuery();
+        while (res.next() ){
+        	Ganado g = new Ganado();
+        	g.setId(res.getInt("g_ganado_id"));
+        	g.setDiio(res.getInt("diio"));
+        	g.setEid(Long.toString(res.getLong("eid")));
+        	list.add(g);
         }
         res.close();
         pst.close();

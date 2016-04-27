@@ -1,14 +1,24 @@
 package cl.a2r.sip.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Instancia implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private Integer id;
-	private Integer superInstanciaId;
+	private Instancia instancia;
 	private Integer usuarioId;
 	private Integer fundoId;
+	private String estado;
+	
+	private TrasladoV2 traslado;
+	
+	private List<Ganado> ganList;
+	
+	public void iniciarInstancia(){
+		instancia = new Instancia();
+	}
 	
 	public Integer getId() {
 		return id;
@@ -18,12 +28,12 @@ public class Instancia implements Serializable{
 		this.id = id;
 	}
 	
-	public Integer getSuperInstanciaId() {
-		return superInstanciaId;
+	public Instancia getInstancia() {
+		return instancia;
 	}
 
-	public void setSuperInstanciaId(Integer superInstanciaId) {
-		this.superInstanciaId = superInstanciaId;
+	public void setInstancia(Instancia instancia) {
+		this.instancia = instancia;
 	}
 
 	public Integer getUsuarioId() {
@@ -40,6 +50,30 @@ public class Instancia implements Serializable{
 	
 	public void setFundoId(Integer fundoId) {
 		this.fundoId = fundoId;
+	}
+
+	public TrasladoV2 getTraslado() {
+		return traslado;
+	}
+
+	public void setTraslado(TrasladoV2 traslado) {
+		this.traslado = traslado;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	public List<Ganado> getGanList() {
+		return ganList;
+	}
+
+	public void setGanList(List<Ganado> ganList) {
+		this.ganList = ganList;
 	}
 	
 }
