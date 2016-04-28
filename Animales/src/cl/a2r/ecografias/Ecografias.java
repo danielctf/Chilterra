@@ -274,7 +274,7 @@ public class Ecografias extends Activity implements View.OnClickListener, View.O
 				}
 				tvUltEco.setVisibility(View.VISIBLE);
 				int maxEcoDays = (int) ((new Date().getTime() - maxEco.getFecha().getTime()) / (24 * 60 * 60 * 1000));
-				tvUltEco.setText("Ecografías: " + Integer.toString(numEcos)+ "  (Última " + Integer.toString(maxEcoDays) + " Días)");
+				tvUltEco.setText("Ecografías: " + Integer.toString(numEcos)+ "  (Última " + Integer.toString(maxEcoDays) + " Días atrás)");
 				//Verificar si tiene una ecografia hoy, de ser asi, tira un warning
 				long diffDays = new Date().getTime() - maxEco.getFecha().getTime();
 				int days = (int) (diffDays / (24 * 60 * 60 * 1000));

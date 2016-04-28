@@ -73,6 +73,9 @@ public class Test {
     	try {
     		List<Ganado> faltantes = WSGanadoCliente.traeOfflineDiioBasico();
     		System.out.println(faltantes.size());
+    		for (Ganado g : faltantes){
+    			System.out.println(g.getTipoGanadoId());
+    		}
     		
 		} catch (AppException e) {
 			// TODO Auto-generated catch block

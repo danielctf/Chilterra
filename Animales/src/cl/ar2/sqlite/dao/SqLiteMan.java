@@ -29,6 +29,7 @@ public class SqLiteMan extends SQLiteOpenHelper {
             + " diio INTEGER,"
             + " eid TEXT,"
             + " fundoId INTEGER, "
+            + " tipo_ganado INTEGER, "
             + " g_estado_leche_id INTEGER )");
         
         db.execSQL( ""
@@ -174,7 +175,8 @@ public class SqLiteMan extends SQLiteOpenHelper {
         	+ " id INTEGER PRIMARY KEY, "
         	+ " ganadoId INTEGER, "
         	+ " ganadoDiio INTEGER, "
-        	+ " mangada INTEGER,"
+        	+ " mangada INTEGER, "
+        	+ " tipo_ganado INTEGER, "
         	+ " instancia INTEGER )");
         
     }

@@ -171,10 +171,7 @@ public class Calculadora extends Activity implements View.OnClickListener {
 				Ganado g = PredioLibreServicio.traeDiio(diio);
 				if (g != null){
 					gan = new Ganado();
-					gan.setId(g.getId());
-					gan.setDiio(g.getDiio());
-					gan.setEid(g.getEid());
-					gan.setPredio(g.getPredio());
+					gan = g;
 					return true;
 				} else {
 					errMsg = "DIIO no existe";

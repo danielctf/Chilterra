@@ -7,6 +7,7 @@ import android.database.SQLException;
 import cl.a2r.common.AppException;
 import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.Traslado;
+import cl.ar2.sqlite.dao.AuditoriasDAO;
 import cl.ar2.sqlite.dao.SqLiteTrx;
 import cl.ar2.sqlite.dao.TrasladosDAO;
 
@@ -216,6 +217,30 @@ public class TrasladosServicio {
         }
 
         return replace;
+    }
+    
+    public static Integer traeMangadaActual() throws AppException {
+    	Integer mangadaActual = null;
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(false);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+            	mangadaActual = TrasladosDAO.mangadaActual(trx);
+            } catch ( SQLException ex ) {
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+
+        }
+
+        return mangadaActual;
     }
 	
 }

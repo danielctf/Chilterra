@@ -95,6 +95,7 @@ public class Menu extends Activity implements View.OnClickListener, ListView.OnI
 			
 			protected Void doInBackground(Void... arg0) {
 				try {
+					//Si no esta en cache o ha pasado mas de 1 dia, actualiza los datos.
 					if (!isInCache || cacheDate.getTime() + (24L * 60L * 60L * 1000L) < new Date().getTime()){
 						System.out.println("not in cache... loading data");
 						chofer = WSTrasladosCliente.traeChofer();
@@ -243,22 +244,24 @@ public class Menu extends Activity implements View.OnClickListener, ListView.OnI
 					try {
 						boolean replace = TrasladosServicio.checkInstance(((Instancia) arg0.getItemAtPosition(arg2)).getId());
 						if (replace){
-							ShowAlert.askYesNo("Advertencia", "Tiene datos guardados de un traslado anterior.\nSi continúa perderá éstos.", this, new DialogInterface.OnClickListener() {
+							ShowAlert.askYesNo("Advertencia", "Tiene datos guardados de un traslado anterior.\nSi continúa perderá éstos.\n¿Está seguro de continuar?", this, new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int which) {
-									try {
-										TrasladosServicio.deleteGanado();
-										final Intent intent = new Intent(Menu.this, TrasladosV2.class);
-										intent.putExtra("superInstanciaId", superInstanciaId);
-										startActivity(intent);
-									} catch (AppException e) {
-										ShowAlert.showAlert("Error", e.getMessage(), Menu.this);
+									if (which == -2){
+										try {
+											TrasladosServicio.deleteGanado();
+											final Intent intent = new Intent(Menu.this, TrasladosV2.class);
+											intent.putExtra("superInstanciaId", superInstanciaId);
+											startActivityForResult(intent, 0);
+										} catch (AppException e) {
+											ShowAlert.showAlert("Error", e.getMessage(), Menu.this);
+										}
 									}
 								}
 							});
 						} else {
 							i = new Intent(this, TrasladosV2.class);
 							i.putExtra("superInstanciaId", superInstanciaId);
-							startActivity(i);
+							startActivityForResult(i, 0);
 						}
 					} catch (AppException e) {
 						ShowAlert.showAlert("Error", e.getMessage(), this);
@@ -295,5 +298,15 @@ public class Menu extends Activity implements View.OnClickListener, ListView.OnI
 		}
 		return true;
 	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        switch(requestCode) {
+        case 0:
+            if (resultCode == RESULT_OK) {
+            	traeDatosWS();
+            }
+            break;
+        }
+    }
 	
 }

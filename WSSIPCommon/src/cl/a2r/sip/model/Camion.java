@@ -8,6 +8,7 @@ public class Camion implements Serializable{
 	private Integer id;
 	private String activa;
 	private String nombre;
+	private Integer transportistaId;
 	
 	public Integer getId() {
 		return id;
@@ -33,6 +34,14 @@ public class Camion implements Serializable{
 		this.nombre = nombre;
 	}
 	
+	public Integer getTransportistaId() {
+		return transportistaId;
+	}
+
+	public void setTransportistaId(Integer transportistaId) {
+		this.transportistaId = transportistaId;
+	}
+
 	public String toString(){
 		return this.nombre;
 	}

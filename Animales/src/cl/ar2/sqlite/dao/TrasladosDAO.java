@@ -29,11 +29,11 @@ public class TrasladosDAO {
 			+ " WHERE id = ? ";
 	
 	private static final String SQL_INSERTA_TRASLADO = ""
-			+ "INSERT INTO traslado (ganadoId, ganadoDiio, mangada, instancia) "
-			+ " VALUES (?, ?, ?) ";
+			+ "INSERT INTO traslado (ganadoId, ganadoDiio, mangada, tipo_ganado, instancia) "
+			+ " VALUES (?, ?, ?, ?, ?) ";
 	
 	private static final String SQL_SELECT_GAN_TRASLADO = ""
-			+ "SELECT id, ganadoId, ganadoDiio, mangada, instancia "
+			+ "SELECT id, ganadoId, ganadoDiio, mangada, tipo_ganado, instancia "
 			+ " FROM traslado "
 			+ " ORDER BY id DESC ";
 	
@@ -50,6 +50,10 @@ public class TrasladosDAO {
 			+ " FROM traslado "
 			+ " WHERE instancia != ? "
 			+ " LIMIT 1 ";
+	
+	private static final String SQL_MANGADA_ACTUAL = ""
+			+ "SELECT max(mangada) mangada "
+			+ " FROM traslado ";
 	
     public static void insertReubicacion(SqLiteTrx trx, Traslado t) throws SQLException {
 
@@ -105,7 +109,8 @@ public class TrasladosDAO {
 	    	statement.bindLong(1, g.getId());
 	    	statement.bindLong(2, g.getDiio());
 	    	statement.bindLong(3, g.getMangada());
-	    	statement.bindLong(4, superInstancia.getId());
+	    	statement.bindLong(4, g.getTipoGanadoId());
+	    	statement.bindLong(5, superInstancia.getId());
 	    	statement.executeInsert();
         }
     }
@@ -120,6 +125,7 @@ public class TrasladosDAO {
         	g.setId(c.getInt(c.getColumnIndex("ganadoId")));
         	g.setDiio(c.getInt(c.getColumnIndex("ganadoDiio")));
         	g.setMangada(c.getInt(c.getColumnIndex("mangada")));
+        	g.setTipoGanadoId(c.getInt(c.getColumnIndex("tipo_ganado")));
         	list.add(g);
             hayReg = c.moveToNext();
         }
@@ -156,6 +162,20 @@ public class TrasladosDAO {
             hayReg = c.moveToNext();
         }
         return replace;
+    }
+    
+    public static Integer mangadaActual(SqLiteTrx trx) throws SQLException {
+    	Integer mangadaActual = null;
+        boolean hayReg;
+        Cursor c = trx.getDB().rawQuery(SQL_MANGADA_ACTUAL, null);
+        hayReg = c.moveToFirst();
+        while ( hayReg ) {
+        	if (!c.isNull(c.getColumnIndex("mangada"))){
+        		mangadaActual = c.getInt(c.getColumnIndex("mangada"));	
+        	}
+        	hayReg = c.moveToNext();
+        }
+        return mangadaActual;
     }
 	
 }

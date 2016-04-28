@@ -92,6 +92,15 @@ public class TrasladosDAO {
 	private static final String SQL_SELECT_ACOPLADOV2 = ""
 			+ "select * from sip.ws_traslado_select_acoplado()";
 	
+	private static final String SQL_INSERT_TRASLADO = ""
+			+ "select * from sip.ws_traslado_insert_traslado(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	
+	private static final String SQL_INSERT_GANADO_SALIDA = ""
+			+ "select * from sip.ws_traslado_insert_ganado_salida(?, ?, ?)";
+	
+	private static final String SQL_INSERT_MOVTO_ADEM = ""
+			+ "select * from sip.ws_traslado_insert_movto_adem(?)";
+	
 
     public static List selectTransportistas(Transaccion trx) throws SQLException {
         List list = new ArrayList();
@@ -560,6 +569,7 @@ public class TrasladosDAO {
         	t.setId(res.getInt("g_chofer_id"));
         	t.setActiva(res.getString("isactive"));
         	t.setNombre(res.getString("nombre"));
+        	t.setTransportistaId(res.getInt("g_transportista_id"));
             list.add(t);
         }
         res.close();
@@ -584,6 +594,7 @@ public class TrasladosDAO {
         	t.setId(res.getInt("g_camion_id"));
         	t.setActiva(res.getString("isactive"));
         	t.setNombre(res.getString("patente"));
+        	t.setTransportistaId(res.getInt("g_transportista_id"));
             list.add(t);
         }
         res.close();
@@ -608,12 +619,49 @@ public class TrasladosDAO {
         	t.setId(res.getInt("g_camion_id"));
         	t.setActiva(res.getString("isactive"));
         	t.setNombre(res.getString("patente"));
+        	t.setTransportistaId(res.getInt("g_transportista_id"));
             list.add(t);
         }
         res.close();
         pst.close();
 
         return list;
+    }
+    
+    public static void insertTraslado(Transaccion trx, Instancia superInstancia) throws SQLException {
+
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+        
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_INSERT_TRASLADO );
+        pst.setObject(1, superInstancia.getUsuarioId());
+        pst.setObject(2, superInstancia.getInstancia().getTraslado().getOrigen().getId());
+        pst.setObject(3, superInstancia.getInstancia().getTraslado().getDestino().getId());
+        pst.setObject(4, superInstancia.getInstancia().getTraslado().getDescription());
+        pst.setObject(5, superInstancia.getInstancia().getTraslado().getTransportistaId());
+        pst.setObject(6, superInstancia.getInstancia().getTraslado().getChoferId());
+        pst.setObject(7, superInstancia.getInstancia().getTraslado().getCamionId());
+        pst.setObject(8, superInstancia.getInstancia().getTraslado().getAcopladoId());
+        pst.setObject(9, superInstancia.getId());
+        res = pst.executeQuery();
+        
+        Integer g_procedimiento_instancia_movto_salida_id = null;
+        if (res.next()){
+        	g_procedimiento_instancia_movto_salida_id = res.getInt("g_procedimiento_instancia_movto_salida_id");
+        }
+        
+        pst = conn.prepareStatement( SQL_INSERT_GANADO_SALIDA );
+        for (Ganado g : superInstancia.getInstancia().getGanList()){
+            pst.setObject(1, superInstancia.getUsuarioId());
+            pst.setObject(2, g.getId());
+            pst.setObject(3, superInstancia.getId());
+            pst.executeQuery();
+        }
+
+        res.close();
+        pst.close();
     }
 	
 }

@@ -16,13 +16,13 @@ public class PredioLibreDAO {
 			+ "DELETE FROM diio";
 	
 	private static final String SQL_INSERTA_DIIO = ""
-			+ "INSERT INTO diio (id, diio, eid, fundoId) VALUES (?, ?, ?, ?)";
+			+ "INSERT INTO diio (id, diio, eid, fundoId, tipo_ganado) VALUES (?, ?, ?, ?, ?)";
 	
 	private static final String SQL_SELECT_DIIO = ""
-			+ "SELECT id, diio, eid, fundoId FROM diio WHERE diio = ?";
+			+ "SELECT id, diio, eid, fundoId, tipo_ganado FROM diio WHERE diio = ?";
 	
 	private static final String SQL_SELECT_EID = ""
-			+ "SELECT id, diio, eid, fundoId FROM diio WHERE eid = ?";
+			+ "SELECT id, diio, eid, fundoId, tipo_ganado FROM diio WHERE eid = ?";
 	
 	private static final String SQL_ALL = ""
 			+ "SELECT id, diio, eid, fundoId FROM diio";
@@ -133,6 +133,11 @@ public class PredioLibreDAO {
         	} else {
         		statement.bindNull(4);
         	}
+        	if (g.getTipoGanadoId() != null){
+        		statement.bindLong(5, g.getTipoGanadoId());
+        	} else {
+        		statement.bindNull(5);
+        	}
         	statement.executeInsert();
         }
     }
@@ -150,7 +155,12 @@ public class PredioLibreDAO {
         	g.setId(c.getInt(c.getColumnIndex("id")));
         	g.setDiio(c.getInt(c.getColumnIndex("diio")));
         	g.setEid(c.getString(c.getColumnIndex("eid")));
-        	g.setPredio(c.getInt(c.getColumnIndex("fundoId")));
+        	if (!c.isNull(c.getColumnIndex("fundoId"))){
+        		g.setPredio(c.getInt(c.getColumnIndex("fundoId")));
+        	}
+        	if (!c.isNull(c.getColumnIndex("tipo_ganado"))){
+        		g.setTipoGanadoId(c.getInt(c.getColumnIndex("tipo_ganado")));
+        	}
             hayReg = c.moveToNext();
         }
 
@@ -165,12 +175,16 @@ public class PredioLibreDAO {
         Cursor c = trx.getDB().rawQuery(SQL_SELECT_EID, args);
         hayReg = c.moveToFirst();
         while ( hayReg ) {
-
         	g = new Ganado();
         	g.setId(c.getInt(c.getColumnIndex("id")));
         	g.setDiio(c.getInt(c.getColumnIndex("diio")));
         	g.setEid(c.getString(c.getColumnIndex("eid")));
-        	g.setPredio(c.getInt(c.getColumnIndex("fundoId")));
+        	if (!c.isNull(c.getColumnIndex("fundoId"))){
+        		g.setPredio(c.getInt(c.getColumnIndex("fundoId")));
+        	}
+        	if (!c.isNull(c.getColumnIndex("tipo_ganado"))){
+        		g.setTipoGanadoId(c.getInt(c.getColumnIndex("tipo_ganado")));
+        	}
             hayReg = c.moveToNext();
         }
 

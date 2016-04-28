@@ -133,7 +133,7 @@ public class GanadoService {
         Transaccion trx = Transaccion.getTransaccion(false);
         if (trx != null){
             try {
-                list = GanadoDAO.selectOfflineDiioBasico(trx);
+                list = GanadoDAO.selectOfflineDiioTipoGanado(trx);
             } catch (SQLException ex) {
                 AppLog.logSevere("GanadoService.traeGanado()", ex);
                 if (ex.getSQLState().equals("SIP01")){

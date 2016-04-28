@@ -1,40 +1,39 @@
 package cl.a2r.traslados;
 
+import java.util.List;
+
 import cl.a2r.animales.R;
-import cl.a2r.animales.TrasladosSalida;
-import cl.a2r.sip.model.Persona;
-import cl.a2r.sip.model.Predio;
-import cl.a2r.sip.model.Transportista;
+import cl.a2r.common.AppException;
+import cl.a2r.custom.ShowAlert;
+import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Instancia;
+import cl.a2r.sip.model.TrasladoV2;
+import cl.ar2.sqlite.servicio.TrasladosServicio;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Toast;
 
 public class TrasladosV2 extends Activity implements View.OnClickListener{
 
 	private Fragment frEncabezado, frAnimales;
 	private Button btnEncabezado, btnAnimales;
-	
-	private Spinner spinnerOrigen, spinnerDestino, spinnerTipoTransporte, spinnerTransportista, spinnerChofer, spinnerCamion, spinnerAcoplado;
-	private TextView despliegaGD, tvApp, deshacer;
-	private TextView tvVacas, tvVaquillas, tvTerneras, tvToros, tvToretes, tvTerneros, tvAnimales, tvBueyes;
-	private TextView tvChofer, tvCamion, tvAcoplado, tvTransportista;
-	private LinearLayout layoutAnimales;
-	private ImageButton goBack, undo, confirmarMovimiento;
+	private ImageButton confirmarMovimiento, goBack;
 	private ProgressBar loading;
-	private boolean hayTransportista;
+	private Integer superInstanciaId;
+	
+	public static Instancia superInstancia;
+	public static TrasladoV2 traslado;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,118 +41,46 @@ public class TrasladosV2 extends Activity implements View.OnClickListener{
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(R.layout.activity_traslado_salida_v2);
 		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			superInstanciaId = extras.getInt("superInstanciaId");
+		}
+		
 		cargarInterfaz();
 	}
 
 	private void cargarInterfaz(){
 		frEncabezado = new Encabezado(this);
-		frAnimales = new Animales();
+		frAnimales = new Animales(this);
 		
+		confirmarMovimiento = (ImageButton)findViewById(R.id.confirmarMovimiento);
+		confirmarMovimiento.setOnClickListener(this);
+		goBack = (ImageButton)findViewById(R.id.goBack);
+		goBack.setOnClickListener(this);
 		btnEncabezado = (Button)findViewById(R.id.btnEncabezado);
 		btnEncabezado.setOnClickListener(this);
 		btnAnimales = (Button)findViewById(R.id.btnAnimales);
 		btnAnimales.setOnClickListener(this);
+		loading = (ProgressBar)findViewById(R.id.loading);
+		loading.setVisibility(View.INVISIBLE);
+		
+		traslado = new TrasladoV2();
+		superInstancia = new Instancia();
+		superInstancia.setId(superInstanciaId);
+		Instancia instancia = new Instancia();
+		superInstancia.setInstancia(instancia);
+		instancia.setTraslado(traslado);
 		
 		btnEncabezado.performClick();
-		/*
-		tvVacas = (TextView)findViewById(R.id.tvVacas);
-		tvVaquillas = (TextView)findViewById(R.id.tvVaquillas);
-		tvTerneras = (TextView)findViewById(R.id.tvTerneras);
-		tvToros = (TextView)findViewById(R.id.tvToros);
-		tvToretes = (TextView)findViewById(R.id.tvToretes);
-		tvTerneros = (TextView)findViewById(R.id.tvTerneros);
-		tvAnimales = (TextView)findViewById(R.id.tvAnimales);
-		tvBueyes = (TextView)findViewById(R.id.tvBueyes);
-		tvVacas.setOnClickListener(this);
-		tvVaquillas.setOnClickListener(this);
-		tvTerneras.setOnClickListener(this);
-		tvToros.setOnClickListener(this);
-		tvToretes.setOnClickListener(this);
-		tvTerneros.setOnClickListener(this);
-		tvAnimales.setOnClickListener(this);
-		layoutAnimales = (LinearLayout)findViewById(R.id.layoutAnimales);
-		layoutAnimales.setOnClickListener(this);
-		tvTransportista = (TextView)findViewById(R.id.tvTransportista);
-		tvChofer = (TextView)findViewById(R.id.tvChofer);
-		tvCamion = (TextView)findViewById(R.id.tvCamion);
-		tvAcoplado = (TextView)findViewById(R.id.tvAcoplado);
-		
-		spinnerChofer = (Spinner)findViewById(R.id.spinnerChofer);
-		spinnerCamion = (Spinner)findViewById(R.id.spinnerCamion);
-		spinnerAcoplado = (Spinner)findViewById(R.id.spinnerAcoplado);
-		spinnerTransportista = (Spinner)findViewById(R.id.spinnerTransportista);
-		spinnerTipoTransporte = (Spinner)findViewById(R.id.spinnerTipoTransporte);
-		spinnerOrigen = (Spinner)findViewById(R.id.spinnerOrigen);
-		spinnerDestino = (Spinner)findViewById(R.id.spinnerDestino);
-		despliegaGD = (TextView)findViewById(R.id.despliegaGD);
-		goBack = (ImageButton)findViewById(R.id.goBack);
-		goBack.setOnClickListener(this);
-		undo = (ImageButton)findViewById(R.id.undo);
-		undo.setOnClickListener(this);
-		tvApp = (TextView)findViewById(R.id.app);
-		deshacer = (TextView)findViewById(R.id.deshacer);
-		deshacer.setOnClickListener(this);
-		confirmarMovimiento = (ImageButton)findViewById(R.id.confirmarMovimiento);
-		confirmarMovimiento.setOnClickListener(this);
-		loading = (ProgressBar)findViewById(R.id.loading);
-		*/
 	}
-	
-	/*
-	private void cargarListeners(){
-		spinnerTipoTransporte.setOnItemSelectedListener(new OnItemSelectedListener(){
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				switch (arg2){
-				case 0:
-					//Con Camión
-					tvChofer.setVisibility(View.VISIBLE);
-					spinnerChofer.setVisibility(View.VISIBLE);
-					tvCamion.setVisibility(View.VISIBLE);
-					spinnerCamion.setVisibility(View.VISIBLE);
-					tvAcoplado.setVisibility(View.VISIBLE);
-					spinnerAcoplado.setVisibility(View.VISIBLE);
-					tvTransportista.setText("Transportista");
-					
-					ArrayAdapter<Transportista> mAdapter = new ArrayAdapter<Transportista>(TrasladosSalida.this, android.R.layout.simple_list_item_1, transportistas);
-					spinnerTransportista.setAdapter(mAdapter);
-					
-					trasladoSalida.setArrieroId(null);
-					hayTransportista = true;
-					break;
-				case 1:
-					//Sin Camión
-					tvChofer.setVisibility(View.INVISIBLE);
-					spinnerChofer.setVisibility(View.INVISIBLE);
-					tvCamion.setVisibility(View.INVISIBLE);
-					spinnerCamion.setVisibility(View.INVISIBLE);
-					tvAcoplado.setVisibility(View.INVISIBLE);
-					spinnerAcoplado.setVisibility(View.INVISIBLE);
-					tvTransportista.setText("Arriero");
-					
-					ArrayAdapter<Persona> mAdapter2 = new ArrayAdapter<Persona>(TrasladosSalida.this, android.R.layout.simple_list_item_1, arrieros);
-					spinnerTransportista.setAdapter(mAdapter2);
-					
-					trasladoSalida.setTransportistaId(null);
-					trasladoSalida.setChoferId(null);
-					trasladoSalida.setCamionId(null);
-					trasladoSalida.setAcopladoId(null);
-					hayTransportista = false;
-					break;
-				}
-				updateStatus();
-			}
-			
-			public void onNothingSelected(AdapterView<?> arg0) {
-			}
-			
-		});
-	}
-*/
-	@Override
+
 	public void onClick(View v) {
 		int id = v.getId();
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		switch (id){
+		case R.id.goBack:
+			finish();
+			break;
 		case R.id.btnEncabezado:
 			transaction.replace(R.id.container, frEncabezado);
 			btnEncabezado.setBackgroundResource(R.drawable.tab_state_activated);
@@ -168,8 +95,55 @@ public class TrasladosV2 extends Activity implements View.OnClickListener{
 			transaction.commit();
 			getFragmentManager().executePendingTransactions();
 			break;
+		case R.id.confirmarMovimiento:
+			ShowAlert.askYesNo("Completar Traslado", "¿Seguro que desea completar el traslado?", this, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					if (which == -2){
+						confirmarMovimiento();
+					}
+				}
+			});
+			break;
 		}
-		
+	}
+	
+	private void confirmarMovimiento(){
+		new AsyncTask<Void, Void, Void>(){
+			
+			String title, msg;
+			
+			protected void onPreExecute(){
+				loading.setVisibility(View.VISIBLE);
+				title = "";
+				msg = "";
+			}
+			
+			protected Void doInBackground(Void... arg0) {
+				try {
+					List<Ganado> list = TrasladosServicio.traeGanadoTraslado();
+					superInstancia.getInstancia().setGanList(list);
+					
+					TrasladosServicio.deleteGanado();
+				} catch (AppException e) {
+					title = "Error";
+					msg = e.getMessage();
+				}
+				return null;
+			}
+			
+			protected void onPostExecute(Void result){
+				loading.setVisibility(View.INVISIBLE);
+				if (!title.equals("Error")){
+					Toast.makeText(TrasladosV2.this, "Traslado Generado", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent();
+                    setResult(RESULT_OK,intent);
+                    finish();
+				} else {
+					ShowAlert.showAlert(title, msg, TrasladosV2.this);
+				}
+			}
+			
+		}.execute();
 	}
 	
 }

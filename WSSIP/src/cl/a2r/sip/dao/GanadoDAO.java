@@ -28,7 +28,7 @@ public class GanadoDAO {
     		+ "select * from sip.ws_busqueda_select_busqueda()";
     
     private static final String SQL_SELECT_OFFLINE_DIIO_BASICO = ""
-    		+ "select * from sip.ws_select_offline_diio_basico()";
+    		+ "select * from sip.ws_select_offline_diio_tipo_ganado()";
 	
     public static List selectGanado(Transaccion trx, Integer diio) throws SQLException {
     	List list = new ArrayList();
@@ -150,7 +150,7 @@ public class GanadoDAO {
         return list;
     }
     
-    public static List selectOfflineDiioBasico(Transaccion trx) throws SQLException {
+    public static List selectOfflineDiioTipoGanado(Transaccion trx) throws SQLException {
         List list = new ArrayList();
 
         Connection conn = null;
@@ -165,6 +165,7 @@ public class GanadoDAO {
         	g.setId(res.getInt("g_ganado_id"));
         	g.setDiio(res.getInt("diio"));
         	g.setEid(Long.toString(res.getLong("eid")));
+        	g.setTipoGanadoId(res.getInt("g_tipo_ganado_id"));
         	list.add(g);
         }
         res.close();

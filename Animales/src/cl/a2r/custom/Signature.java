@@ -101,7 +101,7 @@ public class Signature extends Activity {
                     b.putByteArray("firma", firma);
                     Intent intent = new Intent();
                     intent.putExtras(b);
-                    setResult(RESULT_OK,intent);   
+                    setResult(RESULT_OK,intent);
                     finish();
                 }
             }
