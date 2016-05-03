@@ -184,7 +184,29 @@ public class TrasladosServicio {
 
         if (trx != null) {
             try {
-                TrasladosDAO.deleteGanadoTraslado(trx);
+                TrasladosDAO.deleteTraslado(trx);
+                trx.commit();
+            } catch ( SQLException ex ) {
+                trx.rollback();
+                throw new AppException(ex.getMessage(), null);
+            } finally {
+                trx.close();
+            }
+        }
+    }
+    
+    public static void deleteGanadoTraslado(Integer id) throws AppException {
+        SqLiteTrx trx;
+
+        try {
+            trx = SqLiteTrx.getTrx(true);
+        } catch (Exception ex) {
+            throw new AppException(ex.getMessage(), ex);
+        }
+
+        if (trx != null) {
+            try {
+                TrasladosDAO.deleteGanadoTraslado(trx, id);
                 trx.commit();
             } catch ( SQLException ex ) {
                 trx.rollback();

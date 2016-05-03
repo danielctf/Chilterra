@@ -42,8 +42,12 @@ public class TrasladosDAO {
 			+ " FROM traslado "
 			+ " WHERE ganadoId = ? ";
 	
-	private static final String SQL_DELETE_GAN_TRASLADO = ""
+	private static final String SQL_DELETE_TRASLADO = ""
 			+ "DELETE FROM traslado ";
+	
+	private static final String SQL_DELETE_GANADO_TRASLADO = ""
+			+ "DELETE FROM traslado "
+			+ " WHERE id = ? ";
 	
 	private static final String SQL_CHECK_INSTANCE = ""
 			+ "SELECT id "
@@ -108,7 +112,11 @@ public class TrasladosDAO {
 	    	statement.clearBindings();
 	    	statement.bindLong(1, g.getId());
 	    	statement.bindLong(2, g.getDiio());
-	    	statement.bindLong(3, g.getMangada());
+	    	if (g.getMangada() != null){
+	    		statement.bindLong(3, g.getMangada());
+	    	} else {
+	    		statement.bindNull(3);
+	    	}
 	    	statement.bindLong(4, g.getTipoGanadoId());
 	    	statement.bindLong(5, superInstancia.getId());
 	    	statement.executeInsert();
@@ -122,9 +130,12 @@ public class TrasladosDAO {
         hayReg = c.moveToFirst();
         while ( hayReg ) {
         	Ganado g = new Ganado();
+        	g.setSqlId(c.getInt(c.getColumnIndex("id")));
         	g.setId(c.getInt(c.getColumnIndex("ganadoId")));
         	g.setDiio(c.getInt(c.getColumnIndex("ganadoDiio")));
-        	g.setMangada(c.getInt(c.getColumnIndex("mangada")));
+        	if (!c.isNull(c.getColumnIndex("mangada"))){
+        		g.setMangada(c.getInt(c.getColumnIndex("mangada")));
+        	}
         	g.setTipoGanadoId(c.getInt(c.getColumnIndex("tipo_ganado")));
         	list.add(g);
             hayReg = c.moveToNext();
@@ -145,9 +156,16 @@ public class TrasladosDAO {
         return exists;
     }
     
-    public static void deleteGanadoTraslado(SqLiteTrx trx) throws SQLException {
-    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_GAN_TRASLADO);
+    public static void deleteTraslado(SqLiteTrx trx) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_TRASLADO);
     	statement.clearBindings();
+    	statement.executeUpdateDelete();
+    }
+    
+    public static void deleteGanadoTraslado(SqLiteTrx trx, Integer id) throws SQLException {
+    	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_GANADO_TRASLADO);
+    	statement.clearBindings();
+    	statement.bindLong(1, id);
     	statement.executeUpdateDelete();
     }
     

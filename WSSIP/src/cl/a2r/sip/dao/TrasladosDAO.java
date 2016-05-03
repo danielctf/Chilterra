@@ -77,7 +77,7 @@ public class TrasladosDAO {
 	
 	//------------------------- TRASLADOS V2 ----------------------------
 	
-	private static final String SQL_SELECT_TRASLADO = ""
+	private static final String SQL_SELECT_TRASLADOS = ""
 			+ "select * from sip.ws_traslado_select_traslados(?)";
 	
 	private static final String SQL_DELETE_TRASLADO = ""
@@ -101,6 +101,17 @@ public class TrasladosDAO {
 	private static final String SQL_INSERT_MOVTO_ADEM = ""
 			+ "select * from sip.ws_traslado_insert_movto_adem(?)";
 	
+	private static final String SQL_SELECT_FMA_XML = ""
+			+ "select * from sip.ws_traslado_fma_xml(?, ?, ?, ?)";
+	
+	private static final String SQL_SELECT_TRASLADO = ""
+			+ "select * from sip.ws_traslado_select_traslado(?)";
+	
+	private static final String SQL_INSERT_GANADO_ENTRADA = ""
+			+ "select * from sip.ws_traslado_insert_ganado_entrada(?, ?, ?)";
+	
+	private static final String SQL_INSERT_CONFIRM = ""
+			+ "select * from sip.ws_traslado_insert_confirm(?, ?)";
 
     public static List selectTransportistas(Transaccion trx) throws SQLException {
         List list = new ArrayList();
@@ -504,7 +515,7 @@ public class TrasladosDAO {
         ResultSet res = null;
 
         conn = trx.getConn();
-        pst = conn.prepareStatement( SQL_SELECT_TRASLADO );
+        pst = conn.prepareStatement( SQL_SELECT_TRASLADOS );
         pst.setObject(1, fundoId);
         res = pst.executeQuery();
         while (res.next()){
@@ -628,7 +639,7 @@ public class TrasladosDAO {
         return list;
     }
     
-    public static void insertTraslado(Transaccion trx, Instancia superInstancia) throws SQLException {
+    public static Integer insertTraslado(Transaccion trx, Instancia superInstancia) throws SQLException {
 
         Connection conn = null;
         PreparedStatement pst = null;
@@ -649,7 +660,7 @@ public class TrasladosDAO {
         
         Integer g_procedimiento_instancia_movto_salida_id = null;
         if (res.next()){
-        	g_procedimiento_instancia_movto_salida_id = res.getInt("g_procedimiento_instancia_movto_salida_id");
+        	g_procedimiento_instancia_movto_salida_id = res.getInt("l_procedimiento_instancia_movto_salida_id");
         }
         
         pst = conn.prepareStatement( SQL_INSERT_GANADO_SALIDA );
@@ -662,6 +673,138 @@ public class TrasladosDAO {
 
         res.close();
         pst.close();
+        
+        return g_procedimiento_instancia_movto_salida_id;
+    }
+    
+    public static DctoAdem insertMovtoAdem(Transaccion trx, Integer g_procedimiento_instancia_movto_salida_id) throws SQLException {
+    	DctoAdem d = new DctoAdem();
+    	
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_INSERT_MOVTO_ADEM );
+        pst.setObject(1, g_procedimiento_instancia_movto_salida_id);
+        res = pst.executeQuery();
+        if (res.next()){
+        	d.setIddocto(res.getInt("iddocto"));
+        	d.setIdtipodocto(res.getInt("idtipodocto"));
+        	d.setNrodocto(res.getString("nrodocto"));
+        	d.setG_movimiento_id(g_procedimiento_instancia_movto_salida_id);
+        }
+        
+        res.close();
+        pst.close();
+
+        return d;
+    }
+    
+    public static void selectFmaXml(Transaccion trx, FMA fma) throws SQLException {
+        String strXML = null;
+        String correoDestino = null;
+        String fundoOrigen = null;
+        String fundoDestino = null;
+        String rupOrigen = null;
+        String rupDestino = null;
+        Integer nro_documento = null;
+        
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_FMA_XML );
+        pst.setObject(1, fma.getUsuarioId());
+        pst.setObject(2, fma.getG_movimiento_id());
+        pst.setObject(3, fma.getFundoOrigenId());
+        pst.setObject(4, fma.getFundoDestinoId());
+        res = pst.executeQuery();
+        
+        if (res.next()){
+        	strXML = res.getString("xmlmsg");
+        	correoDestino = res.getString("mail");
+        	fundoOrigen = res.getString("fundo_origen");
+        	fundoDestino = res.getString("fundo_destino");
+        	rupOrigen = res.getString("rup_origen");
+        	rupDestino = res.getString("rup_destino");
+        	nro_documento = res.getInt("nro_documento");
+        }
+        
+        //No se genera el FMA, debido a que el predio de origen y/o destino no esta registrado
+        //en SIPEC o no tiene RUP asignado en SIP
+        if (rupOrigen == null || rupDestino == null || (rupOrigen.equals(rupDestino))){
+            res.close();
+            pst.close();
+            return;
+        }
+        
+        byte[] byteXML = strXML.getBytes();
+        
+        Correo correo = new Correo();
+        correo.setFrom("adempiere@chilterra.com");
+        correo.setTo(correoDestino);
+        correo.setSubject("FMA " + nro_documento + " - " + fundoOrigen + " - " + fundoDestino);
+        correo.setBody("XML válido para generar un FMA en sitio web SIPEC" + "\n"
+        		+ "http://sipecweb.sag.gob.cl/" + "\n"
+        		+ "RUP " + fundoOrigen + ": " + rupOrigen + "\n"
+        		+ "RUP " + fundoDestino + ": " + rupDestino + "\n");
+        correo.addAdjunto(byteXML, "application/xml", "FMA " + fma.getG_movimiento_id() + ".xml" );
+        correo.enviar();
+        
+        res.close();
+        pst.close();
+
+    }
+    
+    public static List selectTraslado(Transaccion trx, Integer g_superprocedimiento_instancia_id) throws SQLException {
+    	List list = new ArrayList();
+    	
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_TRASLADO );
+        pst.setObject(1, g_superprocedimiento_instancia_id);
+        res = pst.executeQuery();
+        while (res.next()){
+        	Ganado g = new Ganado();
+        	g.setId(res.getInt("g_ganado_id"));
+        	g.setDiio(res.getInt("diio"));
+        	g.setTipoGanadoId(res.getInt("g_tipo_ganado_id"));
+        	list.add(g);
+        }
+        
+        res.close();
+        pst.close();
+
+        return list;
+    }
+    
+    public static void insertConfirm(Transaccion trx, Instancia superInstancia) throws SQLException {
+    	
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_INSERT_GANADO_ENTRADA );
+        for (Ganado g : superInstancia.getInstancia().getGanList()){
+        	pst.setObject(1, superInstancia.getUsuarioId());
+        	pst.setObject(2, g.getId());
+        	pst.setObject(3, superInstancia.getId());
+        	pst.executeQuery();
+        }
+
+        pst = conn.prepareStatement( SQL_INSERT_CONFIRM );
+        pst.setObject(1, superInstancia.getUsuarioId());
+        pst.setObject(2, superInstancia.getId());
+        pst.executeQuery();
+        
+        pst.close();
+
     }
 	
 }

@@ -145,6 +145,27 @@
 	            android:src="@drawable/ic_action_done" />
 	
 	    </RelativeLayout>
+	    
+        <TextView
+            android:id="@+id/tvBusqueda"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/llCandidatos"
+            android:text="Busqueda"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ababab"
+            android:textSize="15sp" />
+
+        <Spinner
+            android:id="@+id/spBusqueda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvBusqueda"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/spinner_style" />	    
 
 	    <TextView
 	        android:id="@+id/tvCandidato"
@@ -152,8 +173,8 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
 	        android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-	        android:layout_below="@+id/llCandidatos"
+            android:layout_marginTop="15dp"
+	        android:layout_below="@+id/spBusqueda"
 	        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     </RelativeLayout>

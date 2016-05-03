@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.a2r.sip.model.Busqueda;
 import cl.a2r.sip.model.Ganado;
 
 public class GanadoDAO {
@@ -25,7 +26,10 @@ public class GanadoDAO {
     		+ "select * from sip.ws_select_diio_baston(?)";
     
     private static final String SQL_SELECT_BUSQUEDA = ""
-    		+ "select * from sip.ws_busqueda_select_busqueda()";
+    		+ "select * from sip.ws_busqueda_select_busqueda(?)";
+    
+    private static final String SQL_SELECT_BUSQUEDAS = ""
+    		+ "select * from sip.ws_busqueda_select_busquedas()";
     
     private static final String SQL_SELECT_OFFLINE_DIIO_BASICO = ""
     		+ "select * from sip.ws_select_offline_diio_tipo_ganado()";
@@ -124,7 +128,29 @@ public class GanadoDAO {
         return diio;
     }
     
-    public static List selectGanadoBusqueda(Transaccion trx) throws SQLException {
+    public static List selectBusquedas(Transaccion trx) throws SQLException {
+    	List list = new ArrayList();
+        
+        Connection conn = null;
+        PreparedStatement pst = null;
+        ResultSet res = null;
+
+        conn = trx.getConn();
+        pst = conn.prepareStatement( SQL_SELECT_BUSQUEDAS );
+        res = pst.executeQuery();
+        while (res.next() ){
+        	Busqueda b = new Busqueda();
+        	b.setId(res.getInt("g_busqueda_enc_id"));
+        	b.setNombre(res.getString("name"));
+            list.add(b);
+        }
+        res.close();
+        pst.close();
+
+        return list;
+    }
+    
+    public static List selectGanadoBusqueda(Transaccion trx, Integer g_busqueda_enc_id) throws SQLException {
     	List list = new ArrayList();
         
         Connection conn = null;
@@ -133,7 +159,7 @@ public class GanadoDAO {
 
         conn = trx.getConn();
         pst = conn.prepareStatement( SQL_SELECT_BUSQUEDA );
-
+        pst.setObject(1, g_busqueda_enc_id);
         res = pst.executeQuery();
         while (res.next() ){
         	Ganado g = new Ganado();

@@ -39,6 +39,7 @@ public class WSTraslados extends HttpServlet {
         ParamServlet params = null;
 
         try {
+        	Integer l = 1;
             params = (ParamServlet) inputFromApplet.readObject();
             String servicio = (String) params.getParam("servicio");
 
@@ -113,6 +114,22 @@ public class WSTraslados extends HttpServlet {
             	retorno = list;
             } else if (servicio.equals("traeAcopladoV2")){
             	List list = TrasladosService.traeAcoplado();
+            	retorno = list;
+            } else if (servicio.equals("insertaTraslado")){
+            	Instancia superInstancia = (Instancia) params.getParam("superInstancia");
+            	Integer g_procedimiento_instancia_movto_salida_id = TrasladosService.insertaTraslado(superInstancia);
+            	DctoAdem d = TrasladosService.insertaMovtoAdemV2(g_procedimiento_instancia_movto_salida_id);
+            	WSAdempiereCliente.completaDocto(d.getIddocto(), d.getIdtipodocto());
+            	FMA fma = new FMA();
+            	fma.setUsuarioId(superInstancia.getUsuarioId());
+            	fma.setG_movimiento_id(g_procedimiento_instancia_movto_salida_id);
+            	fma.setFundoOrigenId(superInstancia.getInstancia().getTraslado().getOrigen().getId());
+            	fma.setFundoDestinoId(superInstancia.getInstancia().getTraslado().getDestino().getId());
+            	TrasladosService.generarFmaXml(fma);
+            	retorno = l;
+            } else if (servicio.equals("traeTraslado")){
+            	Integer g_superprocedimiento_instancia_id = (Integer) params.getParam("superInstanciaId");
+            	List list = TrasladosService.traeTraslado(g_superprocedimiento_instancia_id);
             	retorno = list;
             } else {
                 retorno = new AppException("Servicio no válido.", null);

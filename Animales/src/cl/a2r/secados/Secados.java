@@ -174,7 +174,7 @@ public class Secados extends Activity implements View.OnClickListener {
 					
 					medList = WSSecadosCliente.traeMedicamentos(Aplicaciones.appId);
 					estList = WSSecadosCliente.traeEstadosLeche();
-					faltantes = WSGanadoCliente.traeGanadoBusqueda();
+					faltantes = WSGanadoCliente.traeGanadoBusqueda(1);
 					
 					List<Secado> list = WSSecadosCliente.traeGanado();
 					SecadosServicio.deleteSynced();
@@ -318,18 +318,18 @@ public class Secados extends Activity implements View.OnClickListener {
 			//encontrados
 			tvEncontrados.setText(Integer.toString(list.size()));
 			
+			List<Secado> list2 = SecadosServicio.traeGanadoASincronizar();
 			//Contadores mangada
-			tvTotalAnimales.setText(Integer.toString(list.size()));
+			tvTotalAnimales.setText(Integer.toString(list2.size()));
 			tvMangada.setText(Integer.toString(mangadaActual));
 			int animalesMangada = 0;
-			for (Secado s : list){
+			for (Secado s : list2){
 				if (s.getGan().getMangada() != null && s.getGan().getMangada().intValue() == mangadaActual.intValue()){
 					animalesMangada++;
 				}
 			}
 			tvAnimalesMangada.setText(Integer.toString(animalesMangada));
 			
-			List<Secado> list2 = SecadosServicio.traeGanadoASincronizar();
 			// sync pendientes
 			if (list2.size() > 0){
 				tvSync.setText(Integer.toString(list2.size()));

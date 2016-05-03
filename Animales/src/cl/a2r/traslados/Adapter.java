@@ -1,44 +1,23 @@
 package cl.a2r.traslados;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import cl.a2r.animales.Aplicaciones;
-import cl.a2r.animales.Login;
-import cl.a2r.animales.PredioLibreLobby;
 import cl.a2r.animales.R;
-import cl.a2r.animales.R.layout;
-import cl.a2r.common.AppException;
-import cl.a2r.custom.ShowAlert;
-import cl.a2r.custom.Signature;
-import cl.a2r.custom.Utility;
-import cl.a2r.salvatajes.SalvatajesV2;
-import cl.a2r.sip.model.Auditoria;
 import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.Predio;
-import cl.a2r.sip.model.PredioLibre;
-import cl.a2r.sip.model.Salvataje;
-import cl.a2r.sip.wsservice.WSAuditoriaCliente;
-import cl.a2r.sip.wsservice.WSPredioLibreCliente;
-import cl.ar2.sqlite.servicio.SalvatajesServicio;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -48,7 +27,7 @@ public class Adapter extends BaseAdapter{
     private Activity act;
     private SimpleDateFormat dfFecha;
     private SimpleDateFormat dfTime;
-    private SimpleDateFormat df;
+    private SimpleDateFormat dfComp;
     private List<Instancia> trasList;
     private ProgressBar loading;
     private ListView lvTraslados;
@@ -57,9 +36,9 @@ public class Adapter extends BaseAdapter{
       public Adapter(Activity act, List<Instancia> trasList) {
           this.act = act;
           this.trasList = trasList;
-          dfFecha = new SimpleDateFormat("dd-MM");
+          dfFecha = new SimpleDateFormat("dd MMM");
           dfTime = new SimpleDateFormat("HH:mm");
-          df = new SimpleDateFormat("dd");
+          dfComp = new SimpleDateFormat("dd-MM-yyyy");
           currentDate = new Date();
           loading = (ProgressBar)act.findViewById(R.id.loading);
           lvTraslados = (ListView)act.findViewById(R.id.lvTraslados);
@@ -137,14 +116,18 @@ public class Adapter extends BaseAdapter{
           }
           
           TextView tvFecha = (TextView)grid.findViewById(R.id.tvFecha);
-          Date fecha = trasList.get(position).getInstancia().getTraslado().getFecha();
-          if (fecha != null){
-        	  int diaMovto = Integer.parseInt(df.format(fecha));
-        	  int diaActual = Integer.parseInt(df.format(currentDate));
-        	  if (diaMovto < diaActual){
-        		  tvFecha.setText(dfFecha.format(fecha));
+          Date fechaMovtoOriginal = trasList.get(position).getInstancia().getTraslado().getFecha();
+          if (fechaMovtoOriginal != null){
+        	  Date fechaMovto = null, fechaActual = null;
+			  try {
+				fechaMovto = dfComp.parse(dfComp.format(fechaMovtoOriginal));
+				fechaActual = dfComp.parse(dfComp.format(currentDate));
+			  } catch (ParseException e) {}
+        	  System.out.println("fechaMovto.before(fechaActual): " + fechaMovto.before(fechaActual));
+        	  if (fechaMovto.before(fechaActual)){
+        		  tvFecha.setText(dfFecha.format(fechaMovtoOriginal));
         	  } else {
-        		  tvFecha.setText(dfTime.format(fecha));
+        		  tvFecha.setText(dfTime.format(fechaMovtoOriginal));
         	  }
           } else {
         	  tvFecha.setText("");

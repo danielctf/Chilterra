@@ -19,6 +19,7 @@ import cl.a2r.sip.model.Ecografista;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Inseminacion;
 import cl.a2r.sip.wsservice.WSEcografiasCliente;
+import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
 import cl.ar2.sqlite.servicio.EcografiasServicio;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
@@ -34,6 +35,7 @@ public class AsyncGetData extends AsyncTask<Void, Void, Void>{
 	private List<EcografiaEstado> estados;
 	private List<EcografiaProblema> problemas;
 	private List<EcografiaNota> notas;
+	public static List<Ganado> faltantes;
 	
 	public AsyncGetData(Activity act){
 		this.act = act;
@@ -78,6 +80,8 @@ public class AsyncGetData extends AsyncTask<Void, Void, Void>{
 			}
 			problemas = WSEcografiasCliente.traeEcografiaProblema();
 			notas = WSEcografiasCliente.traeEcografiaNota();
+			
+			faltantes = WSGanadoCliente.traeGanadoBusqueda(2);
 		} catch (AppException e) {
 			title = "Error";
 			msg = e.getMessage();
@@ -103,6 +107,7 @@ public class AsyncGetData extends AsyncTask<Void, Void, Void>{
 			spNota.setAdapter(mNotas);
 			
 			((Ecografias) act).cargarListeners();
+			((Ecografias) act).onStart();
 		}
 	}
 	

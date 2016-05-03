@@ -10,6 +10,7 @@ import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
+import cl.a2r.sip.model.Busqueda;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.GanadoBusqueda;
 import cl.a2r.sip.model.MedicamentoControl;
@@ -30,11 +31,15 @@ import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public class Busquedas extends Activity implements View.OnClickListener{
 
@@ -45,6 +50,8 @@ public class Busquedas extends Activity implements View.OnClickListener{
 	private Ganado gan;
 	public static List<Ganado> faltantes;
 	private boolean esCandidato;
+	private Spinner spBusqueda;
+	private Integer busquedaId;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,6 +60,7 @@ public class Busquedas extends Activity implements View.OnClickListener{
 		setContentView(R.layout.activity_busquedas);
 		
 		cargarInterfaz();
+		cargarListeners();
 		traeDatosWS();
 	}
 	
@@ -72,9 +80,60 @@ public class Busquedas extends Activity implements View.OnClickListener{
 		llFaltantes = (LinearLayout)findViewById(R.id.llFaltantes);
 		llFaltantes.setOnClickListener(this);
 		tvCandidato = (TextView)findViewById(R.id.tvCandidato);
+		spBusqueda = (Spinner)findViewById(R.id.spBusqueda);
 		
 		esCandidato = false;
 		gan = new Ganado();
+	}
+	
+	private void cargarListeners(){
+		spBusqueda.setOnItemSelectedListener(new OnItemSelectedListener(){
+			
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				Integer id = ((Busqueda) arg0.getItemAtPosition(arg2)).getId();
+				busquedaId = id;
+				traeDatosBusquedaWS(id);
+			}
+			
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
+			
+		});
+	}
+	
+	private void traeDatosBusquedaWS(final Integer id){
+		new AsyncTask<Void, Void, Void>(){
+
+			String title, msg;
+			List<MedicamentoControl> medList;
+			List<Busqueda> busList;
+			
+			protected void onPreExecute(){
+				loading.setVisibility(View.VISIBLE);
+				title = "";
+				msg = "";
+			}
+			
+			protected Void doInBackground(Void... arg0) {
+				try {
+					faltantes = WSGanadoCliente.traeGanadoBusqueda(id);
+				} catch (AppException e) {
+					title = "Error";
+					msg = e.getMessage();
+				}
+				return null;
+			}
+			
+			protected void onPostExecute(Void result){
+				loading.setVisibility(View.INVISIBLE);
+				if (!title.equals("Error")){
+					mostrarCandidatos();
+				} else {
+					ShowAlert.showAlert(title, msg + "\nReinicie la aplicación", Busquedas.this);
+				}
+			}
+			
+		}.execute();
 	}
 
 	private void traeDatosWS(){		
@@ -82,6 +141,7 @@ public class Busquedas extends Activity implements View.OnClickListener{
 
 			String title, msg;
 			List<MedicamentoControl> medList;
+			List<Busqueda> busList;
 			
 			protected void onPreExecute(){
 				loading.setVisibility(View.VISIBLE);
@@ -96,7 +156,7 @@ public class Busquedas extends Activity implements View.OnClickListener{
 					PredioLibreServicio.deleteDiio();
 					PredioLibreServicio.insertaDiio(list);
 					
-					faltantes = WSGanadoCliente.traeGanadoBusqueda();
+					busList = WSGanadoCliente.traeBusquedas();
 				} catch (AppException e) {
 					title = "Error";
 					msg = e.getMessage();
@@ -107,7 +167,8 @@ public class Busquedas extends Activity implements View.OnClickListener{
 			protected void onPostExecute(Void result){
 				loading.setVisibility(View.INVISIBLE);
 				if (!title.equals("Error")){
-					mostrarCandidatos();
+					ArrayAdapter<Busqueda> mAdapter = new ArrayAdapter<Busqueda>(Busquedas.this, android.R.layout.simple_list_item_1, busList);
+					spBusqueda.setAdapter(mAdapter);
 				} else {
 					ShowAlert.showAlert(title, msg + "\nReinicie la aplicación", Busquedas.this);
 				}
@@ -182,14 +243,18 @@ public class Busquedas extends Activity implements View.OnClickListener{
 		boolean esCandidato = false;
 		for (Ganado gan : faltantes){
 			if (gan.getId().intValue() == g.getId().intValue()){
-				if (gan.getFlag().intValue() == 1 && gan.getVenta().intValue() == 1){
-					tvCandidato.setText("Es Candidato!\nPomo Secado: Si\nDesecho: Si");
-				} else if (gan.getFlag().intValue() == 1 && gan.getVenta().intValue() == 0){
-					tvCandidato.setText("Es Candidato!\nPomo Secado: Si\nDesecho: No");
-				} else if (gan.getFlag().intValue() == 0 && gan.getVenta().intValue() == 1){
-					tvCandidato.setText("Es Candidato!\nPomo Secado: No\nDesecho: Si");
-				} else if (gan.getFlag().intValue() == 0 && gan.getVenta().intValue() == 0){
-					tvCandidato.setText("Es Candidato!\nPomo Secado: No\nDesecho: No");
+				if (busquedaId.intValue() == 1){
+					if (gan.getFlag().intValue() == 1 && gan.getVenta().intValue() == 1){
+						tvCandidato.setText("Es Candidato!\nPomo Secado: Si\nDesecho: Si");
+					} else if (gan.getFlag().intValue() == 1 && gan.getVenta().intValue() == 0){
+						tvCandidato.setText("Es Candidato!\nPomo Secado: Si\nDesecho: No");
+					} else if (gan.getFlag().intValue() == 0 && gan.getVenta().intValue() == 1){
+						tvCandidato.setText("Es Candidato!\nPomo Secado: No\nDesecho: Si");
+					} else if (gan.getFlag().intValue() == 0 && gan.getVenta().intValue() == 0){
+						tvCandidato.setText("Es Candidato!\nPomo Secado: No\nDesecho: No");
+					}
+				} else if (busquedaId.intValue() == 2){
+					tvCandidato.setText("Es Candidato!");
 				}
 				this.gan = gan;
 				esCandidato = true;

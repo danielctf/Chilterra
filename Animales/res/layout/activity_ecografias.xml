@@ -47,20 +47,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/logs"
-            android:layout_marginRight="20dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_cloud_white_36dp" />           
-        
-        <ImageButton
-            android:id="@+id/logs"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:paddingRight="7dp"
+            android:paddingRight="15dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_search_white_36dp" />        
+            android:src="@drawable/ic_cloud_white_36dp" />                 
         
     </RelativeLayout>
 
@@ -88,7 +78,7 @@
                     android:paddingLeft="20dp"
                     android:text="DIIO:"
                     android:textColor="@color/white"
-                    android:textSize="50sp" />
+                    android:textSize="50sp" />                
 
                 <TextView
                     android:id="@+id/tvEcografista"

@@ -10,6 +10,7 @@ import cl.a2r.common.AppException;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
+import cl.a2r.ecografias.AsyncGetData;
 import cl.a2r.rb51.RB51;
 import cl.a2r.secados.Secados;
 import cl.a2r.sip.model.Areteo;
@@ -24,6 +25,7 @@ import cl.a2r.sip.model.Secado;
 import cl.a2r.sip.wsservice.WSAreteosCliente;
 import cl.a2r.sip.wsservice.WSPartosCliente;
 import cl.a2r.sip.wsservice.WSTrasladosCliente;
+import cl.a2r.traslados.Recepcion;
 import cl.ar2.sqlite.servicio.AuditoriasServicio;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
@@ -227,6 +229,16 @@ public class Candidatos extends Activity implements View.OnClickListener, ListVi
 			}
 			ArrayAdapter<GanadoBusqueda> mAdapter10 = new ArrayAdapter<GanadoBusqueda>(this, android.R.layout.simple_list_item_1, gbList);
 			lvCandidatos.setAdapter(mAdapter10);
+			break;
+		case "ecografiasFaltantes":
+			tvApp.setText("Candidatos Faltantes");
+			ArrayAdapter<Ganado> mAdapter11 = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, AsyncGetData.faltantes);
+			lvCandidatos.setAdapter(mAdapter11);
+			break;
+		case "trasladosFaltantes":
+			tvApp.setText("Candidatos Faltantes");
+			ArrayAdapter<Ganado> mAdapter12 = new ArrayAdapter<Ganado>(this, android.R.layout.simple_list_item_1, Recepcion.faltantes);
+			lvCandidatos.setAdapter(mAdapter12);
 			break;
 		}		
 	}

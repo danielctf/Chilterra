@@ -71,8 +71,8 @@ public class Test {
     public static void main(String[] arg) {
     	
     	try {
-    		List<Ganado> faltantes = WSGanadoCliente.traeOfflineDiioBasico();
-    		System.out.println(faltantes.size());
+    		List<Ganado> faltantes = WSTrasladosCliente.traeTraslado(175848);
+    		System.out.println(faltantes.size()+ "<<");
     		for (Ganado g : faltantes){
     			System.out.println(g.getTipoGanadoId());
     		}

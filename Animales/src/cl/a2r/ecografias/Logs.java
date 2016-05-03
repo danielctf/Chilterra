@@ -1,26 +1,18 @@
 package cl.a2r.ecografias;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
-import cl.a2r.custom.ArrayAdapterBrucelosis;
-import cl.a2r.custom.ArrayAdapterInyeccionTB;
 import cl.a2r.custom.ShowAlert;
-import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.Ecografia;
-import cl.a2r.sip.model.InyeccionTB;
 import cl.ar2.sqlite.servicio.EcografiasServicio;
-import cl.ar2.sqlite.servicio.PredioLibreServicio;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,19 +22,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class Logs extends Activity implements View.OnClickListener{
+public class Logs extends Activity implements View.OnClickListener, ListView.OnItemLongClickListener{
 
-    private static final int SWIPE_DURATION = 250;
-    private static final int MOVE_DURATION = 150;
-    private boolean mSwiping = false;
-    private boolean mItemPressed = false;
-    private ArrayAdapterEco mAdapter;
 	private ImageButton goBack;
 	private TextView app;
 	private ListView listViewHistorial;
 	private Spinner spinnerMangada;
-	private Integer mangada;
-	private HashMap<Long, Integer> mItemIdTopMap = new HashMap<Long, Integer>();
+	private Integer mangadaActual;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,9 +36,14 @@ public class Logs extends Activity implements View.OnClickListener{
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(R.layout.activity_mangada_logs);
 		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			mangadaActual = extras.getInt("mangadaActual");
+		}
+		
 		cargarInterfaz();
-		getMangadas();
 		cargarListeners();
+		getMangadas();
 
 	}
 	
@@ -60,251 +51,80 @@ public class Logs extends Activity implements View.OnClickListener{
 		goBack = (ImageButton)findViewById(R.id.goBack);
 		goBack.setOnClickListener(this);
 		listViewHistorial = (ListView)findViewById(R.id.listViewHistorial);
+		listViewHistorial.setOnItemLongClickListener(this);
 		app = (TextView)findViewById(R.id.app);
-		app.setText("Historial");
+		app.setText("Candidatos Encontrados");
 		spinnerMangada = (Spinner)findViewById(R.id.spinnerMangada);
-	}
-	
-	private void getMangadas(){
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			mangada = extras.getInt("mangada");
-		}
-		List<String> mangList = new ArrayList<String>();
-		
-		for (int i = 0; i < mangada.intValue(); i++){
-			mangList.add("Mangada " + (i + 1));
-		}
-		ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mangList);
-		spinnerMangada.setAdapter(mAdapter);
-		spinnerMangada.setSelection(mangada.intValue() - 1);
 	}
 	
 	private void cargarListeners(){
 		spinnerMangada.setOnItemSelectedListener(new OnItemSelectedListener(){
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				mangada = arg2 + 1;
-				getDiiosMangada();
+				mangadaActual = arg2 + 1;
+				getLogs();
 			}
-			public void onNothingSelected(AdapterView<?> arg0) {
-			}
+			public void onNothingSelected(AdapterView<?> arg0) {}
 		});
 	}
 	
-	private void getDiiosMangada(){
+	private void getMangadas(){
+		String[] items = new String[mangadaActual];
+		for (int i = 0; i < mangadaActual; i++){
+			items[i] = "Mangada " + Integer.toString(i + 1);
+		}
+		ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
+		spinnerMangada.setAdapter(mAdapter);
+		spinnerMangada.setSelection(mangadaActual.intValue() - 1);
+	}
+	
+	private void getLogs(){
 		try {
 			List<Ecografia> list = EcografiasServicio.traeEcografias();
-			List<Ecografia> listFiltrada = new ArrayList<Ecografia>();
+			List<Ecografia> toShow = new ArrayList<Ecografia>();
 			for (Ecografia e : list){
-				if (e.getMangada().intValue() == mangada.intValue()){
-					listFiltrada.add(e);
+				if (e.getMangada().intValue() == mangadaActual.intValue()){
+					toShow.add(e);
 				}
 			}
-			mAdapter = new ArrayAdapterEco(this, android.R.layout.simple_list_item_1, listFiltrada, mTouchListener);
+			ArrayAdapter<Ecografia> mAdapter = new ArrayAdapter<Ecografia>(this, android.R.layout.simple_list_item_1, toShow);
 			listViewHistorial.setAdapter(mAdapter);
 		} catch (AppException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
 	}
 
-	public void onClick(View arg0) {
-		int id = arg0.getId();
+	public void onClick(View v) {
+		int id = v.getId();
 		switch (id){
 		case R.id.goBack:
 			finish();
 			break;
 		}
-		
 	}
-	
-	//---------------------------------------------------------------------
-	//----------------------ANIMACION LISTVIEW HISTORIAL-------------------
-	//---------------------------------------------------------------------
-	
-    private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
-        
-        float mDownX;
-        private int mSwipeSlop = -1;
-        
-        @Override
-        public boolean onTouch(final View v, MotionEvent event) {
-        	v.setBackgroundResource(R.drawable.button_pressed);
-            if (mSwipeSlop < 0) {
-                mSwipeSlop = ViewConfiguration.get(Logs.this).
-                        getScaledTouchSlop();
-            }
-            switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if (mItemPressed) {
-                    // Multi-item swipes not handled
-                    return false;
-                }
-                mItemPressed = true;
-                mDownX = event.getX();
-                break;
-            case MotionEvent.ACTION_CANCEL:
-            	v.setBackgroundResource(R.drawable.button_normal);
-                v.setAlpha(1);
-                v.setTranslationX(0);
-                mItemPressed = false;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                {
-                    float x = event.getX() + v.getTranslationX();
-                    float deltaX = x - mDownX;
-                    float deltaXAbs = Math.abs(deltaX);
-                    if (!mSwiping) {
-                        if (deltaXAbs > mSwipeSlop) {
-                            mSwiping = true;
-                            listViewHistorial.requestDisallowInterceptTouchEvent(true);
-                            //mBackgroundContainer.showBackground(v.getTop(), v.getHeight());
-                        }
-                    }
-                    if (mSwiping) {
-                        v.setTranslationX((x - mDownX));
-                        v.setAlpha(1 - deltaXAbs / v.getWidth());
-                    }
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-            	v.setBackgroundResource(R.drawable.button_normal);
-                {
-                    // User let go - figure out whether to animate the view out, or back into place
-                    if (mSwiping) {
-                        float x = event.getX() + v.getTranslationX();
-                        float deltaX = x - mDownX;
-                        float deltaXAbs = Math.abs(deltaX);
-                        float fractionCovered;
-                        float endX;
-                        float endAlpha;
-                        final boolean remove;
-                        if (deltaXAbs > v.getWidth() / 4) {
-                            // Greater than a quarter of the width - animate it out
-                            fractionCovered = deltaXAbs / v.getWidth();
-                            endX = deltaX < 0 ? -v.getWidth() : v.getWidth();
-                            endAlpha = 0;
-                            remove = true;
-                        } else {
-                            // Not far enough - animate it back
-                            fractionCovered = 1 - (deltaXAbs / v.getWidth());
-                            endX = 0;
-                            endAlpha = 1;
-                            remove = false;
-                        }
-                        // Animate position and alpha of swiped item
-                        // NOTE: This is a simplified version of swipe behavior, for the
-                        // purposes of this demo about animation. A real version should use
-                        // velocity (via the VelocityTracker class) to send the item off or
-                        // back at an appropriate speed.
-                        long duration = (int) ((1 - fractionCovered) * SWIPE_DURATION);
-                        listViewHistorial.setEnabled(false);
-                        v.animate().setDuration(duration).
-                                alpha(endAlpha).translationX(endX).
-                                withEndAction(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        // Restore animated values
-                                        v.setAlpha(1);
-                                        v.setTranslationX(0);
-                                        if (remove) {
-                                        	//if (AppLauncher.getHasLogAccess()){
-                                        		animateRemoval(listViewHistorial, v);
-                                        	//}
-                                        } else {
-                                            //mBackgroundContainer.hideBackground();
-                                            mSwiping = false;
-                                            listViewHistorial.setEnabled(true);
-                                        }
-                                    }
-                                });
-                    }else{
-                    	//lvItemClick(v);
-                    }
-                }
-                mItemPressed = false;
-                break;
-            default:
-            	return false;
-            }
-            return true;
-        }
-    };
-	
-    private void animateRemoval(final ListView listview, View viewToRemove) {
-        int firstVisiblePosition = listview.getFirstVisiblePosition();
-        for (int i = 0; i < listview.getChildCount(); ++i) {
-            View child = listview.getChildAt(i);
-            if (child != viewToRemove) {
-                int position = firstVisiblePosition + i;
-                long itemId = mAdapter.getItemId(position);
-                mItemIdTopMap.put(itemId, child.getTop());
-            }
-        }
-        // Delete the item from the adapter
-        int position = listViewHistorial.getPositionForView(viewToRemove);
 
-        try {
-        	Integer id = mAdapter.getItem(position).getId();
-        	EcografiasServicio.deleteEcografiaId(id);
-		} catch (AppException e) {
-			ShowAlert.showAlert("Error", e.getMessage(), this);
+	public boolean onItemLongClick(final AdapterView<?> arg0, View arg1, final int arg2,
+			long arg3) {
+		
+		int id = arg0.getId();
+		switch (id){
+		case R.id.listViewHistorial:
+			ShowAlert.askYesNo("Borrar", "¿Está seguro de borrar el DIIO seleccionado?", this, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					if (which == -2){
+						try {
+							Integer id = ((Ecografia) arg0.getItemAtPosition(arg2)).getId();
+							EcografiasServicio.deleteEcografiaId(id);
+						} catch (AppException e) {
+							ShowAlert.showAlert("Error", e.getMessage(), Logs.this);
+						} finally {
+							getLogs();
+						}
+					}
+				}
+			});
+			break;
 		}
-        mAdapter.remove(mAdapter.getItem(position));
-
-        final ViewTreeObserver observer = listview.getViewTreeObserver();
-        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            public boolean onPreDraw() {
-                observer.removeOnPreDrawListener(this);
-                boolean firstAnimation = true;
-                int firstVisiblePosition = listview.getFirstVisiblePosition();
-                for (int i = 0; i < listview.getChildCount(); ++i) {
-                    final View child = listview.getChildAt(i);
-                    int position = firstVisiblePosition + i;
-                    long itemId = mAdapter.getItemId(position);
-                    Integer startTop = mItemIdTopMap.get(itemId);
-                    int top = child.getTop();
-                    if (startTop != null) {
-                        if (startTop != top) {
-                            int delta = startTop - top;
-                            child.setTranslationY(delta);
-                            child.animate().setDuration(MOVE_DURATION).translationY(0);
-                            if (firstAnimation) {
-                                child.animate().withEndAction(new Runnable() {
-                                    public void run() {
-                                        //mBackgroundContainer.hideBackground();
-                                        mSwiping = false;
-                                        listViewHistorial.setEnabled(true);
-                                    }
-                                });
-                                firstAnimation = false;
-                            }
-                        }
-                    } else {
-                        // Animate new views along with the others. The catch is that they did not
-                        // exist in the start state, so we must calculate their starting position
-                        // based on neighboring views.
-                        int childHeight = child.getHeight() + listview.getDividerHeight();
-                        startTop = top + (i > 0 ? childHeight : -childHeight);
-                        int delta = startTop - top;
-                        child.setTranslationY(delta);
-                        child.animate().setDuration(MOVE_DURATION).translationY(0);
-                        if (firstAnimation) {
-                            child.animate().withEndAction(new Runnable() {
-                                public void run() {
-                                    //mBackgroundContainer.hideBackground();
-                                    mSwiping = false;
-                                    listViewHistorial.setEnabled(true);
-                                }
-                            });
-                            firstAnimation = false;
-                        }
-                    }
-                }
-                mItemIdTopMap.clear();
-                return true;
-            }
-        });
-    }
+		return false;
+	}
 
 }

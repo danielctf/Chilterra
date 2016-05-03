@@ -270,7 +270,31 @@ public class Menu extends Activity implements View.OnClickListener, ListView.OnI
 					ShowAlert.showAlert("Error", "El traslado corresponde a otro usuario", this);
 				}
 			} else if (estado.equals("EP")){
-				
+				try {
+					boolean replace = TrasladosServicio.checkInstance(((Instancia) arg0.getItemAtPosition(arg2)).getId());
+					if (replace){
+						ShowAlert.askYesNo("Advertencia", "Tiene datos guardados de un traslado anterior.\nSi continúa perderá éstos.\n¿Está seguro de continuar?", this, new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								if (which == -2){
+									try {
+										TrasladosServicio.deleteGanado();
+										final Intent intent = new Intent(Menu.this, Recepcion.class);
+										intent.putExtra("superInstanciaId", superInstanciaId);
+										startActivityForResult(intent, 0);
+									} catch (AppException e) {
+										ShowAlert.showAlert("Error", e.getMessage(), Menu.this);
+									}
+								}
+							}
+						});
+					} else {
+						final Intent intent = new Intent(Menu.this, Recepcion.class);
+						intent.putExtra("superInstanciaId", superInstanciaId);
+						startActivityForResult(intent, 0);
+					}
+				} catch (AppException e) {
+					ShowAlert.showAlert("Error", e.getMessage(), this);
+				}
 			} else if (estado.equals("CO")){
 				ShowAlert.showAlert("Traslado", "El traslado se encuentra cerrado", this);
 			}

@@ -370,5 +370,82 @@ public class TrasladosService {
         }
         return list;
     }
+    
+    public static Integer insertaTraslado(Instancia superInstancia) throws AppException {
+    	Integer g_procedimiento_instancia_movto_salida_id = null;
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+            	g_procedimiento_instancia_movto_salida_id = TrasladosDAO.insertTraslado(trx, superInstancia);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("TrasladosService.insertaTraslado()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return g_procedimiento_instancia_movto_salida_id;
+    }
+    
+    public static DctoAdem insertaMovtoAdemV2(Integer g_procedimiento_instancia_movto_salida_id) throws AppException {
+        DctoAdem d;
+
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                d = TrasladosDAO.insertMovtoAdem(trx, g_procedimiento_instancia_movto_salida_id);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("TrasladosService.insertaMovtoAdemV2()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return d;
+    }
+    
+    public static void generarFmaXml(FMA fma) throws AppException {
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                TrasladosDAO.selectFmaXml(trx, fma);
+            } catch (SQLException ex) {
+                AppLog.logSevere("TrasladosService.generaFmaXml()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+    }
+    
+    public static List traeTraslado(Integer g_superprocedimiento_instancia_id) throws AppException {
+        List list = new ArrayList();
+
+        Transaccion trx = Transaccion.getTransaccion(false);
+        if (trx != null){
+            try {
+                list = TrasladosDAO.selectTraslado(trx, g_superprocedimiento_instancia_id);
+            } catch (SQLException ex) {
+                AppLog.logSevere("TrasladosService.traeTraslado()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+        return list;
+    }
 	
 }

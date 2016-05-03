@@ -71,10 +71,14 @@ public class WSGanado extends HttpServlet{
             	Integer i = 1;
             	retorno = i;
             } else if (servicio.equals("traeGanadoBusqueda")){
-            	List list = GanadoService.traeGanadoBusqueda();
+            	Integer g_busqueda_enc_id = (Integer) params.getParam("g_busqueda_enc_id");
+            	List list = GanadoService.traeGanadoBusqueda(g_busqueda_enc_id);
             	retorno = list;
             } else if (servicio.equals("traeOfflineDiioBasico")){
             	List list = GanadoService.traeOfflineDiioBasico();
+            	retorno = list;
+            } else if (servicio.equals("traeBusquedas")){
+            	List list = GanadoService.traeBusquedas();
             	retorno = list;
             } else {
         		retorno = new AppException("Servicio no válido.", null);

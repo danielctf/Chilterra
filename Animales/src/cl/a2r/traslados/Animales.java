@@ -2,9 +2,7 @@ package cl.a2r.traslados;
 
 import java.util.ArrayList;
 import java.util.List;
-import cl.a2r.animales.Candidatos;
 import cl.a2r.animales.R;
-import cl.a2r.auditoria.Logs;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ConnectThread;
@@ -99,9 +97,9 @@ public class Animales extends Fragment implements View.OnClickListener{
 			startActivity(i);
 			break;
 		case R.id.llFaltantes:
-			i = new Intent(act, Candidatos.class);
-			i.putExtra("stance", "auditoriaFaltantes");
-			startActivity(i);
+//			i = new Intent(act, Candidatos.class);
+//			i.putExtra("stance", "auditoriaFaltantes");
+//			startActivity(i);
 			break;
 		}
 	}
@@ -128,7 +126,6 @@ public class Animales extends Fragment implements View.OnClickListener{
 		} catch (AppException e) {
 			ShowAlert.showAlert("Error", e.getMessage(), act);
 		}
-
 	}
 	
 	private void actualizaInfoTraslado(List<Ganado> list){

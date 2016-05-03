@@ -51,7 +51,7 @@ public class AppLauncher {
 			hasLogAccess = true;
 			break;
 		case 6:
-			launchApp = Menu.class;
+			launchApp = Traslados.class;
 			hasLogAccess = true;
 			break;
 		case 7:

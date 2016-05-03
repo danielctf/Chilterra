@@ -88,10 +88,26 @@ public class WSGanadoCliente {
 	       }
 	   }
 	   
-	   public static List traeGanadoBusqueda() throws AppException {
+	   public static List traeBusquedas() throws AppException {
+
+	       ParamServlet params = new ParamServlet();
+	       params.add("servicio", "traeBusquedas" );
+
+	       Object obj = ServiceWS.invocaWS("WSGanado", params );
+	       if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	           throw (AppException) obj;
+	       } else if (obj == null){
+	    	   throw new AppException("Error de conexión a Internet", null);
+	       } else {
+	           return (List) obj;
+	       }
+	   }
+	   
+	   public static List traeGanadoBusqueda(Integer g_busqueda_enc_id) throws AppException {
 
 	       ParamServlet params = new ParamServlet();
 	       params.add("servicio", "traeGanadoBusqueda" );
+	       params.add("g_busqueda_enc_id", g_busqueda_enc_id );
 
 	       Object obj = ServiceWS.invocaWS("WSGanado", params );
 	       if ( obj != null && obj.getClass().getName().contains("AppException")) {

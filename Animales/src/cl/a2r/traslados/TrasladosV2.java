@@ -2,12 +2,14 @@ package cl.a2r.traslados;
 
 import java.util.List;
 
+import cl.a2r.animales.Login;
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.TrasladoV2;
+import cl.a2r.sip.wsservice.WSTrasladosCliente;
 import cl.ar2.sqlite.servicio.TrasladosServicio;
 import android.app.Activity;
 import android.app.Fragment;
@@ -122,6 +124,10 @@ public class TrasladosV2 extends Activity implements View.OnClickListener{
 				try {
 					List<Ganado> list = TrasladosServicio.traeGanadoTraslado();
 					superInstancia.getInstancia().setGanList(list);
+					superInstancia.setUsuarioId(Login.user);
+					superInstancia.getInstancia().getTraslado().setDescription("TRASLADO");
+					
+					WSTrasladosCliente.insertaTraslado(superInstancia);
 					
 					TrasladosServicio.deleteGanado();
 				} catch (AppException e) {

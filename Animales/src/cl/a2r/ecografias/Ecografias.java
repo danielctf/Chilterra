@@ -4,7 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import cl.a2r.animales.Aplicaciones;
+import cl.a2r.animales.Candidatos;
 import cl.a2r.animales.Login;
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
@@ -47,6 +49,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -58,8 +61,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 public class Ecografias extends Activity implements View.OnClickListener, View.OnKeyListener{
 
-	private ImageButton goBack, logs, confirmarAnimal, sync, cerrarMangada;
-	private TextView tvUltAct, tvUltAct2, tvUltEco, tvLogs, tvDiio, tvProblema, tvTotalAnimales, tvMangada, tvAnimalesMangada;
+	private ImageButton goBack, confirmarAnimal, sync, cerrarMangada;
+	private TextView tvUltAct, tvUltAct2, tvUltEco, tvDiio, tvProblema, tvTotalAnimales, tvMangada, tvAnimalesMangada;
 	private Spinner spEcografista, spEstado, spProblema, spNota;
 	private RadioGroup rg;
 	private RadioButton radio1, radio2, radio3;
@@ -88,8 +91,6 @@ public class Ecografias extends Activity implements View.OnClickListener, View.O
 	private void cargarInterfaz(){
 		goBack = (ImageButton)findViewById(R.id.goBack);
 		goBack.setOnClickListener(this);
-		logs = (ImageButton)findViewById(R.id.logs);
-		logs.setOnClickListener(this);
 		sync = (ImageButton)findViewById(R.id.sync);
 		sync.setOnClickListener(this);
 		cerrarMangada = (ImageButton)findViewById(R.id.cerrarMangada);
@@ -105,7 +106,6 @@ public class Ecografias extends Activity implements View.OnClickListener, View.O
 		tvUltAct2.setVisibility(View.GONE);
 		tvUltEco = (TextView)findViewById(R.id.tvUltEco);
 		tvUltEco.setVisibility(View.GONE);
-		tvLogs = (TextView)findViewById(R.id.tvLogs);
     	tvTotalAnimales = (TextView)findViewById(R.id.tvTotalAnimales);
     	tvMangada = (TextView)findViewById(R.id.tvMangada);
     	tvAnimalesMangada = (TextView)findViewById(R.id.tvAnimalesMangada);
@@ -179,12 +179,6 @@ public class Ecografias extends Activity implements View.OnClickListener, View.O
 	public void mostrarCandidatos(){
 		try {
 			List<Ecografia> list = EcografiasServicio.traeEcografias();
-			if (list.size() > 0){
-				tvLogs.setText(Integer.toString(list.size()));
-			} else {
-				tvLogs.setText("");
-			}
-			
 			tvTotalAnimales.setText(Integer.toString(list.size()));
 			tvMangada.setText(Integer.toString(mangadaActual));
 			int animalesMangada = 0; 
@@ -201,6 +195,7 @@ public class Ecografias extends Activity implements View.OnClickListener, View.O
 
 	public void onClick(View v) {
 		int id = v.getId();
+		Intent i;
 		switch (id){
 		case R.id.goBack:
 			ShowAlert.askYesNo("Advertencia", "¿Seguro que desea salir de la aplicación?", this, new DialogInterface.OnClickListener() {
@@ -220,13 +215,18 @@ public class Ecografias extends Activity implements View.OnClickListener, View.O
 		case R.id.sync:
 			new Sincronizacion(this, Login.user).execute();
 			break;
-		case R.id.logs:
-			Intent i = new Intent(this, Logs.class);
-			i.putExtra("mangada", mangadaActual);
-			startActivity(i);
-			break;
 		case R.id.cerrarMangada:
 			verificarCierreMangada();
+			break;
+		case R.id.llEncontrados:
+			i = new Intent(this, Logs.class);
+			i.putExtra("mangadaActual", mangadaActual);
+			startActivity(i);
+			break;
+		case R.id.llFaltantes:
+			i = new Intent(this, Candidatos.class);
+			i.putExtra("stance", "ecografiasFaltantes");
+			startActivity(i);
 			break;
 		}
 	}
@@ -559,7 +559,10 @@ public class Ecografias extends Activity implements View.OnClickListener, View.O
 			ShowAlert.showAlert("Error", e.getMessage(), this);
 		}
 		
-		mostrarCandidatos();
+		try{
+			mostrarCandidatos();
+		} catch (NullPointerException e){}
+		
 		Calculadora.isPredioLibre = true;
 		ConnectThread.setHandler(mHandler);
 		
