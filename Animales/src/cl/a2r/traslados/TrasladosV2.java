@@ -98,6 +98,32 @@ public class TrasladosV2 extends Activity implements View.OnClickListener{
 			getFragmentManager().executePendingTransactions();
 			break;
 		case R.id.confirmarMovimiento:
+			List<Ganado> list = null;
+			try {
+				list = TrasladosServicio.traeGanadoTraslado();
+			} catch (AppException e) {}
+			if (list.size() == 0){
+				ShowAlert.showAlert("Error", "No ha ingresado ningún Animal", this);
+				return;
+			}
+			
+			if (Encabezado.hayTransportista){
+				if (traslado.getDestino().getId() == null || traslado.getTransportistaId() == null || traslado.getChoferId() == null || traslado.getCamionId() == null){
+					ShowAlert.showAlert("Error", "Debe completar el encabezado del traslado", this);
+					return;
+				}
+			} else {
+				if (traslado.getDestino().getId() == null){
+					ShowAlert.showAlert("Error", "Debe completar el encabezado del traslado", this);
+					return;
+				} else {
+					traslado.setTransportistaId(null);
+					traslado.setChoferId(null);
+					traslado.setCamionId(null);
+					traslado.setAcopladoId(null);
+				}
+			}
+			
 			ShowAlert.askYesNo("Completar Traslado", "¿Seguro que desea completar el traslado?", this, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					if (which == -2){
@@ -116,6 +142,7 @@ public class TrasladosV2 extends Activity implements View.OnClickListener{
 			
 			protected void onPreExecute(){
 				loading.setVisibility(View.VISIBLE);
+				confirmarMovimiento.setVisibility(View.INVISIBLE);
 				title = "";
 				msg = "";
 			}
@@ -139,6 +166,7 @@ public class TrasladosV2 extends Activity implements View.OnClickListener{
 			
 			protected void onPostExecute(Void result){
 				loading.setVisibility(View.INVISIBLE);
+				confirmarMovimiento.setVisibility(View.VISIBLE);
 				if (!title.equals("Error")){
 					Toast.makeText(TrasladosV2.this, "Traslado Generado", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent();

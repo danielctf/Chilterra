@@ -1,14 +1,17 @@
 package cl.a2r.secados;
 
 import java.util.List;
+
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.Secado;
 import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSSecadosCliente;
+import cl.a2r.sip.wsservice.WSTrasladosCliente;
 import cl.ar2.sqlite.servicio.SecadosServicio;
 import cl.ar2.sqlite.servicio.TrasladosServicio;
 import android.app.Activity;
@@ -47,12 +50,8 @@ public class Sincronizacion extends AsyncTask<Void, Void, Void>{
 			WSSecadosCliente.insertaEstadoLeche(secList, usuarioId);
 			SecadosServicio.deleteAllSecado();
 			
-			List<Traslado> trasList = TrasladosServicio.traeReubicaciones();
-			for (Traslado t : trasList){
-				t.setUsuarioId(usuarioId);
-				t.setDescripcion("REUBICACION POR BASTONEO");
-			}
-			WSGanadoCliente.reajustaGanado(trasList);
+			List<Instancia> instList = TrasladosServicio.traeReubicaciones();
+			WSTrasladosCliente.insertaReubicacion(instList);
 			TrasladosServicio.deleteReubicaciones();
 			
 			List<Ganado> ganList = WSSecadosCliente.traeAllDiio();

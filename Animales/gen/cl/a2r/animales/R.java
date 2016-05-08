@@ -819,7 +819,7 @@ containing a value of this type.
         public static final int confirmarBaja=0x7f0a0070;
         public static final int confirmarCambios=0x7f0a00aa;
         public static final int confirmarConfirmacion=0x7f0a00ae;
-        public static final int confirmarMovimiento=0x7f0a00d4;
+        public static final int confirmarMovimiento=0x7f0a00d3;
         public static final int confirmarRegistro=0x7f0a00b5;
         public static final int container=0x7f0a00a8;
         public static final int contents_supplement_text_view=0x7f0a0104;
@@ -1029,7 +1029,7 @@ containing a value of this type.
         public static final int tvGrupoActual=0x7f0a00ca;
         public static final int tvGrupos=0x7f0a00c6;
         public static final int tvGuia=0x7f0a011a;
-        public static final int tvInfo=0x7f0a00d3;
+        public static final int tvInfo=0x7f0a00d4;
         public static final int tvLogs=0x7f0a008e;
         public static final int tvMangada=0x7f0a0069;
         public static final int tvMed=0x7f0a00cd;

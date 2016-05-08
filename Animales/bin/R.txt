@@ -291,7 +291,7 @@ int id confirmarAparicion 0x7f0a0058
 int id confirmarBaja 0x7f0a0070
 int id confirmarCambios 0x7f0a00aa
 int id confirmarConfirmacion 0x7f0a00ae
-int id confirmarMovimiento 0x7f0a00d4
+int id confirmarMovimiento 0x7f0a00d3
 int id confirmarRegistro 0x7f0a00b5
 int id container 0x7f0a00a8
 int id contents_supplement_text_view 0x7f0a0104
@@ -501,7 +501,7 @@ int id tvGananciaPeso 0x7f0a00ba
 int id tvGrupoActual 0x7f0a00ca
 int id tvGrupos 0x7f0a00c6
 int id tvGuia 0x7f0a011a
-int id tvInfo 0x7f0a00d3
+int id tvInfo 0x7f0a00d4
 int id tvLogs 0x7f0a008e
 int id tvMangada 0x7f0a0069
 int id tvMed 0x7f0a00cd

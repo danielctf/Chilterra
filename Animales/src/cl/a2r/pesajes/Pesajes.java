@@ -14,11 +14,13 @@ import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.Pesaje;
 import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSPesajesCliente;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
+import cl.a2r.sip.wsservice.WSTrasladosCliente;
 import cl.ar2.sqlite.servicio.PesajesServicio;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
 import cl.ar2.sqlite.servicio.TrasladosServicio;
@@ -118,12 +120,8 @@ public class Pesajes extends Activity implements View.OnClickListener, EditText.
 			protected Void doInBackground(Void... arg0) {
 				try {
 					Thread.sleep(100);
-					List<Traslado> trasList = TrasladosServicio.traeReubicaciones();
-					for (Traslado t : trasList){
-						t.setUsuarioId(Login.user);
-						t.setDescripcion("REUBICACION POR BASTONEO. PESAJE");
-					}
-					WSGanadoCliente.reajustaGanado(trasList);
+					List<Instancia> instList = TrasladosServicio.traeReubicaciones();
+					WSTrasladosCliente.insertaReubicacion(instList);
 					TrasladosServicio.deleteReubicaciones();
 					
 					List<Ganado> list = WSPredioLibreCliente.traeAllDiio();
@@ -346,12 +344,8 @@ public class Pesajes extends Activity implements View.OnClickListener, EditText.
 			
 			protected Void doInBackground(Void... arg0) {
 				try {
-					List<Traslado> trasList = TrasladosServicio.traeReubicaciones();
-					for (Traslado t : trasList){
-						t.setUsuarioId(Login.user);
-						t.setDescripcion("REUBICACION POR BASTONEO");
-					}
-					WSGanadoCliente.reajustaGanado(trasList);
+					List<Instancia> instList = TrasladosServicio.traeReubicaciones();
+					WSTrasladosCliente.insertaReubicacion(instList);
 					TrasladosServicio.deleteReubicaciones();
 					
 					List<Pesaje> list = PesajesServicio.traePesajesNoSync();
@@ -440,11 +434,12 @@ public class Pesajes extends Activity implements View.OnClickListener, EditText.
 				public void onClick(DialogInterface arg0, int arg1) {
 					if (arg1 == -2){
 						try {
-							Traslado t = new Traslado();
-							t.setFundoOrigenId(gan.getPredio());
-							t.setFundoDestinoId(Aplicaciones.predioWS.getId());
-							t.getGanado().add(gan);
-							TrasladosServicio.insertaReubicacion(t);
+							Instancia instancia = new Instancia();
+							instancia.setFundoId(Aplicaciones.predioWS.getId());
+							List<Ganado> ganList = new ArrayList<Ganado>();
+							ganList.add(gan);
+							instancia.setGanList(ganList);
+							TrasladosServicio.insertaReubicacion(instancia);
 							TrasladosServicio.updateGanadoFundo(Aplicaciones.predioWS.getId(), gan.getId());
 							gan.setPredio(Aplicaciones.predioWS.getId());
 							showDiio(gan);

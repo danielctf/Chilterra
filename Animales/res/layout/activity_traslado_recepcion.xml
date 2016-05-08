@@ -43,6 +43,23 @@
 
 
     </RelativeLayout>
+    
+     <RelativeLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:background="@color/green" >
+         
+         <ImageButton
+             android:id="@+id/confirmarMovimiento"
+             android:layout_width="50dp"
+             android:layout_height="50dp"
+             android:layout_alignParentRight="true"
+             android:layout_centerVertical="true"
+             android:layout_marginRight="20dp"
+             android:background="@drawable/circlebutton_naranjo"
+             android:src="@drawable/ic_settings_black_24dp" />
+                             
+     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/RelativeLayout1"

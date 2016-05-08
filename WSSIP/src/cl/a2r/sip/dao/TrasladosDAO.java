@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.a2r.common.AppException;
 import cl.a2r.sip.mail.Correo;
-import cl.a2r.sip.model.Auditoria;
 import cl.a2r.sip.model.Camion;
 import cl.a2r.sip.model.Chofer;
 import cl.a2r.sip.model.DctoAdem;
@@ -21,6 +21,7 @@ import cl.a2r.sip.model.Predio;
 import cl.a2r.sip.model.Transportista;
 import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.model.TrasladoV2;
+import cl.a2r.sip.service.InstanciasService;
 
 public class TrasladosDAO {
 
@@ -112,6 +113,18 @@ public class TrasladosDAO {
 	
 	private static final String SQL_INSERT_CONFIRM = ""
 			+ "select * from sip.ws_traslado_insert_confirm(?, ?)";
+	
+	private static final String SQL_REUBICA_GANADOV2 = ""
+			+ "select * from sip.ws_traslado_reubica_ganado(?, ?)";
+	
+	private static final String SQL_VERIFICA_CONFIRM = ""
+			+ "select * from sip.ws_traslado_verifica_confirm(?, ?)";
+	
+	private static final String SQL_REUBICACION_INSERT_GANADO = ""
+			+ "select * from sip.ws_reubicacion_insert_ganado(?, ?, ?)";
+	
+	private static final String SQL_REUBICACION_COMPLETA_REUBICACION = ""
+			+ "select * from sip.ws_reubicacion_completa_reubicacion(?, ?)";
 
     public static List selectTransportistas(Transaccion trx) throws SQLException {
         List list = new ArrayList();
@@ -750,7 +763,7 @@ public class TrasladosDAO {
         		+ "http://sipecweb.sag.gob.cl/" + "\n"
         		+ "RUP " + fundoOrigen + ": " + rupOrigen + "\n"
         		+ "RUP " + fundoDestino + ": " + rupDestino + "\n");
-        correo.addAdjunto(byteXML, "application/xml", "FMA " + fma.getG_movimiento_id() + ".xml" );
+        correo.addAdjunto(byteXML, "application/xml", "FMA " + nro_documento + ".xml" );
         correo.enviar();
         
         res.close();
@@ -803,7 +816,44 @@ public class TrasladosDAO {
         pst.setObject(2, superInstancia.getId());
         pst.executeQuery();
         
+        pst = conn.prepareStatement( SQL_REUBICA_GANADOV2 );
+        pst.setObject(1, superInstancia.getUsuarioId());
+        pst.setObject(2, superInstancia.getId());
+        pst.executeQuery();
+        
+        //Verificar si en la confirmacion vienen mas animales que en la salida
+        pst = conn.prepareStatement( SQL_VERIFICA_CONFIRM );
+        pst.setObject(1, superInstancia.getUsuarioId());
+        pst.setObject(2, superInstancia.getId());
+        pst.executeQuery();
+        
         pst.close();
+
+    }
+    
+    public static void insertReubicacion(Transaccion trx, List<Instancia> instList) throws SQLException, AppException {
+    	
+        Connection conn = null;
+        PreparedStatement pst = null;
+
+        conn = trx.getConn();
+        
+        for (Instancia i : instList){
+        	Integer superInstanciaId = InstanciasService.insertaProc(i, 1005050);
+        	pst = conn.prepareStatement( SQL_REUBICACION_INSERT_GANADO );
+        	for (Ganado g : i.getGanList()){
+        		pst.setObject(1, i.getUsuarioId());
+        		pst.setObject(2, g.getId());
+        		pst.setObject(3, superInstanciaId);
+        		pst.executeQuery();
+        	}
+        	pst = conn.prepareStatement( SQL_REUBICACION_COMPLETA_REUBICACION );
+        	pst.setObject(1, i.getUsuarioId());
+        	pst.setObject(2, superInstanciaId);
+        	pst.executeQuery();
+        }
+        
+        //pst.close();
 
     }
 	

@@ -13,7 +13,7 @@ import cl.ar2.sqlite.dao.TrasladosDAO;
 
 public class TrasladosServicio {
 
-    public static void insertaReubicacion(Traslado t) throws AppException {
+    public static void insertaReubicacion(Instancia instancia) throws AppException {
         SqLiteTrx trx;
 
         try {
@@ -24,7 +24,7 @@ public class TrasladosServicio {
 
         if (trx != null) {
             try {
-                TrasladosDAO.insertReubicacion(trx, t);
+                TrasladosDAO.insertReubicacion(trx, instancia);
                 trx.commit();
             } catch ( SQLException ex ) {
                 trx.rollback();
@@ -35,8 +35,8 @@ public class TrasladosServicio {
         }
     }
     
-    public static List traeReubicaciones() throws AppException {
-        List list = new ArrayList();
+    public static List<Instancia> traeReubicaciones() throws AppException {
+        List<Instancia> list = new ArrayList<Instancia>();
         SqLiteTrx trx;
 
         try {

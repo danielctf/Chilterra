@@ -131,6 +131,15 @@ public class WSTraslados extends HttpServlet {
             	Integer g_superprocedimiento_instancia_id = (Integer) params.getParam("superInstanciaId");
             	List list = TrasladosService.traeTraslado(g_superprocedimiento_instancia_id);
             	retorno = list;
+            } else if (servicio.equals("insertaConfirm")){
+            	Instancia superInstancia = (Instancia) params.getParam("superInstancia");
+            	TrasladosService.insertaConfirm(superInstancia);
+            	retorno = l;
+            } else if (servicio.equals("insertaReubicacion")){
+            	System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            	List<Instancia> instList = (List<Instancia>) params.getParam("instList");
+            	TrasladosService.insertaReubicacion(instList);
+            	retorno = l;
             } else {
                 retorno = new AppException("Servicio no válido.", null);
             }

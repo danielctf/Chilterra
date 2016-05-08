@@ -10,7 +10,6 @@ import cl.a2r.animales.Login;
 import cl.a2r.animales.Partos;
 import cl.a2r.animales.PredioLibreLobby;
 import cl.a2r.animales.Salvatajes;
-import cl.a2r.animales.Traslados;
 import cl.a2r.auditoria.GruposAuditoria;
 import cl.a2r.busquedas.Busquedas;
 import cl.a2r.common.AppException;
@@ -51,7 +50,7 @@ public class AppLauncher {
 			hasLogAccess = true;
 			break;
 		case 6:
-			launchApp = Traslados.class;
+			launchApp = Menu.class;
 			hasLogAccess = true;
 			break;
 		case 7:

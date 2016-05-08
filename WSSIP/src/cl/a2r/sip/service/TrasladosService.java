@@ -447,5 +447,47 @@ public class TrasladosService {
         }
         return list;
     }
+    
+    public static void insertaConfirm(Instancia superInstancia) throws AppException {
+
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                TrasladosDAO.insertConfirm(trx, superInstancia);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("TrasladosService.insertaConfirm()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+    }
+    
+    public static void insertaReubicacion(List<Instancia> instList) throws AppException {
+
+        Transaccion trx = Transaccion.getTransaccion(true);
+        if (trx != null){
+            try {
+                TrasladosDAO.insertReubicacion(trx, instList);
+                trx.commit();
+            } catch (SQLException ex) {
+                trx.rollback();
+            	AppLog.logSevere("TrasladosService.insertaReubicacion()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } catch (AppException ex){
+                trx.rollback();
+            	AppLog.logSevere("TrasladosService.insertaReubicacion()", ex);
+                throw new AppException("No se pudo recuperar los registros.", null);
+            } finally {
+                trx.close();
+            }
+        } else {
+            throw new AppException("No se pudo obtener la conexión.", null);
+        }
+    }
 	
 }

@@ -5,9 +5,6 @@ import java.util.List;
 
 import cl.a2r.animales.Aplicaciones;
 import cl.a2r.animales.R;
-import cl.a2r.auditoria.GruposAuditoria;
-import cl.a2r.common.AppException;
-import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ConnectThread;
 import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
@@ -15,7 +12,6 @@ import cl.a2r.sip.model.Camion;
 import cl.a2r.sip.model.Chofer;
 import cl.a2r.sip.model.Predio;
 import cl.a2r.sip.model.Transportista;
-import cl.ar2.sqlite.servicio.AuditoriasServicio;
 import android.app.Activity;
 import android.app.Fragment;
 import android.bluetooth.BluetoothDevice;
@@ -38,14 +34,16 @@ public class Encabezado extends Fragment{
 	private TextView tvChofer, tvCamion, tvAcoplado, tvTransportista;
 	private View v;
 	private Activity act;
+	public static boolean hayTransportista;
 	
 	public Encabezado(Activity act){
 		this.act = act;
 	}
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		setRetainInstance(true);
     	v = inflater.inflate(R.layout.fragment_encabezado, container, false);
-
+    	
     	cargarInterfaz();
     	cargarListeners();
     	cargarDatos();
@@ -66,6 +64,7 @@ public class Encabezado extends Fragment{
 		tvChofer = (TextView)v.findViewById(R.id.tvChofer);
 		tvCamion = (TextView)v.findViewById(R.id.tvCamion);
 		tvAcoplado = (TextView)v.findViewById(R.id.tvAcoplado);
+		
 	}
 	
 	private void cargarListeners(){
@@ -73,6 +72,7 @@ public class Encabezado extends Fragment{
 			
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				if (arg2 == 0){
+					hayTransportista = true;
 					spinnerTransportista.setVisibility(View.VISIBLE);
 					tvTransportista.setVisibility(View.VISIBLE);
 					spinnerChofer.setVisibility(View.VISIBLE);
@@ -82,6 +82,7 @@ public class Encabezado extends Fragment{
 					spinnerAcoplado.setVisibility(View.VISIBLE);
 					tvAcoplado.setVisibility(View.VISIBLE);
 				} else {
+					hayTransportista = false;
 					spinnerTransportista.setVisibility(View.GONE);
 					tvTransportista.setVisibility(View.GONE);
 					spinnerChofer.setVisibility(View.GONE);
@@ -181,27 +182,41 @@ public class Encabezado extends Fragment{
 	}
 	
 	private void cargarTransportista(Transportista t){
+		int i = 0;
+		int j = 0;
 		List<Chofer> choferes = new ArrayList<Chofer>();
+		Chofer ch = new Chofer();
+		choferes.add(0, ch);
 		for (Chofer c : Menu.chofer){
-			if (t.getId().intValue() == c.getTransportistaId().intValue()){
+			if (t.getId() != null && t.getId().intValue() == c.getTransportistaId().intValue()){
 				choferes.add(c);
+				i++;
+				System.out.println("choferId obj: " + TrasladosV2.traslado.getChoferId());
+				System.out.println("choferId choferes: " + c.getId());
+				if (TrasladosV2.traslado.getChoferId() != null && TrasladosV2.traslado.getChoferId().intValue() == c.getId().intValue()){
+					System.out.println("FOUND");
+					j = i;
+				}
 			}
 		}
 		ArrayAdapter<Chofer> mAdapter3 = new ArrayAdapter<Chofer>(act, android.R.layout.simple_list_item_1, choferes);
 		spinnerChofer.setAdapter(mAdapter3);
+		spinnerChofer.setSelection(j);
 		
 		List<Camion> camiones = new ArrayList<Camion>();
 		for (Camion c : Menu.camion){
-			if (t.getId().intValue() == c.getTransportistaId().intValue()){
+			if (t.getId() != null && t.getId().intValue() == c.getTransportistaId().intValue()){
 				camiones.add(c);
 			}
 		}
+		Camion ca = new Camion();
+		camiones.add(0, ca);
 		ArrayAdapter<Camion> mAdapter4 = new ArrayAdapter<Camion>(act, android.R.layout.simple_list_item_1, camiones);
 		spinnerCamion.setAdapter(mAdapter4);
 		
 		List<Camion> acoplados = new ArrayList<Camion>();
 		for (Camion c : Menu.acoplado){
-			if (t.getId().intValue() == c.getTransportistaId().intValue()){
+			if (t.getId() != null && t.getId().intValue() == c.getTransportistaId().intValue()){
 				acoplados.add(c);
 			}
 		}

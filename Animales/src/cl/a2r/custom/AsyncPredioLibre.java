@@ -6,10 +6,12 @@ import cl.a2r.animales.PredioLibreLobby;
 import cl.a2r.animales.R;
 import cl.a2r.common.AppException;
 import cl.a2r.sip.model.Brucelosis;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
+import cl.a2r.sip.wsservice.WSTrasladosCliente;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
 import cl.ar2.sqlite.servicio.TrasladosServicio;
 import android.app.Activity;
@@ -53,12 +55,8 @@ public class AsyncPredioLibre extends AsyncTask<Void, Void, Void>{
 			PredioLibreServicio.deletePL();
 			PredioLibreServicio.deletePLBrucelosis();
 			
-			List<Traslado> trasList = TrasladosServicio.traeReubicaciones();
-			for (Traslado t : trasList){
-				t.setUsuarioId(usuarioId);
-				t.setDescripcion("REUBICACION POR BASTONEO");
-			}
-			WSGanadoCliente.reajustaGanado(trasList);
+			List<Instancia> instList = TrasladosServicio.traeReubicaciones();
+			WSTrasladosCliente.insertaReubicacion(instList);
 			TrasladosServicio.deleteReubicaciones();
 			
 			title = "Sincronización";

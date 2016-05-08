@@ -21,6 +21,7 @@ import cl.a2r.sip.model.EcografiaProblema;
 import cl.a2r.sip.model.Ecografista;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Inseminacion;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.Traslado;
 import cl.ar2.sqlite.servicio.EcografiasServicio;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
@@ -503,11 +504,12 @@ public class Ecografias extends Activity implements View.OnClickListener, View.O
 				public void onClick(DialogInterface arg0, int arg1) {
 					if (arg1 == -2){
 						try {
-							Traslado t = new Traslado();
-							t.setFundoOrigenId(gan.getPredio());
-							t.setFundoDestinoId(Aplicaciones.predioWS.getId());
-							t.getGanado().add(gan);
-							TrasladosServicio.insertaReubicacion(t);
+							Instancia instancia = new Instancia();
+							instancia.setFundoId(Aplicaciones.predioWS.getId());
+							List<Ganado> ganList = new ArrayList<Ganado>();
+							ganList.add(gan);
+							instancia.setGanList(ganList);
+							TrasladosServicio.insertaReubicacion(instancia);
 							TrasladosServicio.updateGanadoFundo(Aplicaciones.predioWS.getId(), gan.getId());
 							gan.setPredio(Aplicaciones.predioWS.getId());
 							//EcografiasServicio.updateEcoFundo(Aplicaciones.predioWS.getId(), gan.getId());

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cl.a2r.animales.Candidatos;
+import cl.a2r.animales.Login;
 import cl.a2r.animales.R;
+import cl.a2r.auditoria.GruposAuditoria;
 import cl.a2r.common.AppException;
 import cl.a2r.custom.Calculadora;
 import cl.a2r.custom.ConnectThread;
@@ -18,6 +20,7 @@ import cl.ar2.sqlite.servicio.TrasladosServicio;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
@@ -35,7 +38,7 @@ import android.widget.Toast;
 
 public class Recepcion extends Activity implements View.OnClickListener{
 	
-	private ImageButton confirmarAnimal, goBack;
+	private ImageButton confirmarAnimal, goBack, confirmarMovimiento;
 	private TextView tvDiio, tvFaltantes, tvEncontrados, tvInfo;
 	private LinearLayout llEncontrados, llFaltantes;
 	private ProgressBar loading;
@@ -76,6 +79,8 @@ public class Recepcion extends Activity implements View.OnClickListener{
 		loading = (ProgressBar)findViewById(R.id.loading);
 		loading.setVisibility(View.INVISIBLE);
 		tvInfo = (TextView)findViewById(R.id.tvInfo);
+		confirmarMovimiento = (ImageButton)findViewById(R.id.confirmarMovimiento);
+		confirmarMovimiento.setOnClickListener(this);
 		
 		superInstancia = new Instancia();
 		superInstancia.setId(superInstanciaId);
@@ -123,6 +128,49 @@ public class Recepcion extends Activity implements View.OnClickListener{
 		}.execute();
 	}
 	
+	private void confirmarMovimiento(){
+		new AsyncTask<Void, Void, Void>(){
+			String title, msg;
+			
+			protected void onPreExecute(){
+				loading.setVisibility(View.VISIBLE);
+				confirmarMovimiento.setVisibility(View.INVISIBLE);
+				title = "";
+				msg = "";
+			}
+			
+			protected Void doInBackground(Void... arg0) {
+				try {
+					List<Ganado> list = TrasladosServicio.traeGanadoTraslado();
+					superInstancia.getInstancia().setGanList(list);
+					superInstancia.setUsuarioId(Login.user);
+					
+					WSTrasladosCliente.insertaConfirm(superInstancia);
+					TrasladosServicio.deleteGanado();
+					
+				} catch (AppException e) {
+					title = "Error";
+					msg = e.getMessage();
+				}
+				return null;
+			}
+			
+			protected void onPostExecute(Void result){
+				loading.setVisibility(View.INVISIBLE);
+				confirmarMovimiento.setVisibility(View.VISIBLE);
+				if (!title.equals("Error")){
+					Toast.makeText(Recepcion.this, "Traslado Confirmado", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent();
+                    setResult(RESULT_OK,intent);
+                    finish();
+				} else {
+					ShowAlert.showAlert(title, msg, Recepcion.this);
+				}
+			}
+	
+		}.execute();
+	}
+	
 	public void onClick(View v) {
 		int id = v.getId();
 		Intent i;
@@ -145,6 +193,23 @@ public class Recepcion extends Activity implements View.OnClickListener{
 			i = new Intent(Recepcion.this, Candidatos.class);
 			i.putExtra("stance", "trasladosFaltantes");
 			startActivity(i);
+			break;
+		case R.id.confirmarMovimiento:
+			List<Ganado> list = null;
+			try {
+				list = TrasladosServicio.traeGanadoTraslado();
+			} catch (AppException e) {}
+			if (list.size() == 0){
+				ShowAlert.showAlert("Error", "No ha ingresado ningún Animal", this);
+				return;
+			}
+			ShowAlert.askYesNo("Confirmar Traslado", "¿Seguro que desea confirmar el traslado?", Recepcion.this, new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface arg0, int which) {
+					if (which == -2){
+						confirmarMovimiento();
+					}
+				}
+			});
 			break;
 		}
 	}

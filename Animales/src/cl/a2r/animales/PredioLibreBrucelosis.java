@@ -14,6 +14,7 @@ import cl.a2r.custom.ShowAlert;
 import cl.a2r.object.LecturaTBObject;
 import cl.a2r.sip.model.Brucelosis;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.InyeccionTB;
 import cl.a2r.sip.model.PPD;
 import cl.a2r.sip.model.Traslado;
@@ -303,11 +304,12 @@ public class PredioLibreBrucelosis extends Fragment implements View.OnClickListe
 				public void onClick(DialogInterface arg0, int arg1) {
 					if (arg1 == -2){
 						try {
-							Traslado t = new Traslado();							
-							t.setFundoOrigenId(gan.getPredio());
-							t.setFundoDestinoId(Aplicaciones.predioWS.getId());
-							t.getGanado().add(gan);
-							TrasladosServicio.insertaReubicacion(t);
+							Instancia instancia = new Instancia();
+							instancia.setFundoId(Aplicaciones.predioWS.getId());
+							List<Ganado> ganList = new ArrayList<Ganado>();
+							ganList.add(gan);
+							instancia.setGanList(ganList);
+							TrasladosServicio.insertaReubicacion(instancia);
 							TrasladosServicio.updateGanadoFundo(Aplicaciones.predioWS.getId(), gan.getId());
 							gan.setPredio(Aplicaciones.predioWS.getId());
 							showDiio(gan);

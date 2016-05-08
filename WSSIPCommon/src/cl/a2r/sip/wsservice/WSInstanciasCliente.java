@@ -7,7 +7,7 @@ import cl.a2r.sip.model.Instancia;
 
 public class WSInstanciasCliente {
 
-	   public static void insertaInstancia(Instancia instancia, Integer appId) throws AppException {
+	   public static Integer insertaInstancia(Instancia instancia, Integer appId) throws AppException {
 
 	        ParamServlet params = new ParamServlet();
 	        params.add("servicio", "insertaProc" );
@@ -19,6 +19,8 @@ public class WSInstanciasCliente {
 	            throw (AppException) obj;
 	        } else if (obj == null){
 	        	throw new AppException("Error de conexión a Internet", null);
+	        } else {
+	        	return (Integer) obj;
 	        }
 	   }
 }

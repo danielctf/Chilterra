@@ -300,4 +300,32 @@ public class WSTrasladosCliente {
 	        }
 	   }
 	   
+	   public static void insertaConfirm(Instancia superInstancia) throws AppException {
+			
+	        ParamServlet params = new ParamServlet();
+	        params.add("servicio", "insertaConfirm" );
+	        params.add("superInstancia", superInstancia );
+	
+	        Object obj = ServiceWS.invocaWS("WSTraslados", params );
+	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	            throw (AppException) obj;
+	        } else if (obj == null){
+	        	throw new AppException("Error de conexión a Internet", null);
+	        }
+	   }
+	   
+	   public static void insertaReubicacion(List<Instancia> instList) throws AppException {
+			
+	        ParamServlet params = new ParamServlet();
+	        params.add("servicio", "insertaReubicacion" );
+	        params.add("instList", instList );
+	
+	        Object obj = ServiceWS.invocaWS("WSTraslados", params );
+	        if ( obj != null && obj.getClass().getName().contains("AppException")) {
+	            throw (AppException) obj;
+	        } else if (obj == null){
+	        	throw new AppException("Error de conexión a Internet", null);
+	        }
+	   }
+	   
 }

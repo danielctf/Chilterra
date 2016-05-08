@@ -123,7 +123,6 @@ public class Adapter extends BaseAdapter{
 				fechaMovto = dfComp.parse(dfComp.format(fechaMovtoOriginal));
 				fechaActual = dfComp.parse(dfComp.format(currentDate));
 			  } catch (ParseException e) {}
-        	  System.out.println("fechaMovto.before(fechaActual): " + fechaMovto.before(fechaActual));
         	  if (fechaMovto.before(fechaActual)){
         		  tvFecha.setText(dfFecha.format(fechaMovtoOriginal));
         	  } else {

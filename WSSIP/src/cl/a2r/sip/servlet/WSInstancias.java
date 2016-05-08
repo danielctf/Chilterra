@@ -47,8 +47,8 @@ public class WSInstancias extends HttpServlet{
             if (servicio.equals("insertaProc") ) {
             	Instancia instancia = (Instancia) params.getParam("instancia");
             	Integer appId = (Integer) params.getParam("appId");
-            	InstanciasService.insertaProc(instancia, appId);
-            	retorno = i;
+            	Integer superInstanciaId = InstanciasService.insertaProc(instancia, appId);
+            	retorno = superInstanciaId;
             } else {
                 retorno = new AppException("Servicio no válido.", null);
             }

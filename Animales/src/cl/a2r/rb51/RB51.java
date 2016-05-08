@@ -16,12 +16,14 @@ import cl.a2r.custom.ConnectedThread;
 import cl.a2r.custom.ShowAlert;
 import cl.a2r.sip.model.Bang;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.MedicamentoControl;
 import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.model.VRB51;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
 import cl.a2r.sip.wsservice.WSRB51Cliente;
+import cl.a2r.sip.wsservice.WSTrasladosCliente;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
 import cl.ar2.sqlite.servicio.RB51Servicio;
 import cl.ar2.sqlite.servicio.TrasladosServicio;
@@ -361,12 +363,8 @@ public class RB51 extends Activity implements View.OnClickListener{
 			
 			protected Void doInBackground(Void... arg0) {
 				try {
-					List<Traslado> trasList = TrasladosServicio.traeReubicaciones();
-					for (Traslado t : trasList){
-						t.setUsuarioId(Login.user);
-						t.setDescripcion("REUBICACION POR BASTONEO");
-					}
-					WSGanadoCliente.reajustaGanado(trasList);
+					List<Instancia> instList = TrasladosServicio.traeReubicaciones();
+					WSTrasladosCliente.insertaReubicacion(instList);
 					TrasladosServicio.deleteReubicaciones();
 					
 					List<Bang> bangsABorrar = RB51Servicio.traeNoSyncBang();
@@ -540,11 +538,12 @@ public class RB51 extends Activity implements View.OnClickListener{
 				public void onClick(DialogInterface arg0, int arg1) {
 					if (arg1 == -2){
 						try {
-							Traslado t = new Traslado();
-							t.setFundoOrigenId(gan.getPredio());
-							t.setFundoDestinoId(Aplicaciones.predioWS.getId());
-							t.getGanado().add(gan);
-							TrasladosServicio.insertaReubicacion(t);
+							Instancia instancia = new Instancia();
+							instancia.setFundoId(Aplicaciones.predioWS.getId());
+							List<Ganado> ganList = new ArrayList<Ganado>();
+							ganList.add(gan);
+							instancia.setGanList(ganList);
+							TrasladosServicio.insertaReubicacion(instancia);
 							TrasladosServicio.updateGanadoFundo(Aplicaciones.predioWS.getId(), gan.getId());
 							gan.setPredio(Aplicaciones.predioWS.getId());
 							showDiio(gan);

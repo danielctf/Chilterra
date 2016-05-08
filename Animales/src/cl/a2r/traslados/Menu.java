@@ -97,12 +97,16 @@ public class Menu extends Activity implements View.OnClickListener, ListView.OnI
 				try {
 					//Si no esta en cache o ha pasado mas de 1 dia, actualiza los datos.
 					if (!isInCache || cacheDate.getTime() + (24L * 60L * 60L * 1000L) < new Date().getTime()){
+						isInCache = true;
+						cacheDate = new Date();
 						System.out.println("not in cache... loading data");
 						chofer = WSTrasladosCliente.traeChofer();
 						camion = WSTrasladosCliente.traeCamion();
 						acoplado = WSTrasladosCliente.traeAcoplado();
 						predios = WSAutorizacionCliente.traePredios();
+						predios.add(0, new Predio());
 						transportistas = WSTrasladosCliente.traeTransportistas();
+						transportistas.add(0, new Transportista());
 						
 						List<Ganado> list = WSGanadoCliente.traeOfflineDiioBasico();
 						PredioLibreServicio.deleteDiio();
@@ -120,8 +124,6 @@ public class Menu extends Activity implements View.OnClickListener, ListView.OnI
 				loading.setVisibility(View.INVISIBLE);
 				addTraslado.setVisibility(View.VISIBLE);
 				if (!title.equals("Error")){
-					isInCache = true;
-					cacheDate = new Date();
 					Adapter mAdapter = new Adapter(Menu.this, trasList);
 					lvTraslados.setAdapter(mAdapter);
 					Utility.setListViewHeightBasedOnChildren(lvTraslados);
@@ -167,6 +169,7 @@ public class Menu extends Activity implements View.OnClickListener, ListView.OnI
 					Adapter mAdapter = new Adapter(Menu.this, trasList);
 					lvTraslados.setAdapter(mAdapter);
 					Utility.setListViewHeightBasedOnChildren(lvTraslados);
+					//onItemClick(lvTraslados, null, 0, 0);
 				} else {
 					ShowAlert.showAlert(title, msg, Menu.this);
 				}

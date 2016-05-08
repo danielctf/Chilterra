@@ -6,18 +6,18 @@ import java.util.List;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteStatement;
+import cl.a2r.animales.Login;
 import cl.a2r.sip.model.Ganado;
 import cl.a2r.sip.model.Instancia;
-import cl.a2r.sip.model.Traslado;
 
 public class TrasladosDAO {
 
-	private static final String SQL_REUBICA_GANADO = ""
-			+ "INSERT INTO reubicacion (ganadoId, fundoOrigenId, fundoDestinoId) "
-			+ " VALUES (?, ?, ?) ";
+	private static final String SQL_INSERT_REUBICACION = ""
+			+ "INSERT INTO reubicacion (ganadoId, fundoDestinoId) "
+			+ " VALUES (?, ?) ";
 	
 	private static final String SQL_SELECT_REUBICACIONES = ""
-			+ "SELECT id, ganadoId, fundoOrigenId, fundoDestinoId "
+			+ "SELECT id, ganadoId, fundoDestinoId "
 			+ " FROM reubicacion ";
 	
 	private static final String SQL_DELETE_REUBICACIONES = ""
@@ -59,6 +59,7 @@ public class TrasladosDAO {
 			+ "SELECT max(mangada) mangada "
 			+ " FROM traslado ";
 	
+	/*
     public static void insertReubicacion(SqLiteTrx trx, Traslado t) throws SQLException {
 
         SQLiteStatement statement = trx.getDB().compileStatement(SQL_REUBICA_GANADO);
@@ -89,13 +90,15 @@ public class TrasladosDAO {
         }
         return list;
     }
-    
+    */
+	
     public static void deleteReubicaciones(SqLiteTrx trx) throws SQLException {
     	SQLiteStatement statement = trx.getDB().compileStatement(SQL_DELETE_REUBICACIONES);
     	statement.clearBindings();
     	statement.executeUpdateDelete();
     }
     
+	
     public static void updateGanadoFundo(SqLiteTrx trx, Integer nuevoFundoId, Integer ganadoId) throws SQLException {
     	SQLiteStatement statement = trx.getDB().compileStatement(SQL_UPDATE_GANADO_FUNDO);
     	statement.clearBindings();
@@ -103,6 +106,8 @@ public class TrasladosDAO {
     	statement.bindLong(2, ganadoId);
     	statement.executeUpdateDelete();
     }
+    
+    //----------------------------- TRASLADOS V2 -------------------------------
     
     public static void insertaTraslado(SqLiteTrx trx, Instancia superInstancia) throws SQLException {
 
@@ -196,4 +201,53 @@ public class TrasladosDAO {
         return mangadaActual;
     }
 	
+    //---------------------------- REUBICACION V2 -------------------------------------
+    
+    public static void insertReubicacion(SqLiteTrx trx, Instancia instancia) throws SQLException {
+
+        SQLiteStatement statement = trx.getDB().compileStatement(SQL_INSERT_REUBICACION);
+
+        for (Ganado g : instancia.getGanList()){
+	    	statement.clearBindings();
+	    	statement.bindLong(1, g.getId());
+	    	statement.bindLong(2, instancia.getFundoId());
+	    	statement.executeInsert();
+        }
+    }
+    
+    public static List selectReubicaciones(SqLiteTrx trx) throws SQLException {
+        List<Instancia> instList = new ArrayList<Instancia>();
+        
+        boolean hayReg;
+        Cursor c = trx.getDB().rawQuery(SQL_SELECT_REUBICACIONES, null);
+        hayReg = c.moveToFirst();
+        
+        while ( hayReg ) {
+        	Ganado g = new Ganado();
+        	g.setId(c.getInt(c.getColumnIndex("ganadoId")));
+        	Integer fundoDestinoId = c.getInt(c.getColumnIndex("fundoDestinoId"));
+        	
+        	boolean exists = false;
+        	for (Instancia i : instList){
+        		if (i.getFundoId().intValue() == fundoDestinoId.intValue()){
+        			i.getGanList().add(g);
+        			exists = true;
+        			break;
+        		}
+        	}
+        	if (!exists){
+        		Instancia instancia = new Instancia();
+        		List<Ganado> ganList = new ArrayList<Ganado>();
+        		ganList.add(g);
+        		instancia.setGanList(ganList);
+        		instancia.setFundoId(fundoDestinoId);
+        		instancia.setUsuarioId(Login.user);
+        		instList.add(instancia);
+        	}
+        	
+            hayReg = c.moveToNext();
+        }
+        return instList;
+    }
+    
 }

@@ -13,10 +13,12 @@ import cl.a2r.custom.Signature;
 import cl.a2r.custom.Utility;
 import cl.a2r.sip.model.Auditoria;
 import cl.a2r.sip.model.Ganado;
+import cl.a2r.sip.model.Instancia;
 import cl.a2r.sip.model.Traslado;
 import cl.a2r.sip.wsservice.WSAuditoriaCliente;
 import cl.a2r.sip.wsservice.WSGanadoCliente;
 import cl.a2r.sip.wsservice.WSPredioLibreCliente;
+import cl.a2r.sip.wsservice.WSTrasladosCliente;
 import cl.ar2.sqlite.dao.SqLiteTrx;
 import cl.ar2.sqlite.servicio.AuditoriasServicio;
 import cl.ar2.sqlite.servicio.PredioLibreServicio;
@@ -219,12 +221,8 @@ public class GruposAuditoria extends Activity implements View.OnClickListener, L
 			
 			protected Void doInBackground(Void... arg0) {
 				try {
-					List<Traslado> trasList = TrasladosServicio.traeReubicaciones();
-					for (Traslado t : trasList){
-						t.setUsuarioId(Login.user);
-						t.setDescripcion("REUBICACION POR BASTONEO");
-					}
-					WSGanadoCliente.reajustaGanado(trasList);
+					List<Instancia> instList = TrasladosServicio.traeReubicaciones();
+					WSTrasladosCliente.insertaReubicacion(instList);
 					TrasladosServicio.deleteReubicaciones();
 					
 					List<Ganado> list = WSPredioLibreCliente.traeAllDiio();

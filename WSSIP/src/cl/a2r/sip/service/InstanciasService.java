@@ -10,16 +10,17 @@ import cl.a2r.sip.model.Instancia;
 
 public class InstanciasService {
 
-    public static void insertaProc(Instancia instancia, Integer appId) throws AppException {
+    public static Integer insertaProc(Instancia instancia, Integer appId) throws AppException {
+    	Integer superInstanciaId = null;
         Transaccion trx = Transaccion.getTransaccion(true);
         if (trx != null){
             try {
-                InstanciasDAO.insertProc(trx, instancia, appId);
+                superInstanciaId = InstanciasDAO.insertProc(trx, instancia, appId);
                 trx.commit();
             } catch (SQLException ex) {
                 trx.rollback();
                 AppLog.logSevere("ProcedimientosService.insertaProc()", ex);
-                if (ex.getSQLState().equals("SIP04")){
+                if (ex.getSQLState().equals("SIP06")){
                 	throw new AppException(ex.getMessage(), null);
                 } else {
                 	throw new AppException("No se pudo recuperar los registros.", null);
@@ -30,6 +31,7 @@ public class InstanciasService {
         } else {
             throw new AppException("No se pudo obtener la conexión.", null);
         }
+        return superInstanciaId;
     }
 	
 }
